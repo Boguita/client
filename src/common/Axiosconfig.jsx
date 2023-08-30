@@ -1,7 +1,7 @@
 import axios from "axios";
 
     const api = axios.create({
-      baseURL: "https://api-test-six-nu.vercel.app/api", // URL base del servidor
+      baseURL: "https://uatre-api.onrender.com/api", // URL base del servidor
       withCredentials: true, // Habilita el envío de cookies
     });
 
