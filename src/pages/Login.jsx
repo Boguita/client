@@ -29,7 +29,7 @@ const Login = () => {
     e.preventDefault();
     try {
       await login(inputs)      
-      navigate("/home");
+      navigate("/homeInfo");
     } catch (err) {
       console.log(err)
       setError(err);
