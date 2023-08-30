@@ -164,6 +164,7 @@ useEffect(() => {
       setIsLoading(true); 
    if (!areAllFieldsComplete()) {
       setError('Por favor complete todos los campos');
+      setIsLoading(false);
       return;
     }
 
