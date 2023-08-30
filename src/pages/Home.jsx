@@ -342,7 +342,7 @@ const toggleFamiliar = id => {
                             {affiliateData.recibo_sueldo.map((recibo, index) => (
                               <div key={index}>
                                 <a
-                                  href={`http://localhost:8800/${recibo}`} // Utiliza la URL de tu API
+                                  href={`https://uatre-api.onrender.com/${recibo}`} // Utiliza la URL de tu API
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-blue-500 hover:underline"
