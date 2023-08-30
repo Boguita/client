@@ -82,7 +82,7 @@ const handleAffiliateDataRequest = async () => {
 
   const getDniImg = async () => {
     affiliateData.dni_img.forEach((dni) => {
-    window.open(`http://localhost:8800/${dni}`, '_blank');
+    window.open(`https://uatre-api.onrender.com/${dni}`, '_blank');
   });
     
   }
