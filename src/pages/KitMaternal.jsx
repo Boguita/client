@@ -1,0 +1,762 @@
+import { useState, useEffect, useContext } from "react";
+import { useNavigate, useLocation, Link } from "react-router-dom";
+import { AuthContext } from "../context/authContext";
+import {BiError} from "react-icons/bi"
+import api from "../common/Axiosconfig";
+
+
+import {FiDownload} from 'react-icons/fi'
+import Files from "../components/Files";
+import Mono from '../assets/img/mono.png';
+import Input from "../components/Input";
+import Loader from "../components/Loader";
+
+const KitMaternal = () => {
+
+  const { currentUser, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [dni, setDni] = useState("");
+ 
+  const [currentStep, setCurrentStep] = useState(1);
+  const [validationErrors, setValidationErrors] = useState({});
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+const [beneficio, setBeneficio] = useState({
+
+  "0": {  
+        usuario_otorgante: currentUser?.username,
+        id: "",
+        tipo: "Kit maternal",
+        afiliado_id: "",
+        familiar_id: null,
+        semanas: "",
+        fecha_de_parto: "",
+        cantidad: "",
+        detalles: "",
+        estado: "Pendiente",
+        
+  }
+});
+
+const [error, setError] = useState(null);
+
+
+ 
+  const [familiares, setFamiliares] = useState({
+    
+    name: "",
+    dni: "",
+    fecha_de_nacimiento: "",
+    tel: "",
+    categoria: "Conyugue",
+    id_afiliado: "",
+ } );
+
+
+
+const handleNextStep = async () => {
+  
+  setError(null); // Limpiar cualquier error previo
+  setCurrentStep(currentStep + 1);
+};
+
+
+    const handleBackStep = async () => {
+    setCurrentStep(currentStep - 1);
+
+  
+  };
+
+   useEffect(() => {
+    // Obtener el dni de location.state y almacenarlo en el estado local al cargar el componente
+    setDni(location.state?.dni);
+  }, []);
+
+
+ const handleInputChange = async (e, tipo) => {
+    const { name, value, type } = e.target;
+
+    if  (tipo === 'familiar') {
+    setFamiliares(prevFamiliares => ({
+      ...prevFamiliares,
+      
+      [name]: value,
+      
+    }));
+  } else {
+    setBeneficio(prevBeneficio => ({
+      ...prevBeneficio,
+      0: { // Acceder al índice 0 directamente
+        ...prevBeneficio[0], // Mantener los valores existentes en el índice 0
+        [name]: value,
+      },
+    }));
+  }
+    
+  };
+
+
+
+
+useEffect(() => {
+  const familia = familiares;
+  console.log('Estado de beneficios actualizado:', beneficio[0].familiar_id); 
+}, [familiares, beneficio, selectedFiles]);
+
+
+const handleCertificadoChange = (e) => {
+    const filesArray = Array.from(e.target.files);
+    
+    setSelectedFiles(filesArray);
+  };
+
+const handleRegisterAfiliate = async (e) => {
+  
+  try {
+  setError(null)
+   const errors = validateFields();
+    if (Object.keys(errors).length > 0) {
+      console.log(errors);
+      setValidationErrors(errors);
+      setIsLoading(false);
+      return;
+    }
+    const hasFamiliar = beneficio[0].familiar_id !== undefined && beneficio[0].familiar_id !== null && beneficio[0].familiar_id !== "";
+    if (!hasFamiliar) {
+      // Si no existe un familiar registrado, registrar uno automáticamente
+      const res = await api.post("/users/registro-familiar", familiares);
+      const nuevoFamiliarId = res.data.familiar_id;
+      console.log("entro")
+      // if (res.status !== 200) {
+      //   // Manejar el error o mostrar un mensaje al usuario
+      //   setError("Error al registrar el familiar");
+      //   return;
+      // }
+      
+      // Actualizar el estado de beneficio con la ID del familiar registrado
+      const updatedBeneficio = {
+          ...beneficio,
+          [0]: {
+            ...beneficio[0],
+            familiar_id: nuevoFamiliarId,
+          },
+        };
+
+        setBeneficio(updatedBeneficio);
+    console.log(updatedBeneficio);
+
+       
+    const res2 = await api.post("/tasks/", updatedBeneficio)
+    const nuevoBeneficioIds = res2.data.ids;
+    console.log(nuevoBeneficioIds);
+    // Actualizar el estado "beneficio" con la ID para cada familiar otorgado
+   const updatedBeneficios = {
+        ...beneficio,
+        [0]: {
+          ...beneficio[0],
+          id: nuevoBeneficioIds[0],
+        },
+      };
+
+      setBeneficio(updatedBeneficios);
+
+    
+    
+   const res3 = await handleImageUpload(nuevoBeneficioIds[0]);
+   if(res3.status === 200) {
+    handleNextStep();
+    }
+      // Continuar con el proceso de otorgar el beneficio
+      
+    } else {
+      console.log("no entro")
+    await handleBeneficioOtorgado(e);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+  const handleImageUpload = async (idPass) => {
+     if (selectedFiles.length === 0) {
+      setError("No se pudieron subir los archivos.");
+      return;
+    }
+    try {    
+      // Upload Libreta images
+      // const libretaFormData = new FormData();
+      // libretaFormData .append("id", beneficio.familiar_id);
+      // familiares.libreta.forEach((libretaImg) => {
+      //   libretaFormData .append("libreta", libretaImg);
+      // });
+      // // await Promise.all(formData.dni_img.map(loadImage));
+      // const responseLibreta = await api.post("/uploads/images-libreta", libretaFormData );
+
+        const certificadoFormData = new FormData();
+      
+      selectedFiles.forEach((certificadoImg) => {
+        certificadoFormData.append("id", beneficio[0].id ? beneficio[0].id : idPass);
+        certificadoFormData.append("certificado", certificadoImg);
+        
+      });
+      // await Promise.all(formData.dni_img.map(loadImage));
+      const responseCertificado = await api.post("/uploads/images-certificado", certificadoFormData);
+   
+
+      return responseCertificado;
+    
+
+      // Aquí puedes mostrar un mensaje de éxito o realizar acciones adicionales después de la carga de imágenes
+    } catch (err) {
+      console.error(err);
+      // Aquí puedes mostrar un mensaje de error o realizar acciones adicionales en caso de error
+    } // finally {
+    //   // Revocar las URLs de los objetos Blob para liberar memoria
+    //   formData.dni_img.forEach((dniImg) => URL.revokeObjectURL(dniImg.src));
+    //   formData.recibo_sueldo.forEach((reciboSueldo) =>
+    //     URL.revokeObjectURL(reciboSueldo.src)
+    //   );
+    // }
+  };
+
+
+   const handleAfiliadoSearch = async (dni) => {
+  try {
+    const res = await api.get(`users/afiliados/${dni}`);
+    const familiaresDisponibles = res.data.familiares;
+    const afiliado = res.data;
+    
+
+    if (familiaresDisponibles === null) {
+      setError("No se encontraron datos de familiares.");
+      setFamiliares(prevFamiliares => ({
+      ...prevFamiliares,
+      
+        
+      id_afiliado: afiliado.idafiliados,
+    
+    }));
+          setBeneficio(prevBeneficio => ({
+      ...prevBeneficio,
+      0: { // Acceder al índice 0 directamente
+        ...prevBeneficio[0], // Mantener los valores existentes en el índice 0
+        afiliado_id: afiliado.idafiliados,
+      },
+    }));
+      setIsLoading(false);
+      return;
+    }
+
+    const familiaresConyugue = familiaresDisponibles.filter(
+      (familiar) => familiar.categoria === 'Conyugue'
+    );
+
+    if (familiaresConyugue.length === 0) {
+      setError("No se encontraron familiares con categoría 'Conyugue'.");
+       setFamiliares(prevFamiliares => ({
+      ...prevFamiliares,
+      
+    
+      id_afiliado: afiliado.idafiliados,
+   
+    }));
+          setBeneficio(prevBeneficio => ({
+      ...prevBeneficio,
+      0: { // Acceder al índice 0 directamente
+        ...prevBeneficio[0], // Mantener los valores existentes en el índice 0
+        afiliado_id: afiliado.idafiliados,
+      },
+    }));
+      
+      setIsLoading(false);
+      return;
+    }
+
+ 
+    
+    // setBeneficio(prevBeneficio => ({
+    //   ...prevBeneficio,
+    //   [name]: value,
+    // }));
+    setFamiliares(familiaresConyugue);
+     setBeneficio(prevBeneficio => ({
+      ...prevBeneficio,
+      0: { // Acceder al índice 0 directamente
+        ...prevBeneficio[0], // Mantener los valores existentes en el índice 0
+        afiliado_id: afiliado.idafiliados,
+        familiar_id: familiaresConyugue[0].id,
+      },
+    }));
+    setIsLoading(false);
+    
+  
+    
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// ...
+
+// useEffect(() => {
+//   const errors = validateFields(); // Realizar la validación
+//   setValidationErrors(errors); // Actualizar los errores de validación
+// }, [familiares, beneficio, selectedFiles]); // Ejecutar el efecto cuando estos estados cambien
+
+// // ...
+
+
+const validateFields = () => {
+  setValidationErrors({}); // Limpiar cualquier error de validación previo
+  const requiredFields = {
+    familiares: ['name', 'dni', 'fecha_de_nacimiento', 'tel'],
+    beneficio: ['semanas', 'fecha_de_parto', 'cantidad'],
+    selectedFiles: ['certificado'],
+  };
+
+  const errors = {};
+
+  Object.entries(requiredFields).forEach(([fieldGroup, fieldNames]) => {
+    fieldNames.forEach(fieldName => {
+      if (familiares[fieldName] === "" && fieldGroup === 'familiares') {
+        errors[fieldName] = "Campo requerido";
+        
+      }
+      if (!beneficio[0][fieldName] && fieldGroup === 'beneficio') {
+        
+        errors[fieldName] = "Campo requerido";
+      }
+
+    });
+
+  });
+  console.log(selectedFiles)
+        if (selectedFiles.length === 0) {
+      
+      errors.certificado = "Campo requerido";
+}
+
+  return errors;
+};
+
+
+  
+  const handleBeneficioOtorgado = async (e) => {
+  e.preventDefault();
+
+  try {
+    setError(null); // Limpiar cualquier error previo
+    setIsLoading(true);
+    
+
+    const errors = validateFields();
+    if (Object.keys(errors).length > 0) {
+      console.log(errors);
+      setValidationErrors(errors);
+      setIsLoading(false);
+      return;
+    }
+    console.log("llega esto",beneficio)
+    const res = await api.post("/tasks/", beneficio);
+    
+    const nuevoBeneficioIds = res.data.ids;
+    console.log(nuevoBeneficioIds);
+    // Actualizar el estado "beneficio" con la ID para cada familiar otorgado
+    const updatedBeneficio = { ...beneficio };
+    
+      updatedBeneficio[0].id = nuevoBeneficioIds[0];
+    
+    console.log(updatedBeneficio);
+
+    setBeneficio(updatedBeneficio);
+    // // handleNextStep();
+
+    // console.log(beneficio);
+
+    handleImageUpload();
+    setIsLoading(false);
+    handleNextStep();
+    // Continuar con el proceso de otorgar el beneficio
+    
+
+  } catch (err) {
+    console.log(err.response)
+    setError(err.response.data.error);
+
+  }
+  setIsLoading(false);
+};
+
+//    const comprobarBeneficios = async (familiarIds) => {
+//   try {
+//     const queryParams = familiarIds.join(','); // Convertir a cadena separada por comas
+//     const res = await api.get(`/tasks/verified-kit-escolar/${queryParams}`);
+
+//     setBeneficiosOtorgados(res.data);
+    
+//     // setIsLoading(false);
+    
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
+
+
+
+
+
+
+useEffect(() => {
+  error && console.log(error);
+}, [error]);
+
+  
+  useEffect(() => {
+    if (dni) {
+      // Si hay un DNI válido en el estado local, realizar la búsqueda del afiliado
+      handleAfiliadoSearch(dni);
+    }
+  }, [dni]);
+
+  
+
+return (
+  <div className="bg-gray-200 h-screen w-screen sm:pl-80 ml-5">
+    <div className="flex mb-10 mt-40 h-20">
+      <img className=" w-12 h-12" src={Mono}></img>
+      <div className="flex flex-col pl-4">
+        <h2 className=" text-black text-3xl font-extrabold">
+          Solicitar Beneficio: Kit Nacimiento
+        </h2>
+        <p className="p-2 font-bold text-[#757678]">
+          Carga los datos y los archivos correspondientes <br /> para realizar
+          la solicitud.
+        </p>
+      </div>
+    </div>
+
+    <div className="flex justify-center bg-gray-200">
+      <div className="sm:w-[95%]">
+        <div className="grid grid-cols-2 space-x-8">
+          {isLoading ? (
+            <Loader />
+          ) : (
+            currentStep === 1 && (
+              <>
+                <div className="rounded-lg  p-8  bg-white ">
+                  <h3 className="text-black text-2xl font-bold">
+                    Datos del Conyugue
+                  </h3>
+
+                  {/* Display familiares checkboxes here */}
+                  {familiares.length > 0 ? (
+                    familiares.map((familiar) => (
+                      <div key={familiar.id} className="flex justify-center">
+                        <div className="flex flex-col w-[95%] ">
+                          <label className="font-semibold mt-4 ">
+                            Nombre y Apellido
+                          </label>
+
+                          <div
+                            key={familiar.id}
+                            className={`flex  items-center mt-2 justify-between border-l-4 border-[#006084] w-[95%] bg-gray-200  `}
+                          >
+                            <label
+                              htmlFor={`familiar_${familiar.id}`}
+                              className="font-semibold text-black p-3"
+                            >
+                              {familiar.name}
+                            </label>
+                          </div>
+
+                          <label className="font-semibold mt-2 ">DNI</label>
+
+                          <div
+                            key={familiar.id}
+                            className="flex  items-center mt-2 justify-between border-l-4 border-[#006084] w-[95%] bg-gray-200"
+                          >
+                            <label className="font-semibold text-black p-3 ">
+                              {familiar.dni}
+                            </label>
+                          </div>
+
+                          <label className="font-semibold mt-2 ">
+                            Fecha de Nacimiento
+                          </label>
+
+                          <div
+                            key={familiar.id}
+                            className={
+                              "flex  items-center mt-2 justify-between border-l-4 border-[#006084] w-[95%] bg-gray-200"
+                            }
+                          >
+                            <label className="font-semibold text-black p-3">
+                              {familiar.fecha_de_nacimiento}
+                            </label>
+                          </div>
+
+                          <label className="font-semibold mt-2 ">
+                            Teléfono
+                          </label>
+
+                          <div
+                            key={familiar.id}
+                            className={`flex  items-center mt-2 justify-between border-l-4 border-[#006084] w-[95%] bg-gray-200 " 
+              }`}
+                          >
+                            <label className="font-semibold text-black p-3 ">
+                              {familiar.tel}
+                            </label>
+                          </div>
+
+                          {error && (
+                            <p className="text-red-500 mt-2">{error}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex flex-col gap-2 px-4 w-full">
+                      <label className="font-semibold mt-4 ">
+                        Nombre y Apellido
+                      </label>
+                      <Input
+                        name={"name"}
+                        onChange={(e) => handleInputChange(e, "familiar")}
+                        value={familiares.name}
+                        className={"w-full p-3"}
+                      />
+                      {validationErrors.name && (
+                        <p className="text-red-500 ">{validationErrors.name}</p>
+                      )}
+                      <label className="font-semibold mt-2 ">DNI</label>
+                      <Input
+                        name={"dni"}
+                        onChange={(e) => handleInputChange(e, "familiar")}
+                        value={familiares.dni}
+                        className={"w-full p-3"}
+                      />
+                      {validationErrors.dni && (
+                        <p className="text-red-500">{validationErrors.dni}</p>
+                      )}
+                      <label className="font-semibold mt-2 ">
+                        Fecha de Nacimiento
+                      </label>
+                      <Input
+                        name={"fecha_de_nacimiento"}
+                        type={"date"}
+                        value={familiares.fecha_de_nacimiento}
+                        onChange={(e) => handleInputChange(e, "familiar")}
+                        className={"w-full p-3"}
+                      />
+                      {validationErrors.fecha_de_nacimiento && (
+                        <p className="text-red-500">
+                          {validationErrors.fecha_de_nacimiento}
+                        </p>
+                      )}
+                      <label className="font-semibold mt-2 ">Teléfono</label>
+                      <Input
+                        name={"tel"}
+                        onChange={(e) => handleInputChange(e, "familiar")}
+                        value={familiares.tel}
+                        className={"w-full p-3"}
+                      />
+                      {validationErrors.tel && (
+                        <p className="text-red-500 ">{validationErrors.tel}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="rounded-lg  p-8   bg-white ">
+                  <h3 className="text-black text-2xl font-bold mb-4">
+                    Certificado Médico
+                  </h3>
+                  <label className="font-semibold">
+                    Cantidad de Semanas de Gestación
+                  </label>
+                  <div className="mt-2 mb-2">
+                    <Input
+                      name={"semanas"}
+                      onChange={handleInputChange}
+                      value={beneficio.semana}
+                      className={"w-[95%] p-3"}
+                      placeholder={"12345"}
+                    />
+                    {validationErrors.semanas && (
+                      <p className="text-red-500">{validationErrors.semanas}</p>
+                    )}
+                  </div>
+                  <label className="font-semibold">
+                    Fecha posible de parto
+                  </label>
+                  <div className="mt-2 mb-2">
+                    <Input
+                      name={"fecha_de_parto"}
+                      type={"date"}
+                      onChange={handleInputChange}
+                      value={beneficio.fecha_de_parto}
+                      className={"w-[95%] p-3"}
+                      placeholder={"12345"}
+                    />
+                    {validationErrors.fecha_de_parto && (
+                      <p className="text-red-500">
+                        {validationErrors.fecha_de_parto}
+                      </p>
+                    )}
+                  </div>
+                  <label className="font-semibold">Niños por nacer</label>
+                  <div className="mt-2">
+                    <select
+                      name="cantidad"
+                      onChange={handleInputChange}
+                      value={beneficio.cantidad}
+                      className={
+                        "w-[95%] !border-l-4 !border-[#006084] bg-gray-200 pl-3 text-base font-semibold focus:outline-none p-3"
+                      }
+                    >
+                      <option value="1">Hijo/a (1)</option>
+                      <option value="2">Mellizos (2)</option>
+                      <option value="3">Trillizos (3)</option>
+                    </select>
+                    {validationErrors.cantidad && (
+                      <p className="text-red-500">
+                        {validationErrors.cantidad}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col justify-center items-center mt-4 rounded-xl min-h-[6rem] w-[100%] p-2">
+                    <p className="font-bold">Subir Certificado Médico:</p>
+                    <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
+                      Recuerda debe estar firmado por un personal de la salud.
+                    </p>
+
+                    <label
+                      htmlFor="certificado"
+                      className="cursor-pointer mt-auto mb-2"
+                    >
+                      <FiDownload className="text-5xl text-[#23A1D8]" />
+                    </label>
+
+                    <input
+                      type="file"
+                      name="certificado"
+                      id="certificado"
+                      multiple
+                      required
+                      style={{ display: "none" }}
+                      onChange={handleCertificadoChange}
+                    />
+
+                    <p className="text-xs font-semibold text-gray-600 text-center">
+                      Click aquí para cargar o{" "}
+                      <strong className="text-[#006084]">
+                        elegir archivos.
+                      </strong>
+                    </p>
+                  </div>
+                  {validationErrors.certificado && (
+                    <p className="text-red-500">
+                      {validationErrors.certificado}
+                    </p>
+                  )}
+                </div>
+                <div></div>
+
+                <div className="flex justify-end pt-6">
+                  <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={handleRegisterAfiliate}
+                  >
+                    Siguiente
+                  </button>
+                </div>
+              </>
+            )
+          )}
+          
+        </div>
+        {/* {currentStep === 2 && (
+            <>
+                           
+                  <div className="flex flex-col h-full w-full justify-end items-center space-y-4">
+                   <Files label="Subir foto de REMITO DE ENTREGA" instructions="Recuerde que debe estar firmada por el trabajador." id={beneficio[0].id}  />
+
+                    <p className="font-extrabold text-3xl text-[#006084]">
+                      El beneficio ha sido registrado con éxito.
+                    </p>
+                    <p className="font-bold text-xl text-gray-500">
+                      Por favor, verifique si se cargaron los datos
+                      correctamente.
+                    </p>
+                  </div>
+                  <div className="h-full w-full items-end pb-10 justify-center flex">
+                    <button
+                      className="btn w-1/3"
+                      onClick={() => navigate("/home")}
+                    >
+                      <span>VOLVER</span>
+                    </button>
+                  </div>
+               
+             
+            </>
+          )} */}
+        {currentStep === 2 && (
+            <>
+              {error ? (
+                <>
+                  <div className="flex flex-col h-full w-full justify-center items-center space-y-4">
+                    <BiError className="text-[8rem] justify-center items-center text-[#006084]" />
+                    <p className="font-extrabold text-3xl align-middle justify-center items-center text-red-500">
+                      Ocurrio un error durante la carga de datos, por favor verificar los datos antes de reintentar:<br></br>
+                      {error}
+                    </p>
+                     <button
+                      className="btn w-1/3"
+                      onClick={() => navigate("/home")}
+                    >
+                      <span>VOLVER</span>
+                    </button>
+                  </div>
+                  
+               
+                </>
+              ) : (
+                <>
+                  <div className="flex flex-col h-full w-full justify-end items-center space-y-4">
+                    <img className="w-[4rem] text-[#006084]" src={Mono} />
+                    <p className="font-extrabold text-3xl text-[#006084]">
+                      El beneficio ha sido registrado con éxito.
+                    </p>
+                    <p className="font-bold text-xl text-gray-500">
+                      Por favor, verifique si se cargaron los datos
+                      correctamente e informe al afiliado que un representante se pondra en contacto.
+                    </p>
+                  </div>
+                  <div className="h-full w-full items-end pb-10 justify-center flex">
+                    <button
+                      className="btn w-1/3"
+                      onClick={() => navigate("/home")}
+                    >
+                      <span>VOLVER</span>
+                    </button>
+                  </div>
+                </>
+              )}
+            </>
+          )}
+      </div>
+      
+    </div>
+    
+  </div>
+);
+
+  
+};
+
+export default KitMaternal;
