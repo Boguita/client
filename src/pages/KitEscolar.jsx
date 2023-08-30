@@ -249,6 +249,12 @@ const KitEscolar = () => {
         (familiar) => familiar.categoria === "Hijo/a"
       );
 
+      if(familiaresHijos.length === 0){
+           setError("No hay datos de Hijos/as asociados al afiliado");
+        setIsLoading(false);
+        return;
+      }
+      
       setFamiliares(familiaresHijos);
 
       comprobarBeneficios(familiaresHijos.map((familiar) => familiar.id));
