@@ -162,6 +162,10 @@ useEffect(() => {
     setError(null);
     try {
       setIsLoading(true); 
+   if (!areAllFieldsComplete()) {
+      setError('Por favor complete todos los campos');
+      return;
+    }
 
     const formDataToSend = new FormData();
     formDataToSend.append('name', formData.name);
