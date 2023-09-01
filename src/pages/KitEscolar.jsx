@@ -420,7 +420,7 @@ const KitEscolar = () => {
                         }`}
                       >
                         <label
-                          htmlFor={`familiar_${familiar.id}`}
+                          htmlFor={`familiar_ids${familiar.id}`}
                           className="font-semibold text-black p-3 cursor-pointer"
                         >
                           {familiar.name}
@@ -430,7 +430,7 @@ const KitEscolar = () => {
                           {/* Checkbox for selecting familiar */}
                           <input
                             type="checkbox"
-                            name="familiar_ids"
+                            name={`familiar_ids${familiar.id}`}
                             id={`familiar_${familiar.id}`}
                             value={familiar.id}
                             className="cursor-pointer custom-checkbox"
