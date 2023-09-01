@@ -6,6 +6,7 @@ import axios from "axios";
 import Loader from "../components/Loader";
 import {BsCheck2Circle} from 'react-icons/bs'
 import { FiDownload } from 'react-icons/fi';
+
 const RegisterAfiliate = () => {
   const [err, setError] = useState(null);
   const [currentStep, setCurrentStep] = useState(1);
@@ -179,6 +180,8 @@ useEffect(() => {
     formDataToSend.append('cuit', formData.cuit);
     formDataToSend.append('domicilio', formData.domicilio);
     formDataToSend.append('correo', formData.correo);
+    formDataToSend.append('provincia', formData.provincia);
+    formDataToSend.append('ciudad', formData.ciudad);
 
     
 
@@ -211,6 +214,12 @@ useEffect(() => {
 
     const handleDniImgChange = (e) => {
     const filesArray = Array.from(e.target.files);
+    const maxFiles = 2;
+    if (filesArray.length > maxFiles) {
+      alert(`Por favor, selecciona un máximo de ${maxFiles} archivos.`);
+      e.target.value = null;
+      return
+    }
   setFormData((prevFormData) => ({
     ...prevFormData,
     dni_img: filesArray,
@@ -221,6 +230,12 @@ useEffect(() => {
 
   const handleReciboSueldoChange = (e) => {
     const filesArray = Array.from(e.target.files);
+    const maxFiles = 2;
+    if (filesArray.length > maxFiles) {
+      alert(`Por favor, selecciona un máximo de ${maxFiles} archivos.`);
+      e.target.value = null;
+      return
+    }
 setFormData((prevFormData) => ({
     ...prevFormData,
     recibo_sueldo: filesArray,
@@ -231,6 +246,12 @@ setFormData((prevFormData) => ({
 
   const handleDdjjChange = (e) => {
     const filesArray = Array.from(e.target.files);
+    const maxFiles = 2;
+    if (filesArray.length > maxFiles) {
+      alert(`Por favor, selecciona un máximo de ${maxFiles} archivos.`);
+      e.target.value = null;
+      return
+    }
 setFormData((prevFormData) => ({
     ...prevFormData,
     ddjj: filesArray,
@@ -357,19 +378,24 @@ const handleImageUpload = async () => {
                     
                   </select>
                 </div>
-
-        <div className="mb-4">
-   
-          <Input
-            type="date"
-            name="fecha_de_nacimiento"
-            
-            required
-            value={formData.fecha_de_nacimiento}
-            onChange={handleChange}
-            className="w-full focus:text-[#808080] py-2 px-3 "
-          />
-        </div>
+<div className="relative mb-4">
+  <Input
+    type="date"
+    name="fecha_de_nacimiento"
+    required
+    value={formData.fecha_de_nacimiento}
+    onChange={handleChange}
+    className="w-full focus:text-[#808080] py-2 px-3"
+  />
+  <label className="absolute left-0 bottom-full text-gray-600 text-xs mt-1 opacity-0">
+    Fecha de nacimiento del trabajador
+  </label>
+  
+  {/* Selector CSS para mostrar el texto emergente */}
+  <style>
+    {`.mb-4:hover label { opacity: 1; }`}
+  </style>
+</div>
        
         
         <div className="block pr-2 py-2 h-max !border-l-4 !border-[#006084] bg-gray-200">
@@ -467,7 +493,7 @@ const handleImageUpload = async () => {
                   <Input
                     type="text"
                     name="domicilio"
-                    placeholder={"Domicilio"}
+                    placeholder={"Calle"}
                     required
                     value={formData.domicilio}
                     onChange={handleChange}
@@ -549,6 +575,10 @@ const handleImageUpload = async () => {
   <p className="text-xs font-semibold text-gray-600 text-center">
     Suelte el archivo aquí para cargar o <strong className="text-[#006084]">elegir archivos.</strong>
   </p>
+   {formData.dni_img &&
+    formData.dni_img.map((file, index) => (
+      file.name && <li className="text-sm" key={index}>{file.name}</li>
+    ))}
 </div>
 
 
@@ -575,6 +605,10 @@ const handleImageUpload = async () => {
   <p className="text-xs font-semibold text-gray-600 text-center">
     Suelte el archivo aquí para cargar o <strong className="text-[#006084]">elegir archivos.</strong>
   </p>
+   {formData.ddjj &&
+    formData.ddjj.map((file, index) => (
+      file.name && <li className="text-sm" key={index}>{file.name}</li>
+    ))}
 </div>  
     
       
@@ -678,6 +712,10 @@ const handleImageUpload = async () => {
   <p className="text-xs font-semibold text-gray-600 text-center">
     Suelte el archivo aquí para cargar o <strong className="text-[#006084]">elegir archivos.</strong>
   </p>
+  {formData.recibo_sueldo &&
+    formData.recibo_sueldo.map((file, index) => (
+      file.name && <li className="text-sm" key={index}>{file.name}</li>
+    ))}
 </div>  
 
     

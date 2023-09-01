@@ -22,6 +22,8 @@ import ImageUpload from "./pages/ImageUpload";
 import RegisterAfiliate from "./pages/RegisterAfiliate";
 
 import Home from "./pages/Home";
+import ResetPassword from "./pages/ResetPassword";
+import ForgotPassword from "./pages/ForgotPassword";
 
 
 const PrivateRoute = ({children, redirectTo="/"}) => {
@@ -55,6 +57,8 @@ export const AppRouter = () => {
 
     <Route index element={<Login/>} />
     <Route path='/login' element={<Login/>} />
+    <Route path='/reset-password/:id/:token' element={<ResetPassword/>} />
+     <Route path='/forgot-password' element={<ForgotPassword/>} />
     <Route path='/register' element={<Register/>} />   
     <Route element={<PrivateRoute/>}>
       <Route path='/' element={<Layout/>}>      
@@ -69,7 +73,6 @@ export const AppRouter = () => {
         <Route path='/upload-images' element={<ImageUpload />} />
         <Route path='/profile' element={<Profile />} />
         <Route path='/soporte' element={<Soporte />} />
-       
       </Route>
     </Route> 
 

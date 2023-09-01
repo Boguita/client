@@ -1,20 +1,32 @@
 
 import { useState,  useEffect } from "react";
+import api from '../common/Axiosconfig'
 import { useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import Logo from '../assets/img/logo.png'
 
 import '../css/auth.css';
 
 
-const Login = () => {
+const ForgotPassword = () => {
+  const location = useLocation();
+  const token = new URLSearchParams(location.search).get("token");
+  const id = new URLSearchParams(location.search).get("id");
+  const [success, setSuccess] = useState(false);
+
+  const [formData, setFormData] = useState({
+    id: "",
+    token: "",
+    password: "",
+    repeat_password: "",
+  });
   const [inputs, setInputs] = useState({
     email: "",
-    password: "",
-  });
+  })
   const [error, setError] = useState(null);
   
+
 
   const navigate = useNavigate();
 
@@ -28,14 +40,23 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(inputs)      
-      navigate("/homeInfo");
+      const res = await api.post("/auth/forgot-password", inputs)   
+      res.status === 200 ? setSuccess(true) : setSuccess(false)    
+      // navigate("/homeInfo");
     } catch (err) {
       console.log(err)
       setError(err);
     }
     
   };
+
+  useEffect(() => {
+    if (token && id) {
+      setFormData((prev) => ({ ...prev, token, id }));
+      
+    }
+    console.log(formData)
+  }, [token, id, formData]);
   return (
     <div className="form-bg ">
         
@@ -48,7 +69,6 @@ const Login = () => {
     <img className="flex h-20 w-auto cursor-pointer" src={Logo} alt="Logo" />
   </a>
 </div>
-
 
            
             <div className="flex flex-col justify-center h-full items-center">
@@ -66,7 +86,7 @@ const Login = () => {
                 <div className="form-container h-[12rem]">
 
                   <div className="flex flex-col items-center p-8 ">
-                     <h3 className="title font-extrabold text-4xl text-[#006084]">Ingresar</h3>
+                     <h3 className="title font-extrabold text-4xl text-[#006084]">Recuperar Contraseña</h3>
                      <p className="mt-4 max-w-[450px] text-[#787779] font-semibold">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque repudiandae, quibusdam deserunt quidem optio dignissimos excepturi voluptate alias similique provident, totam soluta aut eum recusandae.</p>
                   </div>
                  
@@ -82,7 +102,7 @@ const Login = () => {
                                 className='form-control p-2 bg-[#d8d8d8] font-semibold text-gray-800 w-80 mt-4 pl-6 pr-4'
                             />
                         </div>
-                        <div className="form-group relative">
+                        {/* <div className="form-group relative">
                             <div className="absolute left-0 top-0 h-full w-1 bg-[#006084]"></div>
                             <input 
                                 
@@ -94,21 +114,22 @@ const Login = () => {
                                 className='form-control p-2 bg-[#d8d8d8] font-semibold text-gray-800 w-80 mt-4 pl-6 pr-4'
                             />
                             
-                        </div>
+                        </div> */}
                         
 
                         <div className="flex flex-col justify-center items-center align-middle">
                           
-                          <button className="btn" onClick={handleSubmit}><span>INICIAR SESIÓN</span></button>
+                          <button disabled={success} className={`btn ${success ? "cursor-not-allowed opacity-80" : ""} `} onClick={handleSubmit}><span>RECUPERAR CONTRASEÑA</span></button>
                         </div>
-                        
-                        {error && <p className="flex justify-center text-[#797777] mt-2 ">{error}</p>}
-                          <span className="forgot-password">
-                             <Link className="hi" to="/forgot-password">He olvidado mi contraseña</Link>
+
+                        {success && <p className="flex justify-center font-bold text-green-500 mt-2 ">Se ha enviado un correo a tu cuenta de email, revisa tu correo no deseado en caso de no recibirlo.</p>}                        
+                        {error && <p className="flex justify-center text-red-500 mt-2 ">{error}</p>}
+                          {/* <span className="forgot-password">
+                             <Link className="hi" to="/recuperar-contraseña">He olvidado mi contraseña</Link>
                           </span>
                           <span className="">
                              <Link className="flex justify-center text-[#787779] mt-2" to="/register">¿Todavia no tienes una cuenta?<strong className="text-[#006084] font-bold ml-1 text-[15px]"> Regístrate.</strong></Link>
-                          </span>
+                          </span> */}
                     </form>
                 </div>
             </div>
@@ -118,4 +139,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;

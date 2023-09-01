@@ -33,7 +33,7 @@ const KitEscolar = () => {
   const [error, setError] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
   const [selectedFiles, setSelectedFiles] = useState([]);
-
+  const [showButton, setShowButton] = useState(true);
 
   const [formData, setFormData] = useState({
     id_afiliado: "",
@@ -369,9 +369,20 @@ const KitEscolar = () => {
     }
   }, [dni]);
 
+    useEffect(() => {
+  if (familiares.length < 5) {
+    setShowButton(true);
+    console.log("Mostrar botón: true");
+    console.log(familiares.length)
+  } else {
+    setShowButton(false);
+    console.log("Mostrar botón: false");
+  }
+}, [familiares]);
+
   return (
     <div className="bg-gray-200 h-screen w-screen sm:pl-80 ml-5">
-      <div className="flex mb-10 mt-40 h-20">
+      <div className="flex mb-10 mt-32 h-20">
         <img className=" w-12 h-12" src={Libro}></img>
         <div className="flex flex-col pl-4">
           <h2 className=" text-black text-3xl font-extrabold">
@@ -506,12 +517,18 @@ const KitEscolar = () => {
                 ))}
 
                 <div className="flex w-full h-2/7 justify-between items-end pt-4 px-4">
+                  { showButton ? (
                   <button
                     className="mt-4 bg-[#006084] w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
                     onClick={() => setModalIsOpen(true)}
                   >
                     + Cargar Hijo/a
                   </button>
+                  ) : (
+                      <p className="text-[#006084] font-bold">Limite de hijos/as alcanzado.</p>
+                  )
+                    }
+                  
                   <button
                     className="mt-4 bg-[#23A1D8] w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
                     onClick={handleNextStep}

@@ -4,17 +4,31 @@ import api from '../common/Axiosconfig';
 import Input from '../components/Input';
 import Avatar from '../assets/img/avatar.png';
 import {FiDownload} from 'react-icons/fi'
-
+import Modal from "react-modal";
+import {AiOutlineIdcard} from 'react-icons/ai'
 const Home = () => {
   const [dni, setDni] = useState('');
   const [affiliateData, setAffiliateData] = useState(null);
   const [err, setErr] = useState(null);
   const [beneficio, setBeneficio] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
-  const [popUpseen, setPopUpseen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+   const [showButton, setShowButton] = useState(true);
+   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showEmpleadorPopup, setShowEmpleadorPopup] = useState(false);
   const [expandedFamiliars, setExpandedFamiliars] = useState([]);
-
+  const [validationErrors, setValidationErrors] = useState({});
+  const [modalConyugueIsOpen, setModalConyugueIsOpen] = useState(false);
+    const [formData, setFormData] = useState({
+    id_afiliado: "",
+    name: "",
+    categoria: "",
+    dni: "",
+    tel: "1234",
+    fecha_de_nacimiento: "",
+    dni_img_familiar: null,
+    libreta_img:null,
+  });
 
   const navigate = useNavigate();
   
@@ -30,7 +44,11 @@ const handleAffiliateDataRequest = async () => {
     // Almacenar los datos recibidos de la API
     console.log(res.data)
     setAffiliateData(res.data);
-    setErr(null);
+    
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      id_afiliado: res.data.idafiliados,
+    }));
      // Restablecer el estado del error si la solicitud tiene éxito
   } catch (error) {
     
@@ -40,6 +58,157 @@ const handleAffiliateDataRequest = async () => {
   }
  
 };
+
+  const handleDniImgChange = (e) => {
+    const filesArray = Array.from(e.target.files);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      dni_img_familiar: filesArray,
+    }));
+    console.log(formData.dni_img_familiar);
+  };
+
+  const handleLibretaImgChange = (e) => {
+    const filesArray = Array.from(e.target.files);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      libreta_img: filesArray,
+    }));
+    console.log(formData.libreta_img);
+  };
+
+  const handleChangeHijo = (e) => {
+    const { name, value } = e.target;
+    if (name === "dni" && !/^[0-9]*$/.test(value)) {
+      setErr("Ingresa solo números en el campo DNI");
+    } else {
+    setErr(null)
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+      categoria: "Hijo/a",
+    }));
+  }
+  };
+
+  const handleChangeConyugue = (e) => {
+    const { name, value } = e.target;
+    if (name === "dni" && !/^[0-9]*$/.test(value)) {
+      setErr("Ingresa solo números en el campo DNI");
+    } else {
+    setErr(null)
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+      categoria: "Conyugue",
+    }));
+  }
+  };
+
+  const validateFields = () => {
+    setValidationErrors({}); // Limpiar cualquier error de validación previo
+    const requiredFields = {
+      formData: ["name", "dni", "tel", "fecha_de_nacimiento", "dni_img_familiar, libreta_img"],
+    };
+
+    const errors = {};
+
+    Object.entries(requiredFields).forEach(([fieldGroup, fieldNames]) => {
+      fieldNames.forEach((fieldName) => {
+        if (formData[fieldName] === "" && fieldGroup === "formData") {
+          errors[fieldName] = "*";
+        }
+      });
+    });
+    if(modalIsOpen){
+    if (!formData.dni_img_familiar || formData.dni_img_familiar.length === 0) {
+      errors.dni_img_familiar = "*";
+    }
+  } else
+     if (!formData.libreta_img || formData.libreta_img.length === 0) {
+      errors.libreta_img = "*";
+    }
+ 
+    return errors;
+
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    const errors = validateFields();
+    if (Object.keys(errors).length > 0) {
+      console.log(errors);
+      setValidationErrors(errors);
+      setIsLoading(false);
+      return;
+    }
+
+    const res = await api.post("users/registro-familiar", formData);
+    if (res.status === 200) {
+      handleImageUpload();
+      setModalIsOpen(false);
+      setAffiliateData(
+        (prevAffiliateData) => ({
+          ...prevAffiliateData,
+          familiares: [...prevAffiliateData.familiares, res.data],
+        }),
+      );
+      setFormData({
+      id_afiliado: "",
+      name: "",
+      categoria: "",
+      dni: "",
+      tel: "1234",
+      fecha_de_nacimiento: "",
+      dni_img_familiar: null,
+      libreta_img:null,
+    });
+      setIsLoading(false);
+      handleAffiliateDataRequest();
+      
+    }
+  };
+
+
+  const handleImageUpload = async () => {
+
+    if(formData.categoria === "Hijo/a"){
+    const imgFormaData = new FormData();
+    imgFormaData.append("dni", formData.dni);
+    formData.dni_img_familiar.forEach((dniImg) => {
+      imgFormaData.append("dni_img_familiar", dniImg);
+    });
+    // await Promise.all(formData.dni_img.map(loadImage));
+    const responseDni = await api.post(
+      "/uploads/images-dni-familiar",
+      imgFormaData
+    );
+    if(responseDni.status !== 200){
+      setErr("Error al subir la imagen del DNI.")
+    } else {
+      handleAffiliateDataRequest();
+    }
+    } else {
+      const imgFormaData = new FormData();
+    imgFormaData.append("dni", formData.dni);
+    formData.libreta_img.forEach((libretaImg) => {
+      imgFormaData.append("libreta", libretaImg);
+    });
+
+    const responseLibreta = await api.post("/uploads/images-libreta",
+      imgFormaData
+    );
+    if(responseLibreta.status !== 200){
+      setErr("Error al subir la imagen de la libreta.")
+    } else {
+      handleAffiliateDataRequest();
+    }
+    }
+
+  };
+  
 
  const formatFechaOtorgamiento = (fecha) => {
     const date = new Date(fecha);
@@ -87,6 +256,46 @@ const handleAffiliateDataRequest = async () => {
     
   }
 
+ const getLibretaImg = async () => {
+  const conyugueIndex = affiliateData.familiares.findIndex(familiar => familiar.categoria === "Conyugue");
+
+  if (conyugueIndex !== -1) {
+    const libretaImgArray = affiliateData.familiares[conyugueIndex].libreta_img;
+    console.log(libretaImgArray);
+
+    if (libretaImgArray && Array.isArray(libretaImgArray)) {
+      libretaImgArray.forEach((libreta) => {
+        window.open(`https://uatre-api.onrender.com/${libreta}`, '_blank');
+      });
+    } else {
+      console.log("La propiedad libreta_img no es un arreglo o es null.");
+    }
+  } else {
+    console.log("No se encontró un conyugue en la lista de familiares.");
+  }
+}
+
+ const getDniImgHijo = async () => {
+  const conyugueIndex = affiliateData.familiares.findIndex(familiar => familiar.categoria === "Hijo/a");
+
+  if (conyugueIndex !== -1) {
+    const libretaImgArray = affiliateData.familiares[conyugueIndex].dni_img;
+    
+
+    if (libretaImgArray && Array.isArray(libretaImgArray)) {
+      libretaImgArray.forEach((dni) => {
+        window.open(`https://uatre-api.onrender.com/${dni}`, '_blank');
+      });
+    } else {
+      console.log("La propiedad libreta_img no es un arreglo o es null.");
+    }
+  } else {
+    console.log("No se encontró un conyugue en la lista de familiares.");
+  }
+}
+
+
+
   const handleGrantBenefit = async () => {
   try {
     const res = await api.get(`tasks/beneficio/${dni}`);
@@ -100,12 +309,24 @@ const handleAffiliateDataRequest = async () => {
   
 };
 
-useEffect(() => {
-  if (!showPopup && beneficio) {
-    // Si showPopup es falso y hay datos de beneficio, limpiar los datos de beneficio
-    setBeneficio(null);
+// useEffect(() => {
+//   console.log(affiliateData?.familiares.length)
+//   }
+// , [affiliateData]
+// );
+
+
+   useEffect(() => {
+  if (affiliateData?.familiares.length < 5) {
+    setShowButton(true);
+    console.log("Mostrar botón: true");
+    
+  } else {
+    setShowButton(false);
+    console.log("Mostrar botón: false");
   }
-}, [showPopup, beneficio]);
+}, [affiliateData?.familiares]);
+
 
 const toggleFamiliar = id => {
   setExpandedFamiliars(prevState => ({
@@ -128,47 +349,73 @@ const toggleFamiliar = id => {
         // Mostrar los datos del afiliado
         <div className="flex">
           {/* ... Código para mostrar los datos del afiliado ... */}
-           <div className="flex flex-col rounded-2xl w-[23%] mt-4 ">
+           <div className="flex flex-col rounded-2xl w-[25%] mt-4 ">
          
         
          <img className='mb-[-5px]' src={Avatar}>
               </img>
 
 
-            <div className='flex flex-col p-5 bg-white rounded-b-2xl'> 
-            
-              <p className='mt-2 text-gray-800 font-semibold'><strong>{affiliateData.name}</strong> </p>
-               <p className='mt-2 text-gray-800 font-semibold'><strong>DNI:</strong> {affiliateData.dni} {affiliateData.dni_img && (
-        <div>
-          
-         
-        </div>
-      )}</p>
-       <p><strong>CUIT:</strong> {affiliateData.cuit}</p>
-               <p><strong>Nacionalidad:</strong> {affiliateData.nacionalidad}</p>
-               <p><strong>Sexo:</strong> {affiliateData.sexo}</p>
-               <p><strong>Domicilio:</strong> {affiliateData.domicilio}</p>
-               <p><strong>Estado Civil:</strong> {affiliateData.estado_civil}</p>
-               <p><strong>Fecha de Nacimiento:</strong> {affiliateData.fecha_de_nacimiento}</p>
-               <p><strong>Teléfono:</strong> {affiliateData.tel}</p>
-               <p><strong>Email:</strong> {affiliateData.correo}</p>
-              <button 
-              className='mt-4 bg-[#0E6F4B] w-36 font-bold text-white rounded-lg p-1 hover:bg-opacity-75'
-              onClick={handleGrantBenefit}>
-                Otorgar Beneficio
-              </button>
-      </div>
+            <div className=' p-5 bg-white rounded-b-2xl grid gap-4'>
+               <p className='mt-2 text-gray-800 font-semibold'><strong>{affiliateData.name}</strong></p>
+               <div className='grid grid-cols-2'>
+  <div >   
 
-        <div className='flex h-28'>
-               
-          <div onClick={getDniImg}  className='flex flex-col cursor-pointer justify-center items-center w-full rounded-2xl mt-5 h-[80%] bg-white'>
+    <p><strong>DNI</strong></p>
+    <p className='text-gray-500 font-semibold'>{affiliateData.dni}</p>
+
+    <p ><strong>CUIT</strong></p>
+    <p className='text-gray-500 font-semibold'> {affiliateData.cuit}</p>
+
+    <p><strong>Nacionalidad</strong></p>
+    <p className='text-gray-500 font-semibold'>{affiliateData.nacionalidad}</p>
+
+    <p><strong>Sexo</strong></p>
+    <p className='text-gray-500 font-semibold'>{affiliateData.sexo}</p>
+
+    <p><strong>Provincia</strong></p>
+    <p className='text-gray-500 font-semibold'>{affiliateData.provincia}, {affiliateData.ciudad}</p>
+  </div>
+
+  <div>
+    
+    <p><strong>Estado Civil</strong></p>
+    <p className='text-gray-500 font-semibold'>{affiliateData.estado_civil}</p>
+
+    <p><strong>Fecha de Nacimiento</strong></p>
+    <p className='text-gray-500 font-semibold'>{affiliateData.fecha_de_nacimiento}</p>
+
+    <p><strong>Teléfono</strong></p>
+    <p className='text-gray-500 font-semibold'>{affiliateData.tel}</p>
+
+    <p><strong>Email</strong></p>
+    <p className='text-gray-500 font-semibold'>{affiliateData.correo}</p>
+
+     <p><strong>Domicilio</strong></p>
+    <p className='text-gray-500 font-semibold'>{affiliateData.domicilio}</p>
+
+   
+  </div>
+  </div>
+</div>
+
+        <div className='flex h-28 gap-x-4'>       
+          <div onClick={getDniImg}  className='flex flex-col cursor-pointer justify-center items-center w-[50%] rounded-2xl mt-5  bg-white'>
                 
-            <FiDownload className='text-5xl text-[#23A1D8]'></FiDownload>
-            <p className='text-[#727272] hover:underline font-semibold'>Ver foto del DNI</p> 
+            <AiOutlineIdcard className='text-5xl text-[#23A1D8]'></AiOutlineIdcard>
+            <p className='text-[#23A1D8] hover:underline font-semibold'>Ver foto del DNI</p> 
            
             
           </div>
-          
+         
+
+         <button
+          className='mt-5 bg-[#0E6F4B] w-[50%]  font-bold text-white rounded-2xl p-1 hover:bg-opacity-75'
+          onClick={handleGrantBenefit}>
+          OTORGAR BENEFICIO
+        </button> 
+
+              
         </div>
     </div>
 
@@ -177,7 +424,7 @@ const toggleFamiliar = id => {
 
                 <div className=''>
                 <h3 className='font-bold text-3xl mb-5'>Hijos:</h3>
-                  {affiliateData.familiares ? (
+                  {affiliateData.familiares && affiliateData.familiares.some(familiar => familiar.categoria === 'Hijo/a') ? (
   <div>
     
     <ul>
@@ -206,6 +453,12 @@ const toggleFamiliar = id => {
                   <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
                   {familiar.fecha_de_nacimiento}
                 </p>
+                <p><strong>VER DNI:</strong></p>
+                <p className='p-2 bg-gray-200 relative pl-6'>
+                  <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
+                  {familiar.fecha_de_nacimiento}
+                </p>
+              
                 
                 {/* Agregar aquí otros campos de los familiares */}
               </li>
@@ -213,18 +466,20 @@ const toggleFamiliar = id => {
           </div>
         ))}
     </ul>
-         <button 
-              className='mt-4 bg-[#006084] font-bold text-white rounded-lg p-2 hover:bg-opacity-75'
-              onClick={""}>
-                + CARGAR HIJO
-              </button>
+    {showButton && (
+  <button 
+    className='mt-4 bg-[#006084] font-bold text-white rounded-lg p-2 hover:bg-opacity-75'
+    onClick={() => setModalIsOpen(true)}>
+    + CARGAR HIJO
+  </button>
+)}
   </div>
 ) : (
   <>
   <p className='text-gray-500'>No hay datos de familiares.</p>
      <button 
               className='mt-4 bg-[#006084] font-bold text-white rounded-lg p-2 hover:bg-opacity-75'
-              onClick={""}>
+              onClick={() => setModalIsOpen(true)}>
                 + CARGAR HIJO
               </button>
   </>
@@ -236,7 +491,7 @@ const toggleFamiliar = id => {
 
               <div className=''>
               <h3 className='font-bold text-3xl mb-5'>Datos del Conyugue:</h3>
-                  {affiliateData.familiares ? (
+                  {affiliateData.familiares && affiliateData.familiares.some(familiar => familiar.categoria === 'Conyugue') ? (
   <div>
     
     <ul>
@@ -274,6 +529,11 @@ const toggleFamiliar = id => {
                 {/* Agregar aquí otros campos de los familiares */}
               </li>
             )}
+            <div onClick={getLibretaImg}>
+            <button className='mt-4 bg-[#006084] font-bold text-white rounded-lg p-2 hover:bg-opacity-75'
+            
+            >Ver libreta de matrimonio</button>
+            </div>
           </div>
         ))}
     </ul>
@@ -283,7 +543,8 @@ const toggleFamiliar = id => {
   <>  <p className='text-gray-500'>No hay datos de familiares.</p>
    <button 
               className='mt-4 bg-[#0E6F4B] font-bold text-white rounded-lg p-2 hover:bg-opacity-75'
-              onClick={""}>
+              onClick={() => 
+              setModalConyugueIsOpen(true)}>
                 + CARGAR CONYUGUE
               </button>
   </>
@@ -390,14 +651,285 @@ const toggleFamiliar = id => {
              className='mt-4 bg-[#006084] w-40 font-bold text-white rounded-lg p-1 hover:bg-opacity-75'>
             Buscar Afiliado
           </button>
-             { err && (
-            <p className="text-red-500">{err}</p>
-            ) }
+             
        
         </div>
         
       )}
-      
+        <Modal
+            isOpen={modalIsOpen}
+            onRequestClose={() => setModalIsOpen(false)}
+            contentLabel="Editar Familiares"
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+              },
+              content: {
+                border: "none",
+                background: "white",
+                color: "black",
+                top: "50%",
+                left: "50%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+                padding: "2rem",
+                width: "80%",
+                maxWidth: "40rem",
+              },
+            }}
+          >
+            <h2 className="text-2xl font-bold mb-4">Añadir Hijos</h2>
+            {err && <p className="text-red-500">{err}</p>}
+            <div className="mb-2">
+              <label className="block font-bold mb-1">
+                Nombre y Apellido{" "}
+                <strong className="text-red-500 text-sm">
+                  {validationErrors.name}
+                </strong>
+              </label>
+              <Input
+                required
+                name="name"
+                className="w-full"
+                type="text"
+                value={formData.name}
+                onChange={handleChangeHijo}
+              />
+            </div>
+
+            <div className="mb-2">
+              <label className="block font-bold mb-1">
+                DNI{" "}
+                <strong className="text-red-500 text-sm">
+                  {validationErrors.dni}
+                </strong>
+              </label>
+              <Input
+                required
+                name="dni"
+                className="w-full"
+                type="text"
+                value={formData.dni}
+                onChange={handleChangeHijo}
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block font-bold mb-1">
+                Fecha de Nacimiento{" "}
+                <strong className="text-red-500 text-sm">
+                  {validationErrors.fecha_de_nacimiento}
+                </strong>
+              </label>
+              <Input
+                required
+                name="fecha_de_nacimiento"
+                className="w-full"
+                type="date"
+                value={formData.fecha_de_nacimiento}
+                onChange={handleChangeHijo}
+              />
+            </div>
+
+            <div className="flex flex-col justify-center items-center mt-4 rounded-xl min-h-[6rem] w-[100%] bg-gray-200 p-2">
+              <p className="font-bold">Subir foto de DNI:</p>
+              <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
+                Frente y Dorso.
+              </p>
+
+              <label
+                htmlFor="dni_img_familiar"
+                className="cursor-pointer mt-auto mb-2"
+              >
+                <FiDownload className="text-5xl text-[#23A1D8]" />
+              </label>
+
+              <input
+                type="file"
+                name="dni_img_familiar"
+                id="dni_img_familiar"
+                multiple
+                required
+                style={{ display: "none" }}
+                onChange={handleDniImgChange}
+              />
+
+              <p className="text-xs font-semibold text-gray-600 text-center">
+                Click aquí para cargar o{" "}
+                <strong className="text-[#006084]">elegir archivos.</strong>
+                <strong className="text-red-500 text-xl">
+                  {validationErrors.dni_img_familiar}
+                </strong>
+              </p>
+              {validationErrors.dni_img_familiar && (
+                <p className="text-red-500"></p>
+              )}
+            </div>
+
+            <div className="flex justify-between">
+              <button
+                className="mt-4 bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                onClick={() => setModalIsOpen(false)}
+              >
+                Cerrar
+              </button>
+              <button
+                className="mt-4 bg-[#006084] w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                onClick={handleRegister}
+              >
+                Confirmar
+              </button>
+            </div>
+          </Modal>
+
+          <Modal
+            isOpen={modalConyugueIsOpen}
+            onRequestClose={() => setModalConyugueIsOpen(false)}
+            contentLabel="Editar Familiares"
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+              },
+              content: {
+                border: "none",
+                background: "white",
+                color: "black",
+                top: "50%",
+                left: "50%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+                padding: "2rem",
+                width: "80%",
+                maxWidth: "40rem",
+              },
+            }}
+          >
+            <h2 className="text-2xl font-bold mb-4">Añadir Conyugue</h2>
+            {err && <p className="text-red-500">{err}</p>}
+            <div className="mb-2">
+              <label className="block font-bold mb-1">
+                Nombre y Apellido{" "}
+                <strong className="text-red-500 text-sm">
+                  {validationErrors.name}
+                </strong>
+              </label>
+              <Input
+                required
+                name="name"
+                className="w-full"
+                type="text"
+                value={formData.name}
+                onChange={handleChangeConyugue}
+              />
+            </div>
+
+            <div className="mb-2">
+              <label className="block font-bold mb-1">
+                DNI{" "}
+                <strong className="text-red-500 text-sm">
+                  {validationErrors.dni}
+                </strong>
+              </label>
+              <Input
+                required
+                name="dni"
+                className="w-full"
+                type="text"
+                value={formData.dni}
+                onChange={handleChangeConyugue}
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block font-bold mb-1">
+                Teléfono{" "}
+                <strong className="text-red-500 text-sm">
+                  {validationErrors.tel}
+                </strong>
+              </label>
+              <Input
+                required
+                name="tel"
+                className="w-full"
+                type="number"
+                value={formData.tel}
+                onChange={handleChangeConyugue}
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block font-bold mb-1">
+                Fecha de Nacimiento{" "}
+                <strong className="text-red-500 text-sm">
+                  {validationErrors.fecha_de_nacimiento}
+                </strong>
+              </label>
+              <Input
+                required
+                name="fecha_de_nacimiento"
+                className="w-full"
+                type="date"
+                value={formData.fecha_de_nacimiento}
+                onChange={handleChangeConyugue}
+              />
+            </div>
+
+
+            <div className="flex flex-col justify-center items-center mt-4 rounded-xl min-h-[6rem] w-[100%] bg-gray-200 p-2">
+              <p className="font-bold">Subir foto de Libreta:</p>
+              <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
+                Donde figuren los datos del afiliado y la conyugue.
+              </p>
+
+              <label
+                htmlFor="libreta_img"
+                className="cursor-pointer mt-auto mb-2"
+              >
+                <FiDownload className="text-5xl text-[#23A1D8]" />
+              </label>
+
+              <input
+                type="file"
+                name="libreta_img"
+                id="libreta_img"
+                multiple
+                required
+                style={{ display: "none" }}
+                onChange={handleLibretaImgChange}
+              />
+
+              <p className="text-xs font-semibold text-gray-600 text-center">
+                Click aquí para cargar o{" "}
+                <strong className="text-[#006084]">elegir archivos.</strong>
+                <strong className="text-red-500 text-xl">
+                  {validationErrors.libreta_img}
+                </strong>
+              </p>
+              {validationErrors.libreta_img && (
+                <p className="text-red-500"></p>
+              )}
+            </div>
+
+            <div className="flex justify-between">
+              <button
+                className="mt-4 bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                onClick={() => setModalConyugueIsOpen(false)}
+              >
+                Cerrar
+              </button>
+              <button
+                className="mt-4 bg-[#006084] w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                onClick={handleRegister}
+              >
+                Confirmar
+              </button>
+            </div>
+          </Modal>
+          
+      {err && <p className='text-red-500 font-bold'>{err}</p>}
      
       
 

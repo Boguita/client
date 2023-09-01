@@ -1,10 +1,17 @@
 import { useState } from "react";
-
+import { AuthContext } from "../context/authContext"
+import { useContext, useEffect } from "react"
+import api from "../common/Axiosconfig"
 
 const Soporte = () => {
+  const [success, setSuccess] = useState(null);
+  const { currentUser} = useContext(AuthContext);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
-    name: '',
+    email: currentUser?.email,
+    name: currentUser?.username,
     dni: '',
+    seguimiento: '',
     type: 'Consulta',
     benefit: 'Otro',
     message: '',
@@ -18,11 +25,34 @@ const Soporte = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Aquí puedes enviar el formulario al servidor Node.js para manejar la solicitud de soporte
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const res = await api.post("users/soporte", formData);
+    if (res.status === 200 || res.status === 204) {
+      setSuccess("Su consulta ha sido enviada con éxito");
+      setFormData({
+    email: currentUser?.email,
+    name: currentUser?.username,
+    dni: '',
+    seguimiento: '',
+    type: 'Consulta',
+    benefit: 'Otro',
+    message: '',
+  })
+      setError(null);
+    } else {
+      setError("Ha ocurrido un error, por favor intente nuevamente");
+      setSuccess(null);
+    }
     console.log(formData);
-  };
+  } catch (error) {
+    setError("Ha ocurrido un error, por favor intente nuevamente");
+    setSuccess(null);
+    console.error(error);
+  }
+};
 
   return (
     <div className="ml-64 w-screen h-screen bg-gray-100 flex justify-center items-center">
@@ -37,6 +67,7 @@ const Soporte = () => {
               className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="type"
               name="type"
+              required
               value={formData.type}
               onChange={handleInputChange}
             >
@@ -54,10 +85,26 @@ const Soporte = () => {
               className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="dni"
               type="text"
+              required
               name="dni"
               value={formData.dni}
               onChange={handleInputChange}
               placeholder="Número de DNI"
+            />
+          </div>
+
+           <div className="mb-4">
+            <label className="block text-gray-700 font-bold mb-2" htmlFor="seguimiento">
+              Número de Seguimiento
+            </label>
+            <input
+              className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="seguimiento"
+              type="text"
+              name="seguimiento"
+              value={formData.seguimiento}
+              onChange={handleInputChange}
+              placeholder="Número de Seguimiento"
             />
           </div>
 
@@ -69,12 +116,13 @@ const Soporte = () => {
               className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="benefit"
               name="benefit"
+              required
               value={formData.benefit}
               onChange={handleInputChange}
             >
               <option value="Modificar">Otro</option>
               <option value="Consulta">Kit Escolar</option>
-              <option value="Error de Datos">Kit Maternal</option>
+              <option value="Error de Datos">Kit Nacimiento</option>
               <option value="Eliminar Datos">Luna de Miel</option>
               
             </select>
@@ -89,6 +137,7 @@ const Soporte = () => {
               name="message"
               value={formData.message}
               onChange={handleInputChange}
+              required
               placeholder="Escribe tu mensaje detallado aquí..."
               rows="4"
             />
@@ -100,6 +149,8 @@ const Soporte = () => {
             Enviar
           </button>
         </form>
+        {success && <p className="text-green-500 font-semibold">{success}</p>}
+        {error && <p className="text-red-500 font-semibold">{error}</p>}
       </div>
     </div>
   );

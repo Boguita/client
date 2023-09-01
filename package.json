@@ -19,7 +19,8 @@
     "react-router-dom": "^6.4.1",
     "react-select": "^5.7.2",
     "recharts": "^2.7.3",
-    "sass": "^1.55.0"
+    "sass": "^1.55.0",
+    "vite-plugin-rewrite-all": "^1.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
