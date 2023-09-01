@@ -47,10 +47,10 @@ const KitEscolar = () => {
 
   const [familiares, setFamiliares] = useState([]);
 
-  const handleFamiliarSelection = (selectedOptions) => {
-    const selectedFamiliarIds = selectedOptions.map((option) => option.value);
-    setSelectedFamiliares(selectedFamiliarIds);
-  };
+  // const handleFamiliarSelection = (selectedOptions) => {
+  //   const selectedFamiliarIds = selectedOptions.map((option) => option.value);
+  //   setSelectedFamiliares(selectedFamiliarIds);
+  // };
 
   const handleNextStep = async () => {
     if (!selectedFamiliares.length) return;
@@ -195,18 +195,19 @@ const KitEscolar = () => {
     );
   };
 
-  const handleFamiliarCheckboxChange = (e) => {
-    const { value } = e.target;
-    setSelectedFamiliares((prevSelectedFamiliares) => {
-      if (prevSelectedFamiliares.includes(value)) {
-        return prevSelectedFamiliares.filter(
-          (familiarId) => familiarId !== value
-        );
-      } else {
-        return [...prevSelectedFamiliares, value];
-      }
-    });
-  };
+const handleFamiliarCheckboxChange = (e) => {
+  const { value } = e.target;
+  const familiarId = parseInt(value, 10); // Convertir el valor a número
+  setSelectedFamiliares((prevSelectedFamiliares) => {
+    if (prevSelectedFamiliares.includes(familiarId)) {
+      return prevSelectedFamiliares.filter(
+        (familiarId) => familiarId !== familiarId
+      );
+    } else {
+      return [...prevSelectedFamiliares, familiarId];
+    }
+  });
+};
 
   // const handleEditFamiliar = (familiarId) => {
   //   const familiar = familiares.find((familiar) => familiar.id === familiarId);
@@ -380,6 +381,11 @@ const KitEscolar = () => {
   }
 }, [familiares]);
 
+useEffect(() => {
+  console.log(selectedFamiliares);
+}, [selectedFamiliares]);
+
+
   return (
     <div className="bg-gray-200 h-screen w-screen sm:pl-80 ml-5">
       <div className="flex mb-10 mt-32 h-20">
@@ -412,7 +418,7 @@ const KitEscolar = () => {
                   <div key={familiar.id} className="flex justify-center">
                     <div className="flex flex-col w-[95%]">
                       <div
-                        key={familiar.id}
+                        key={`div_${familiar.id}`}
                         className={`flex  items-center justify-between mt-10 border-l-4 border-[#006084] w-[95%] bg-gray-200  ${
                           areTodosBeneficiosOtorgados(familiar.id)
                             ? "opacity-50 cursor-not-allowed"
@@ -420,7 +426,7 @@ const KitEscolar = () => {
                         }`}
                       >
                         <label
-                          htmlFor={`familiar_ids${familiar.id}`}
+                          htmlFor={`familiar_${familiar.id}`}
                           className="font-semibold text-black p-3 cursor-pointer"
                         >
                           {familiar.name}
@@ -430,7 +436,7 @@ const KitEscolar = () => {
                           {/* Checkbox for selecting familiar */}
                           <input
                             type="checkbox"
-                            name={`familiar_ids${familiar.id}`}
+                            name="familiar_ids"
                             id={`familiar_${familiar.id}`}
                             value={familiar.id}
                             className="cursor-pointer custom-checkbox"
