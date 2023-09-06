@@ -102,7 +102,7 @@ const Login = () => {
                           <button className="btn" onClick={handleSubmit}><span>INICIAR SESIÓN</span></button>
                         </div>
                         
-                        {error && <p className="flex justify-center text-[#797777] mt-2 ">{error}</p>}
+                        {error && <p className="flex justify-center font-bold text-red-500 mt-2 ">{error}</p>}
                           <span className="forgot-password">
                              <Link className="hi" to="/forgot-password">He olvidado mi contraseña</Link>
                           </span>
