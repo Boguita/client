@@ -151,6 +151,7 @@ const handleAffiliateDataRequest = async () => {
     if (res.status === 200) {
       handleImageUpload();
       setModalIsOpen(false);
+      setModalConyugueIsOpen(false)
       setAffiliateData(
         (prevAffiliateData) => ({
           ...prevAffiliateData,
