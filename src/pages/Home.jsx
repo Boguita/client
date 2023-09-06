@@ -318,16 +318,16 @@ const handleAffiliateDataRequest = async () => {
 // );
 
 
-   useEffect(() => {
-  if (affiliateData?.familiares.length < 6) {
+useEffect(() => {
+  if (affiliateData?.familiares.some((familiar) => familiar.categoria === 'Hijo/a')) {
     setShowButton(true);
     console.log("Mostrar botón: true");
-    
   } else {
     setShowButton(false);
     console.log("Mostrar botón: false");
   }
 }, [affiliateData?.familiares]);
+
 
 
 const toggleFamiliar = id => {
