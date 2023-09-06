@@ -319,12 +319,13 @@ const handleAffiliateDataRequest = async () => {
 
 
 useEffect(() => {
-  if (affiliateData?.familiares.some((familiar) => familiar.categoria === 'Hijo/a')) {
+  const hijos = affiliateData?.familiares.filter((familiar) => familiar.categoria === 'Hijo/a');
+  if (hijos.length >= 5) {
+    setShowButton(false);
+    console.log("Mostrar botón: false, límite de 5 hijos alcanzado");
+  } else {
     setShowButton(true);
     console.log("Mostrar botón: true");
-  } else {
-    setShowButton(false);
-    console.log("Mostrar botón: false");
   }
 }, [affiliateData?.familiares]);
 
