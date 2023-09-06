@@ -7,6 +7,9 @@ import {FiDownload} from 'react-icons/fi'
 import Modal from "react-modal";
 import {AiOutlineIdcard} from 'react-icons/ai'
 import {RiBillLine} from 'react-icons/ri'
+import { useRef } from 'react';
+import autoAnimate from '@formkit/auto-animate';
+
 
 const Home = () => {
   const [dni, setDni] = useState('');
@@ -21,6 +24,8 @@ const Home = () => {
   const [expandedFamiliars, setExpandedFamiliars] = useState([]);
   const [validationErrors, setValidationErrors] = useState({});
   const [modalConyugueIsOpen, setModalConyugueIsOpen] = useState(false);
+  const yourRef = useRef(null);
+  
     const [formData, setFormData] = useState({
     id_afiliado: "",
     name: "",
@@ -33,6 +38,10 @@ const Home = () => {
   });
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    yourRef.current && autoAnimate(yourRef.current)
+  }, [yourRef])
   
   // Función para manejar las peticiones a la API para los datos de afiliados
 const handleAffiliateDataRequest = async () => {
@@ -429,24 +438,24 @@ const toggleFamiliar = id => {
                 <div className=''>
                 <h3 className='font-bold text-3xl mb-5'>Hijos:</h3>
                   {affiliateData.familiares && affiliateData.familiares.some(familiar => familiar.categoria === 'Hijo/a') ? (
-  <div>
+  <div ref={yourRef}  >
     
-    <ul>
+    <ul ref={yourRef} >
       {affiliateData.familiares
         .filter(familiar => familiar.categoria === 'Hijo/a')
         .map((familiar, index) => (
-          <div key={index}>
+          <div ref={yourRef} key={index}>
             <p
               className='p-2 bg-[#d8d8d8] font-semibold text-gray-800 relative w-80 mt-4 pl-6 cursor-pointer flex flex-row justify-between'
              
             >
                
               <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
-              {familiar.name} <span onClick={() => toggleFamiliar(familiar.id)} className='text-[#006084] pr-1'>{expandedFamiliars[familiar.id] ? "Ver menos" : "Ver más"}</span>
+              {familiar.name} <span  onClick={() => toggleFamiliar(familiar.id)} className='text-[#006084] pr-1'>{expandedFamiliars[familiar.id] ? "Ver menos" : "Ver más"}</span>
             </p>
 
             {expandedFamiliars[familiar.id] && (
-              <li key={index} className="w-80 p-2 ">
+              <li   key={index} className="w-80 p-2 ">
                 <p><strong>DNI:</strong></p>
                 <p className='p-2 bg-gray-200 relative pl-6'>
                   <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
@@ -503,7 +512,7 @@ const toggleFamiliar = id => {
       {affiliateData.familiares
         .filter(familiar => familiar.categoria === 'Conyugue')
         .map((familiar, index) => (
-          <div key={index}>
+          <div ref={yourRef} key={index}>
             <p
               className='p-2 bg-[#d8d8d8] font-semibold text-gray-800 relative w-80 mt-4 pl-6 cursor-pointer flex flex-row justify-between'
              
@@ -792,6 +801,7 @@ const toggleFamiliar = id => {
           </Modal>
 
           <Modal
+            
             isOpen={modalConyugueIsOpen}
             onRequestClose={() => setModalConyugueIsOpen(false)}
             contentLabel="Editar Familiares"
@@ -816,7 +826,8 @@ const toggleFamiliar = id => {
             }}
           >
             <h2 className="text-2xl font-bold mb-4">Añadir Conyugue</h2>
-            {err && <p className="text-red-500">{err}</p>}
+            
+            {err && <p  className="text-red-500">{err}</p>}
             <div className="mb-2">
               <label className="block font-bold mb-1">
                 Nombre y Apellido{" "}

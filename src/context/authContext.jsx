@@ -11,7 +11,7 @@ export const AuthContexProvider = ({ children }) => {
  const login = async (inputs, setError) => {
     try {
       const res = await axios.post(
-        "https://uatre-api.onrender.com/api/auth/login",
+        "http://localhost:8800/api/auth/login",
         inputs,
         { withCredentials: true } // Asegúrate de incluir esta opción para enviar las cookies
       );
