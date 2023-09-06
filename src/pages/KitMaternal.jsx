@@ -323,8 +323,8 @@ const handleRegisterAfiliate = async (e) => {
     //   ...prevBeneficio,
     //   [name]: value,
     // }));
-    setFamiliares(familiaresConyugue);
-     setBeneficio(prevBeneficio => ({
+    await setFamiliares(familiaresConyugue);
+     await setBeneficio(prevBeneficio => ({
       ...prevBeneficio,
       0: { // Acceder al índice 0 directamente
         ...prevBeneficio[0], // Mantener los valores existentes en el índice 0
@@ -332,8 +332,8 @@ const handleRegisterAfiliate = async (e) => {
         familiar_id: familiaresConyugue[0].id,
       },
     }));
-    beneficioPendiente(familiaresConyugue[0].id);
-    setIsLoading(false);
+    await beneficioPendiente(familiaresConyugue[0].id);
+    await setIsLoading(false);
     
   
     
