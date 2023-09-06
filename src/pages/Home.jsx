@@ -286,7 +286,7 @@ const handleAffiliateDataRequest = async () => {
 
     if (dniImgArray && Array.isArray(dniImgArray)) {
       dniImgArray.forEach((dni) => {
-        window.open(`http://localhost:8800/${dni}`, '_blank');
+        window.open(`https://uatre-api.onrender.com/${dni}`, '_blank');
       });
     } else {
       console.log("La propiedad dni_img no es un arreglo o es null.");
