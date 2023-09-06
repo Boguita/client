@@ -319,7 +319,7 @@ const handleAffiliateDataRequest = async () => {
 
 
    useEffect(() => {
-  if (affiliateData?.familiares.length < 5) {
+  if (affiliateData?.familiares.length < 6) {
     setShowButton(true);
     console.log("Mostrar botón: true");
     
