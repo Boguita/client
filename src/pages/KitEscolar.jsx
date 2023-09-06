@@ -287,6 +287,7 @@ const handleFamiliarCheckboxChange = (e) => {
     
 
     try {
+      setIsLoading(true);
       const beneficioFamiliarSeleccionado = selectedFamiliares.map(
         (familiarId) => beneficio[familiarId]
       );
@@ -299,9 +300,11 @@ const handleFamiliarCheckboxChange = (e) => {
         updatedBeneficio[familiarId].id = nuevoBeneficioIds[index];
       });
 
+      
       setBeneficio(updatedBeneficio);
+      setIsLoading(false);
       handleNextStep();
-      console.log(res.data);
+      
       return res
 
       // Realizar acciones adicionales después de otorgar el beneficio
