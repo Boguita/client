@@ -351,7 +351,7 @@ const toggleFamiliar = id => {
 
 
   return (
-    <div className="h-screen py-36 pl-80 w-full ">
+    <div ref={yourRef} className="h-screen py-36 pl-80 w-full ">
       <div className='flex flex-col justify-center'>        
         <h1 className="mt-4 text-3xl font-extrabold ">{affiliateData ? 'Perfil del Trabajador: Revisar Datos' : 'INGRESA EL NUMERO DE DNI DEL TRABAJADOR'}</h1>
         <p className='text-gray-500 font-semibold mt-4'>{affiliateData ? '' : 'Ingrese un número de DNI para comenzar.'}</p>
