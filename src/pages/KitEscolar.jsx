@@ -265,7 +265,7 @@ const handleFamiliarCheckboxChange = (e) => {
           usuario_otorgante: currentUser?.username,
           id: "",
           tipo: "Kit escolar",
-          estado: "",
+          estado: "Entregado",
           afiliado_id: res.data.idafiliados,
           familiar_id: familiar.id,
           detalles: "",
@@ -428,7 +428,7 @@ useEffect(() => {
                       >
                         <label
                           htmlFor={`familiar_${familiar.id}`}
-                          className="font-semibold text-black p-3 cursor-pointer"
+                          className="uppercase font-semibold text-black p-3 cursor-pointer"
                         >
                           {familiar.name}
                         </label>
@@ -550,7 +550,7 @@ useEffect(() => {
           {currentStep === 2 && (
             // Step 2: Detalles de productos
             <div className="rounded w-full">
-              <h3 className="text-black text-2xl font-bold">
+              <h3 className="text-black text-3xl font-bold">
                 Paso 2: Items a Entregar
               </h3>
               {/* Display product details for selected familiares */}
@@ -745,7 +745,7 @@ useEffect(() => {
          {currentStep === 3 && (
   // Step 3: Resumen y Otorgar Beneficios
   <div className="rounded w-full">
-    <h3 className="text-black font-bold text-3xl">Paso 3: Resumen de Entrega</h3>
+    <h3 className="font-bold text-3xl text-black">Paso 3: Resumen de Entrega</h3>
     {selectedFamiliares.map((familiarId) => {
       const familiar = familiares.find((f) => f.id === familiarId);
       const beneficioIndividual = beneficio[familiarId]; // Obtener el beneficio individual para este familiar
@@ -856,7 +856,7 @@ useEffect(() => {
                             <svg className="w-4 h-2 mr-2 fill-current text-[#006084]" viewBox="0 0 20 20">
                               <circle cx="10" cy="10" r="9" />
                             </svg>
-                            <span>{familiar.name}</span>
+                            <span className="uppercase">{familiar.name}</span>
                           </div>
                           <p className="ml-6 text-sm text-gray-500">
                             Número de seguimiento: {beneficioIndividual.id}

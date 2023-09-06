@@ -161,10 +161,11 @@ const handleRegisterAfiliate = async (e) => {
 
     
     
-   const res3 = await handleImageUpload(nuevoFamiliarId);
+   const res3 = await handleImageUpload();
    if(res3.status === 200) {
     handleNextStep();
     }
+    return res2;
       // Continuar con el proceso de otorgar el beneficio
       
     } else {
@@ -194,7 +195,7 @@ const handleRegisterAfiliate = async (e) => {
         const libretaFormData = new FormData();
       
       selectedFiles.forEach((libretaImg) => {
-        libretaFormData.append("id", beneficio[0].id ? beneficio[0].id : idPass);
+        libretaFormData.append("dni", familiares.dni ? familiares.dni : idPass);
         libretaFormData.append("libreta", libretaImg);
         
       });
@@ -376,7 +377,7 @@ const validateFields = () => {
     setIsLoading(false);
     handleNextStep();
     // Continuar con el proceso de otorgar el beneficio
-    
+    return res
 
   } catch (err) {
     console.log(err.response)
@@ -586,7 +587,8 @@ return (
                       <p className="text-red-500">{validationErrors.semanas}</p>
                     )}
                   </div>
-                  
+
+             {beneficio[0].familiar_id === null &&                  
                   <div className="flex flex-col justify-center items-center mt-4 rounded-xl min-h-[6rem] w-[100%] p-2">
                     <p className="font-bold">Subir foto de libreta:</p>
                     <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
@@ -616,14 +618,21 @@ return (
                         elegir archivos.
                       </strong>
                     </p>
+                     {selectedFiles.map((file, index) => (
+                      <li key={index}>{file.name}</li>
+                    ))}
                   </div>
-                  {validationErrors.libreta && (
-                    <p className="text-red-500">
-                      {validationErrors.libreta}
-                    </p>
-                  )}
+                  // {validationErrors.libreta && (
+                  //   <p className="text-red-500">
+                  //     {validationErrors.libreta}
+                  //   </p>
+                  // )}
+                  }
+                  <div className="flex justify-center items-center flex-col mt-4">
+                  <Files label="Subir foto de REMITO DE ENTREGA" instructions="Recuerde que debe estar firmada por el trabajador." onUpload={handleRegisterAfiliate} />
+                  </div>
                 </div>
-                <div></div>
+                {/* <div></div>
 
                 <div className="flex justify-end pt-6">
                   <button
@@ -632,7 +641,7 @@ return (
                   >
                     Siguiente
                   </button>
-                </div>
+                </div> */}
               </>
             )
           )}

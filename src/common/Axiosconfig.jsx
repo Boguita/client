@@ -1,9 +1,11 @@
 import axios from "axios";
 
     const api = axios.create({
-      baseURL: "https://uatre-api.onrender.com/api", // URL base del servidor
+      baseURL: "http://localhost:8800/api", // URL base del servidor
       withCredentials: true, // Habilita el envío de cookies
     });
+
+    // baseURL: "https://uatre-api.onrender.com/api",
 
     // api.defaults.adapter = (config) => {
     //   return new Promise((resolve, reject) => {

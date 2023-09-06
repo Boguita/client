@@ -6,6 +6,8 @@ import Avatar from '../assets/img/avatar.png';
 import {FiDownload} from 'react-icons/fi'
 import Modal from "react-modal";
 import {AiOutlineIdcard} from 'react-icons/ai'
+import {RiBillLine} from 'react-icons/ri'
+
 const Home = () => {
   const [dni, setDni] = useState('');
   const [affiliateData, setAffiliateData] = useState(null);
@@ -275,24 +277,24 @@ const handleAffiliateDataRequest = async () => {
   }
 }
 
- const getDniImgHijo = async () => {
-  const conyugueIndex = affiliateData.familiares.findIndex(familiar => familiar.categoria === "Hijo/a");
+ const getDniImgHijo = async (familiarId) => {
+  // Busca el familiar por su ID
+  const familiar = affiliateData.familiares.find((fam) => fam.id === familiarId);
 
-  if (conyugueIndex !== -1) {
-    const libretaImgArray = affiliateData.familiares[conyugueIndex].dni_img;
-    
+  if (familiar) {
+    const dniImgArray = familiar.dni_img;
 
-    if (libretaImgArray && Array.isArray(libretaImgArray)) {
-      libretaImgArray.forEach((dni) => {
-        window.open(`https://uatre-api.onrender.com/${dni}`, '_blank');
+    if (dniImgArray && Array.isArray(dniImgArray)) {
+      dniImgArray.forEach((dni) => {
+        window.open(`http://localhost:8800/${dni}`, '_blank');
       });
     } else {
-      console.log("La propiedad libreta_img no es un arreglo o es null.");
+      console.log("La propiedad dni_img no es un arreglo o es null.");
     }
   } else {
-    console.log("No se encontró un conyugue en la lista de familiares.");
+    console.log("No se encontró el familiar con el ID proporcionado.");
   }
-}
+};
 
 
 
@@ -442,7 +444,7 @@ const toggleFamiliar = id => {
             </p>
 
             {expandedFamiliars[familiar.id] && (
-              <li key={index} className="w-80 p-4 mb-4">
+              <li key={index} className="w-80 p-2 ">
                 <p><strong>DNI:</strong></p>
                 <p className='p-2 bg-gray-200 relative pl-6'>
                   <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
@@ -453,11 +455,12 @@ const toggleFamiliar = id => {
                   <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
                   {familiar.fecha_de_nacimiento}
                 </p>
-                <p><strong>VER DNI:</strong></p>
-                <p className='p-2 bg-gray-200 relative pl-6'>
-                  <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
-                  {familiar.fecha_de_nacimiento}
-                </p>
+                <div id={familiar.id} onClick={() => getDniImgHijo(familiar.id)} className='p-2 mt-2 flex items-center justify-center w-full pl-6'>               
+                <button className='bg-[#23A1D8] font-bold text-white rounded-lg p-2 hover:bg-opacity-75' >
+                  
+                  VER DNI
+                </button>
+                </div> 
               
                 
                 {/* Agregar aquí otros campos de los familiares */}
@@ -598,10 +601,12 @@ const toggleFamiliar = id => {
 
                 
                                     {affiliateData.recibo_sueldo && affiliateData.recibo_sueldo.length > 0 && (
-                          <div>
-                            <h3>Recibo de Sueldo:</h3>
+                          <div className='flex flex-col cursor-pointer justify-center items-center rounded-2xl p-2 mt-5  bg-gray-200'>
+                            <RiBillLine className='text-3xl'/>
                             {affiliateData.recibo_sueldo.map((recibo, index) => (
-                              <div key={index}>
+                              
+                              <div className='flex-col flex justify-center items-center' key={index}>
+                                
                                 <a
                                   href={`https://uatre-api.onrender.com/${recibo}`} // Utiliza la URL de tu API
                                   target="_blank"

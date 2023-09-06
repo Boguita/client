@@ -3,7 +3,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import {BiError} from "react-icons/bi"
 import api from "../common/Axiosconfig";
-
+import Modal from "react-modal";
 
 import {FiDownload} from 'react-icons/fi'
 import Files from "../components/Files";
@@ -20,9 +20,10 @@ const KitMaternal = () => {
  
   const [currentStep, setCurrentStep] = useState(1);
   const [validationErrors, setValidationErrors] = useState({});
-
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [beneficiosOtorgados, setBeneficiosOtorgados] = useState([]);
 const [beneficio, setBeneficio] = useState({
 
   "0": {  
@@ -36,6 +37,7 @@ const [beneficio, setBeneficio] = useState({
         cantidad: "",
         detalles: "",
         estado: "Pendiente",
+        
         
   }
 });
@@ -97,12 +99,53 @@ const handleNextStep = async () => {
     
   };
 
+  const beneficioPendiente = async (familiarId) => {
+  try {
+     // Convertir a cadena separada por comas
+    const res = await api.get(`/tasks/verified-kit-maternal/${familiarId}`);
+    const beneficiosOtorgados = res.data;
+    res.status === 200 &&
+    console.log(res.data)
+    setBeneficiosOtorgados(beneficiosOtorgados);
+    if(beneficiosOtorgados.length === 0) {
+      return;
+    } else {
+    setModalIsOpen(true);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+ const handleUpdateBeneficio = async () => {
+
+
+  try {
+    setError(null); // Limpiar cualquier error previo
+    setIsLoading(true);    
+    const res = await api.put(`/tasks/${beneficiosOtorgados[0].id}`, {estado: "Entregado"});
+    res.status === 200 &&
+    console.log(res.data);
+    setIsLoading(false);
+    setModalIsOpen(false);
+    handleNextStep();
+
+  } catch (err) {
+    console.log(err.response)
+    setError(err.response.data.error? err.response.data.error : "Error al entregar el beneficio");
+
+  }
+  setIsLoading(false);
+};
+   
+  
 
 
 
 useEffect(() => {
   const familia = familiares;
   console.log('Estado de beneficios actualizado:', beneficio[0].familiar_id); 
+  console.log('Estado de beneficio actualizado:', beneficio);
 }, [familiares, beneficio, selectedFiles]);
 
 
@@ -289,6 +332,7 @@ const handleRegisterAfiliate = async (e) => {
         familiar_id: familiaresConyugue[0].id,
       },
     }));
+    beneficioPendiente(familiaresConyugue[0].id);
     setIsLoading(false);
     
   
@@ -383,7 +427,7 @@ const validateFields = () => {
 
   } catch (err) {
     console.log(err.response)
-    setError(err.response.data.error);
+    setError(err.response.data.error? err.response.data.error : "Error al otorgar el beneficio");
 
   }
   setIsLoading(false);
@@ -657,6 +701,9 @@ return (
                         elegir archivos.
                       </strong>
                     </p>
+                    {selectedFiles.map((file, index) => (
+                      <li key={index}>{file.name}</li>
+                    ))}
                   </div>
                   {validationErrors.certificado && (
                     <p className="text-red-500">
@@ -668,7 +715,7 @@ return (
 
                 <div className="flex justify-end pt-6">
                   <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    className="mt-4 bg-[#006084] w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
                     onClick={handleRegisterAfiliate}
                   >
                     Siguiente
@@ -732,9 +779,9 @@ return (
                     <p className="font-extrabold text-3xl text-[#006084]">
                       El beneficio ha sido registrado con éxito.
                     </p>
-                    <p className="font-bold text-xl text-gray-500">
+                    <p className="font-bold text-xl w-[80%] text-gray-500">
                       Por favor, verifique si se cargaron los datos
-                      correctamente e informe al afiliado que un representante se pondra en contacto.
+                      correctamente e informe al afiliado que un representante se pondra en contacto o haga entrega si correspondiere.
                     </p>
                   </div>
                   <div className="h-full w-full items-end pb-10 justify-center flex">
@@ -752,8 +799,119 @@ return (
       </div>
       
     </div>
+     <Modal
+            isOpen={modalIsOpen}
+            onRequestClose={() => setModalIsOpen(false)}
+            contentLabel="Entregar Beneficio"
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+              },
+              content: {
+                border: "none",
+                background: "white",
+                color: "black",
+                top: "50%",
+                left: "50%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+                padding: "2rem",
+                width: "80%",
+                maxWidth: "40rem",
+              },
+            }}
+          >
+            <h2 className="text-2xl font-bold mb-4">Entregar beneficio pendiente.</h2>
+            {error && <p className="text-red-500">{error}</p>}
+            <div className="mb-2">
+             {familiares.length > 0 &&
+             familiares.map((familiar) => (
+                      <div key={familiar.id} className="flex justify-center items-center">
+                        <div className="flex flex-col w-[95%] ">
+                          <label className="font-semibold mt-4 ">
+                            Nombre y Apellido
+                          </label>
+
+                          <div
+                            key={familiar.id}
+                            className={`flex  items-center mt-2 justify-between border-l-4 border-[#006084] w-[95%] bg-gray-200  `}
+                          >
+                            <label
+                              htmlFor={`familiar_${familiar.id}`}
+                              className="font-semibold text-black p-3"
+                            >
+                              {familiar.name}
+                            </label>
+                          </div>
+
+                          <label className="font-semibold mt-2 ">DNI</label>
+
+                          <div
+                            key={familiar.id}
+                            className="flex  items-center mt-2 justify-between border-l-4 border-[#006084] w-[95%] bg-gray-200"
+                          >
+                            <label className="font-semibold text-black p-3 ">
+                              {familiar.dni}
+                            </label>
+                          </div>
+
+                          <label className="font-semibold mt-2 ">
+                            Fecha de Otorgamiento
+                          </label>
+
+                          <div
+                            key={familiar.id}
+                            className={
+                              "flex  items-center mt-2 justify-between border-l-4 border-[#006084] w-[95%] bg-gray-200"
+                            }
+                          >
+                            <label className="font-semibold text-black p-3">
+                                   {beneficiosOtorgados[0] && 
+                                   <>                             
+                                   { new Date(beneficiosOtorgados[0].fecha_otorgamiento).toLocaleDateString()}{" "}
+                                    {new Date(beneficiosOtorgados[0].fecha_otorgamiento).toLocaleTimeString()
+                                   }
+                                   </>
+                            
+                             }
+                            </label>
+                          </div>
+
+                         
+                          <div className="flex flex-col mt-4 items-center">
+                          <Files 
+                          label="Subir foto de REMITO DE ENTREGA" 
+                          onUpload={handleUpdateBeneficio}
+                          instructions="Recuerde que debe estar firmada por el trabajador." 
+                            />
+                          <button
+                            className="mt-4 bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                            onClick={() => setModalIsOpen(false)}
+                          >
+                            Cerrar
+                          </button>
+                          </div>
+
+
+                          {error && (
+                            <p className="text-red-500 mt-2">{error}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                          }
+            </div>
+                          
+
+       
+          </Modal>
     
   </div>
+
+  
+    
 );
 
   

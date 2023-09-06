@@ -27,7 +27,7 @@ const Navbar = () => {
   return (
     <>
     {/* Barra horizontal superior */}
-      <div className={`fixed top-0 left-0 w-full  px-4 py-2 bg-[#23A1D8] text-white ${fix ? 'shadow-md' : ''}`}>
+      <div className={`fixed top-0 left-0 w-full z-40  px-4 py-2 bg-[#23A1D8] text-white ${fix ? 'shadow-md' : ''}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <img src={Logo} className="h-8 mr-2" alt="Logo" />
@@ -49,7 +49,7 @@ const Navbar = () => {
    </svg>
 </button>
 
-<aside id="logo-sidebar" className="fixed justify-center left-0 top-0 z-40 w-30 lg:w-72 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-cover bg-center bg-[51rem]" style={{ backgroundImage: `url(${NavBG})` }} aria-label="Sidebar">
+<aside id="logo-sidebar" className="fixed justify-center z-50 left-0 top-0  w-30 lg:w-72 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-cover bg-center bg-[51rem]" style={{ backgroundImage: `url(${NavBG})` }} aria-label="Sidebar">
    <div className="flex flex-col space-y-2 h-screen px-3 py-4 overflow-y-auto relative  bg-[#0d4668] bg-opacity-80"
     >
       
