@@ -16,6 +16,7 @@ import Input from "../components/Input";
 import {PiBackpackDuotone} from 'react-icons/pi'
 import {TbTools} from 'react-icons/tb'
 import {TbJacket} from 'react-icons/tb'
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 
 const KitEscolar = () => {
   const { currentUser, logout } = useContext(AuthContext);
@@ -34,6 +35,8 @@ const KitEscolar = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [showButton, setShowButton] = useState(true);
+
+  const [animationParent] = useAutoAnimate();
 
   const [formData, setFormData] = useState({
     id_afiliado: "",
@@ -406,7 +409,7 @@ useEffect(() => {
       </div>
 
       <div className="flex justify-center bg-gray-200">
-        <div className="sm:w-2/4 min-h-[35em] bg-white flex p-4 rounded-lg">
+        <div ref={animationParent} className=" sm:w-2/4 min-h-[35em] bg-white flex p-4 rounded-lg">
           {isLoading ? (
             <Loader />
           ) : (
@@ -552,7 +555,7 @@ useEffect(() => {
 
           {currentStep === 2 && (
             // Step 2: Detalles de productos
-            <div className="rounded w-full">
+            <div  className="rounded w-full">
               <h3 className="text-black text-3xl font-bold">
                 Paso 2: Items a Entregar
               </h3>

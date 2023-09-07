@@ -4,7 +4,7 @@ import { AuthContext } from "../context/authContext";
 import {BiError} from "react-icons/bi"
 import api from "../common/Axiosconfig";
 
-
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 import {FiDownload} from 'react-icons/fi'
 import Files from "../components/Files";
 import Avion from '../assets/img/plane.png';
@@ -40,6 +40,7 @@ const [beneficio, setBeneficio] = useState({
 
 const [error, setError] = useState(null);
 
+const [animationParent] = useAutoAnimate();
 
  
   const [familiares, setFamiliares] = useState({
@@ -437,7 +438,7 @@ return (
 
     <div className="flex justify-center bg-gray-200">
       <div className="sm:w-[95%]">
-        <div className="grid grid-cols-2 space-x-8">
+        <div ref={animationParent} className="grid grid-cols-2 space-x-8">
           {isLoading ? (
             <Loader />
           ) : (

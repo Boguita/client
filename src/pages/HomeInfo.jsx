@@ -1,12 +1,8 @@
-import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../common/Axiosconfig';
-import Input from '../components/Input';
-import Avatar from '../assets/img/avatar.png';
-import {FiDownload} from 'react-icons/fi'
 import Avion from '../assets/img/plane.png'
 import Mono from '../assets/img/mono.png'
 import Libro from '../assets/img/libro-abierto.png'
+
 
 const HomeInfo = () => {
   const navigate = useNavigate();

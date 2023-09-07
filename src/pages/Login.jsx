@@ -4,8 +4,11 @@ import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import Logo from '../assets/img/logo.png'
+import { useRef } from 'react';
+import autoAnimate from '@formkit/auto-animate';
 
 import '../css/auth.css';
+import Loader from "../components/Loader";
 
 
 const Login = () => {
@@ -14,11 +17,18 @@ const Login = () => {
     password: "",
   });
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   
 
   const navigate = useNavigate();
 
   const { login } = useContext(AuthContext);
+    const yourRef = useRef(null);
+
+    useEffect(() => {
+    yourRef.current && autoAnimate(yourRef.current)
+  }, [yourRef])
+  
 
 
   const handleChange = (e) => {
@@ -28,11 +38,14 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(inputs)      
+      setIsLoading(true);      
+      await login(inputs)   
+      setIsLoading(false);   
       navigate("/homeInfo");
     } catch (err) {
       console.log(err)
       setError(err);
+      setIsLoading(false); 
     }
     
   };
@@ -70,7 +83,7 @@ const Login = () => {
                      <p className="mt-4 max-w-[450px] text-[#787779] font-semibold">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque repudiandae, quibusdam deserunt quidem optio dignissimos excepturi voluptate alias similique provident, totam soluta aut eum recusandae.</p>
                   </div>
                  
-                    <form className="form-horizontal">
+                    <form ref={yourRef} className="form-horizontal">
                         <div className="form-group relative">
                             <div className="absolute left-0 top-0 h-full w-1 bg-[#006084]"></div>
                             <input 
@@ -97,9 +110,10 @@ const Login = () => {
                         </div>
                         
 
-                        <div className="flex flex-col justify-center items-center align-middle">
+                        <div ref={yourRef} className="flex flex-col justify-center items-center align-middle">
                           
-                          <button className="btn" onClick={handleSubmit}><span>INICIAR SESIÓN</span></button>
+                          {isLoading ? <Loader/> :
+                          <button className="btn" onClick={handleSubmit}><span>INICIAR SESIÓN</span></button>}
                         </div>
                         
                         {error && <p className="flex justify-center font-bold text-red-500 mt-2 ">{error}</p>}

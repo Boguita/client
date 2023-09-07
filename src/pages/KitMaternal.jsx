@@ -10,13 +10,16 @@ import Files from "../components/Files";
 import Mono from '../assets/img/mono.png';
 import Input from "../components/Input";
 import Loader from "../components/Loader";
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 
 const KitMaternal = () => {
 
   const { currentUser, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const [animationParent] = useAutoAnimate();
   const [dni, setDni] = useState("");
+
  
   const [currentStep, setCurrentStep] = useState(1);
   const [validationErrors, setValidationErrors] = useState({});
@@ -468,7 +471,7 @@ useEffect(() => {
 
 return (
   <div className="bg-gray-200 h-screen w-screen sm:pl-80 ml-5">
-    <div className="flex mb-10 mt-40 h-20">
+    <div className="flex mb-10 mt-32 h-20">
       <img className=" w-12 h-12" src={Mono}></img>
       <div className="flex flex-col pl-4">
         <h2 className=" text-black text-3xl font-extrabold">
@@ -483,7 +486,7 @@ return (
 
     <div className="flex justify-center bg-gray-200">
       <div className="sm:w-[95%]">
-        <div className="grid grid-cols-2 space-x-8">
+        <div ref={animationParent} className="grid grid-cols-2 space-x-8">
           {isLoading ? (
             <Loader />
           ) : (
@@ -614,7 +617,7 @@ return (
                   )}
                 </div>
 
-                <div className="rounded-lg  p-8   bg-white ">
+                <div ref={animationParent} className="rounded-lg  p-8   bg-white ">
                   <h3 className="text-black text-2xl font-bold mb-4">
                     Certificado Médico
                   </h3>
@@ -652,7 +655,7 @@ return (
                     )}
                   </div>
                   <label className="font-semibold">Niños por nacer</label>
-                  <div className="mt-2">
+                  <div  className="mt-2">
                     <select
                       name="cantidad"
                       onChange={handleInputChange}
@@ -661,14 +664,15 @@ return (
                         "w-[95%] !border-l-4 !border-[#006084] bg-gray-200 pl-3 text-base font-semibold focus:outline-none p-3"
                       }
                     >
+                      <option disabled selected value="">Elegir Cantidad</option>
                       <option value="1">Hijo/a (1)</option>
                       <option value="2">Mellizos (2)</option>
                       <option value="3">Trillizos (3)</option>
-                    </select>
-                    {validationErrors.cantidad && (
+                    </select>                    
+                    {validationErrors.cantidad && (                      
                       <p className="text-red-500">
-                        {validationErrors.cantidad}
-                      </p>
+                         {validationErrors.cantidad}
+                      </p>                                         
                     )}
                   </div>
 
