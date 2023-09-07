@@ -433,7 +433,7 @@ const KitEscolar = () => {
                             >
                         <label
                           htmlFor={`familiar_${familiar.id}`}
-                          className="uppercase font-semibold text-black p-3 cursor-pointer"
+                          className="capitalize font-semibold text-black p-3 cursor-pointer"
                         >
                           {familiar.name}
                         </label>
@@ -563,7 +563,7 @@ const KitEscolar = () => {
                 const familiar = familiares.find((f) => f.id === familiarId);
                 return (
                   <div className="pt-10 px-10  " key={familiar.id}>
-                    <h4 className="text-black text-lg uppercase w-max pb-1 font-semibold">
+                    <h4 className="text-black text-lg capitalize w-max pb-1 font-semibold">
                       {familiar.name}:
                     </h4>
                     <div className="flex flex-col justify-between">
@@ -765,7 +765,7 @@ const KitEscolar = () => {
                     key={familiar.id}
                     className="bg-gray-100 border-b-2 border-[#006084] shadow-lg rounded p-4 mt-4"
                   >
-                    <h4 className="text-black text-2xl uppercase font-semibold">
+                    <h4 className="text-black text-2xl capitalize font-semibold">
                       {familiar.name}:
                     </h4>
                     <p className="text-gray-600 text-lg mt-2">
@@ -876,7 +876,7 @@ const KitEscolar = () => {
                                 >
                                   <circle cx="10" cy="10" r="9" />
                                 </svg>
-                                <span className="uppercase">
+                                <span className="capitalize">
                                   {familiar.name}
                                 </span>
                               </div>

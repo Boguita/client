@@ -464,7 +464,7 @@ return (
                           >
                             <label
                               htmlFor={`familiar_${familiar.id}`}
-                              className="font-semibold text-black p-3"
+                              className="capitalize font-semibold text-black p-3"
                             >
                               {familiar.name}
                             </label>
