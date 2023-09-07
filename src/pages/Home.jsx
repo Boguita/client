@@ -376,7 +376,7 @@ const toggleFamiliar = id => {
 
 
             <div className=' p-5 bg-white rounded-b-2xl grid gap-4'>
-               <p className='mt-2 text-gray-800 font-semibold'><strong>{affiliateData.name}</strong></p>
+               <p className='mt-2 uppercase text-gray-800 font-semibold'><strong>{affiliateData.name}</strong></p>
                <div className='grid grid-cols-2'>
   <div >   
 
@@ -452,7 +452,7 @@ const toggleFamiliar = id => {
         .map((familiar, index) => (
           <div onClick={() => toggleFamiliar(familiar.id)} key={index} ref={animationParent} >
             <p 
-              className='p-2 bg-[#d8d8d8] font-semibold text-gray-800 relative w-80 mt-4 pl-6 cursor-pointer flex flex-row justify-between'
+              className='p-2 bg-[#d8d8d8] uppercase font-semibold text-gray-800 relative w-80 mt-4 pl-6 cursor-pointer flex flex-row justify-between'
              
             >
                
@@ -520,7 +520,7 @@ const toggleFamiliar = id => {
         .map((familiar, index) => (
           <div onClick={() => toggleFamiliar(familiar.id)} key={index} ref={animationParent} >
             <p
-              className='p-2 bg-[#d8d8d8] font-semibold text-gray-800 relative w-80 mt-4 pl-6 cursor-pointer flex flex-row justify-between'
+              className='p-2 uppercase bg-[#d8d8d8] font-semibold text-gray-800 relative w-80 mt-4 pl-6 cursor-pointer flex flex-row justify-between'
              
             >
                
@@ -588,7 +588,7 @@ const toggleFamiliar = id => {
                                           <div>
                                             <p><strong>Razon Social:</strong></p>
                                             <p
-                                               className='p-2 bg-gray-200 font-semibold text-gray-800 relative w-80 mt-2 pl-6'
+                                               className='p-2 uppercase bg-gray-200 font-semibold text-gray-800 relative w-80 mt-2 pl-6'
                                             >                
                                               <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
                                               {empleador.razon_social} 
@@ -600,7 +600,7 @@ const toggleFamiliar = id => {
                                                 {empleador.cuit_empleador}
                                               </p>
                                               <p><strong>Actividad:</strong></p>
-                                              <p className='p-2 bg-gray-200 relative pl-6'>
+                                              <p className='p-2 uppercase bg-gray-200 relative pl-6'>
                                                 <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
                                                 {empleador.actividad}
                                               </p>                                            
