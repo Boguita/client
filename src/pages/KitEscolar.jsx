@@ -13,10 +13,10 @@ import Files from "../components/Files";
 import Libro from "../assets/img/libro-abierto.png";
 import Loader from "../components/Loader";
 import Input from "../components/Input";
-import {PiBackpackDuotone} from 'react-icons/pi'
-import {TbTools} from 'react-icons/tb'
-import {TbJacket} from 'react-icons/tb'
-import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { PiBackpackDuotone } from "react-icons/pi";
+import { TbTools } from "react-icons/tb";
+import { TbJacket } from "react-icons/tb";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 const KitEscolar = () => {
   const { currentUser, logout } = useContext(AuthContext);
@@ -133,12 +133,12 @@ const KitEscolar = () => {
     if (name === "dni" && !/^[0-9]*$/.test(value)) {
       setError("Ingresa solo números en el campo DNI");
     } else {
-    setError(null)
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  }
+      setError(null);
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
+    }
   };
 
   const validateFields = () => {
@@ -198,19 +198,19 @@ const KitEscolar = () => {
     );
   };
 
-const handleFamiliarCheckboxChange = (e) => {
-  const { value } = e.target;
-  const familiarId = parseInt(value, 10); // Convertir el valor a número
-  setSelectedFamiliares((prevSelectedFamiliares) => {
-    if (prevSelectedFamiliares.includes(familiarId)) {
-      return prevSelectedFamiliares.filter(
-        (familiarId) => familiarId !== familiarId
-      );
-    } else {
-      return [...prevSelectedFamiliares, familiarId];
-    }
-  });
-};
+  const handleFamiliarCheckboxChange = (e) => {
+    const { value } = e.target;
+    const familiarId = parseInt(value, 10); // Convertir el valor a número
+    setSelectedFamiliares((prevSelectedFamiliares) => {
+      if (prevSelectedFamiliares.includes(familiarId)) {
+        return prevSelectedFamiliares.filter(
+          (familiarId) => familiarId !== familiarId
+        );
+      } else {
+        return [...prevSelectedFamiliares, familiarId];
+      }
+    });
+  };
 
   // const handleEditFamiliar = (familiarId) => {
   //   const familiar = familiares.find((familiar) => familiar.id === familiarId);
@@ -253,12 +253,12 @@ const handleFamiliarCheckboxChange = (e) => {
         (familiar) => familiar.categoria === "Hijo/a"
       );
 
-      if(familiaresHijos.length === 0){
-           setError("No hay datos de Hijos/as asociados al afiliado");
+      if (familiaresHijos.length === 0) {
+        setError("No hay datos de Hijos/as asociados al afiliado");
         setIsLoading(false);
         return;
       }
-      
+
       setFamiliares(familiaresHijos);
 
       comprobarBeneficios(familiaresHijos.map((familiar) => familiar.id));
@@ -287,8 +287,6 @@ const handleFamiliarCheckboxChange = (e) => {
   };
 
   const handleBeneficioOtorgado = async () => {
-    
-
     try {
       setIsLoading(true);
       const beneficioFamiliarSeleccionado = selectedFamiliares.map(
@@ -303,12 +301,11 @@ const handleFamiliarCheckboxChange = (e) => {
         updatedBeneficio[familiarId].id = nuevoBeneficioIds[index];
       });
 
-      
       setBeneficio(updatedBeneficio);
       setIsLoading(false);
       handleNextStep();
-      
-      return res
+
+      return res;
 
       // Realizar acciones adicionales después de otorgar el beneficio
     } catch (err) {
@@ -377,21 +374,20 @@ const handleFamiliarCheckboxChange = (e) => {
     }
   }, [dni]);
 
-    useEffect(() => {
-  if (familiares.length < 5) {
-    setShowButton(true);
-    console.log("Mostrar botón: true");
-    console.log(familiares.length)
-  } else {
-    setShowButton(false);
-    console.log("Mostrar botón: false");
-  }
-}, [familiares]);
+  useEffect(() => {
+    if (familiares.length < 5) {
+      setShowButton(true);
+      console.log("Mostrar botón: true");
+      console.log(familiares.length);
+    } else {
+      setShowButton(false);
+      console.log("Mostrar botón: false");
+    }
+  }, [familiares]);
 
-useEffect(() => {
-  console.log(selectedFamiliares);
-}, [selectedFamiliares]);
-
+  useEffect(() => {
+    console.log(selectedFamiliares);
+  }, [selectedFamiliares]);
 
   return (
     <div className="bg-gray-200 h-screen w-screen sm:pl-80 ml-5">
@@ -409,29 +405,32 @@ useEffect(() => {
       </div>
 
       <div className="flex justify-center bg-gray-200">
-        <div ref={animationParent} className=" sm:w-2/4 min-h-[35em] bg-white flex p-4 rounded-lg">
-          {isLoading ? (
+        <div
+          ref={animationParent}
+           className=" sm:w-2/4 min-h-[35em] bg-white flex p-4 rounded-lg"
+           >
+           {isLoading ? (
             <Loader />
-          ) : (
-            currentStep === 1 && (
-              // Step 1: Seleccionar hijos
-              <div className="rounded w-full">
-                <h3 className="text-black text-2xl font-bold">
-                  Paso 1: Seleccionar Hijos/as
-                </h3>
-                {/* Display familiares checkboxes here */}
-                {error && <p className="text-red-500">{error}</p>}
-                {familiares.map((familiar) => (
-                  <div key={familiar.id} className="flex justify-center">
-                    <div className="flex justify-center items-center flex-col w-[95%]">
-                      <div
-                        key={`div_${familiar.id}`}
-                        className={`flex items-center justify-between mt-10 border-l-4 border-[#006084] w-[95%] bg-gray-200  ${
-                          areTodosBeneficiosOtorgados(familiar.id)
-                            ? "opacity-50 cursor-not-allowed"
-                            : ""
-                        }`}
-                      >
+           ) : (
+                  currentStep === 1 && (
+                    // Step 1: Seleccionar hijos
+                    <div className="rounded w-full">
+                      <h3 className="text-black text-2xl font-bold">
+                        Paso 1: Seleccionar Hijos/as
+                      </h3>
+                      {/* Display familiares checkboxes here */}
+                      {error && <p className="text-red-500">{error}</p>}
+                      {familiares.map((familiar) => (
+                        <div key={familiar.id} className="flex justify-center">
+                          <div className="flex justify-center items-center flex-col w-[95%]">
+                            <div
+                              key={`div_${familiar.id}`}
+                              className={`flex items-center justify-between mt-10 border-l-4 border-[#006084] w-[95%] bg-gray-200  ${
+                                areTodosBeneficiosOtorgados(familiar.id)
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
+                              }`}
+                            >
                         <label
                           htmlFor={`familiar_${familiar.id}`}
                           className="uppercase font-semibold text-black p-3 cursor-pointer"
@@ -471,12 +470,11 @@ useEffect(() => {
                           key={familiar.id}
                           className="flex justify-around pt-1"
                         >
-                          <PiBackpackDuotone className="text-gray-400"/>
+                          <PiBackpackDuotone className="text-gray-400" />
                           <p
                             className={`px-1 text-xs font-semibold text-gray-400`}
                           >
-                            
-                           Útiles:{" "}
+                            Útiles:{" "}
                             <strong
                               className={`px-1 text-xs font-semibold ${
                                 isBeneficioOtorgado(familiar.id, "utiles")
@@ -489,7 +487,7 @@ useEffect(() => {
                                 : "SIN ENTREGAR"}
                             </strong>
                           </p>
-                              <TbTools className="text-gray-400"/>
+                          <TbTools className="text-gray-400" />
                           <p
                             className={`px-1 text-xs font-semibold text-gray-400`}
                           >
@@ -506,7 +504,7 @@ useEffect(() => {
                                 : "SIN ENTREGAR"}
                             </strong>
                           </p>
-                            <TbJacket className="text-gray-400"/>
+                          <TbJacket className="text-gray-400" />
                           <p
                             className={`px-1 text-xs font-semibold text-gray-400`}
                           >
@@ -530,18 +528,19 @@ useEffect(() => {
                 ))}
 
                 <div className="flex w-full h-2/7 justify-between items-end pt-4 px-4">
-                  { showButton ? (
-                  <button
-                    className="mt-4 bg-[#006084] w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
-                    onClick={() => setModalIsOpen(true)}
-                  >
-                    + Cargar Hijo/a
-                  </button>
+                  {showButton ? (
+                    <button
+                      className="mt-4 bg-[#006084] w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                      onClick={() => setModalIsOpen(true)}
+                    >
+                      + Cargar Hijo/a
+                    </button>
                   ) : (
-                      <p className="text-[#006084] font-bold">Limite de hijos/as alcanzado.</p>
-                  )
-                    }
-                  
+                    <p className="text-[#006084] font-bold">
+                      Limite de hijos/as alcanzado.
+                    </p>
+                  )}
+
                   <button
                     className="mt-4 bg-[#23A1D8] w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
                     onClick={handleNextStep}
@@ -551,11 +550,11 @@ useEffect(() => {
                 </div>
               </div>
             )
-          )}
+           )}
 
-          {currentStep === 2 && (
+           {currentStep === 2 && (
             // Step 2: Detalles de productos
-            <div  className="rounded w-full">
+            <div className="rounded w-full">
               <h3 className="text-black text-3xl font-bold">
                 Paso 2: Items a Entregar
               </h3>
@@ -596,7 +595,6 @@ useEffect(() => {
                             : "border-[#006084]"
                         } bg-gray-100 mt-2 px-8 h-10`}
                       >
-                       
                         <label
                           htmlFor={`checkbox_mochila${familiar.id}`}
                           className={`mr-2 flex items-center font-semibold ${
@@ -608,32 +606,34 @@ useEffect(() => {
                           <span className="mr-2">
                             <PiBackpackDuotone />
                           </span>
-                          
                           Mochila
                         </label>
                         <div className="flex">
-                        <input
-                          id={`checkbox_mochila${familiar.id}`}
-                          name="mochila"
-                          type="checkbox"
-                          className={`custom-checkbox ${
-                            isBeneficioOtorgado(familiar.id, "mochila")
-                              ? "cursor-not-allowed"
-                              : "cursor-pointer"
-                          }`}
-                          disabled={isBeneficioOtorgado(familiar.id, "mochila")}
-                          checked={beneficio.mochila}
-                          onChange={(e) => handleInputChange(e, familiarId)}
-                        />
-                        <label
-                          className="check"
-                          htmlFor={`checkbox_mochila${familiar.id}`}
-                        >
-                          <svg className="w-18 h-18" viewBox="0 0 18 18">
-                            <path d="M1,9 L1,3.5 C1,2 2,1 3.5,1 L14.5,1 C16,1 17,2 17,3.5 L17,14.5 C17,16 16,17 14.5,17 L3.5,17 C2,17 1,16 1,14.5 L1,9 Z"></path>
-                            <polyline points="1 9 7 14 15 4"></polyline>
-                          </svg>
-                        </label>
+                          <input
+                            id={`checkbox_mochila${familiar.id}`}
+                            name="mochila"
+                            type="checkbox"
+                            className={`custom-checkbox ${
+                              isBeneficioOtorgado(familiar.id, "mochila")
+                                ? "cursor-not-allowed"
+                                : "cursor-pointer"
+                            }`}
+                            disabled={isBeneficioOtorgado(
+                              familiar.id,
+                              "mochila"
+                            )}
+                            checked={beneficio.mochila}
+                            onChange={(e) => handleInputChange(e, familiarId)}
+                          />
+                          <label
+                            className="check"
+                            htmlFor={`checkbox_mochila${familiar.id}`}
+                          >
+                            <svg className="w-18 h-18" viewBox="0 0 18 18">
+                              <path d="M1,9 L1,3.5 C1,2 2,1 3.5,1 L14.5,1 C16,1 17,2 17,3.5 L17,14.5 C17,16 16,17 14.5,17 L3.5,17 C2,17 1,16 1,14.5 L1,9 Z"></path>
+                              <polyline points="1 9 7 14 15 4"></polyline>
+                            </svg>
+                          </label>
                         </div>
                       </div>
 
@@ -645,41 +645,44 @@ useEffect(() => {
                         }  bg-gray-100 mt-2 px-8 h-10`}
                       >
                         <label
-                        htmlFor={`checkbox_utiles${familiar.id}`}
+                          htmlFor={`checkbox_utiles${familiar.id}`}
                           className={`mr-2 flex items-center font-semibold ${
                             isBeneficioOtorgado(familiar.id, "utiles")
                               ? "text-gray-300"
                               : "text-gray-600"
                           } `}
                         >
-                           <span className="mr-2">
+                          <span className="mr-2">
                             <TbTools />
                           </span>
                           Útiles
                         </label>
                         <div className="flex">
-                        <input
-                          id={`checkbox_utiles${familiar.id}`}
-                          name="utiles"
-                          type="checkbox"
-                          className={`custom-checkbox ${
-                            isBeneficioOtorgado(familiar.id, "utiles")
-                              ? "cursor-not-allowed"
-                              : "cursor-pointer"
-                          }`}
-                          disabled={isBeneficioOtorgado(familiar.id, "utiles")}
-                          checked={beneficio.utiles}
-                          onChange={(e) => handleInputChange(e, familiarId)}
-                        />
-                        <label
-                          className="check"
-                          htmlFor={`checkbox_utiles${familiar.id}`}
-                        >
-                          <svg className="w-18 h-18" viewBox="0 0 18 18">
-                            <path d="M1,9 L1,3.5 C1,2 2,1 3.5,1 L14.5,1 C16,1 17,2 17,3.5 L17,14.5 C17,16 16,17 14.5,17 L3.5,17 C2,17 1,16 1,14.5 L1,9 Z"></path>
-                            <polyline points="1 9 7 14 15 4"></polyline>
-                          </svg>
-                        </label>
+                          <input
+                            id={`checkbox_utiles${familiar.id}`}
+                            name="utiles"
+                            type="checkbox"
+                            className={`custom-checkbox ${
+                              isBeneficioOtorgado(familiar.id, "utiles")
+                                ? "cursor-not-allowed"
+                                : "cursor-pointer"
+                            }`}
+                            disabled={isBeneficioOtorgado(
+                              familiar.id,
+                              "utiles"
+                            )}
+                            checked={beneficio.utiles}
+                            onChange={(e) => handleInputChange(e, familiarId)}
+                          />
+                          <label
+                            className="check"
+                            htmlFor={`checkbox_utiles${familiar.id}`}
+                          >
+                            <svg className="w-18 h-18" viewBox="0 0 18 18">
+                              <path d="M1,9 L1,3.5 C1,2 2,1 3.5,1 L14.5,1 C16,1 17,2 17,3.5 L17,14.5 C17,16 16,17 14.5,17 L3.5,17 C2,17 1,16 1,14.5 L1,9 Z"></path>
+                              <polyline points="1 9 7 14 15 4"></polyline>
+                            </svg>
+                          </label>
                         </div>
                       </div>
                       <div
@@ -746,52 +749,61 @@ useEffect(() => {
                 </button>
               </div>
             </div>
-          )}
-         
-         {currentStep === 3 && (
-  // Step 3: Resumen y Otorgar Beneficios
-  <div className="rounded w-full">
-    <h3 className="font-bold text-3xl text-black">Paso 3: Resumen de Entrega</h3>
-    {selectedFamiliares.map((familiarId) => {
-      const familiar = familiares.find((f) => f.id === familiarId);
-      const beneficioIndividual = beneficio[familiarId]; // Obtener el beneficio individual para este familiar
-      return (
-        <div key={familiar.id} className="bg-gray-100 border-b-2 border-[#006084] shadow-lg rounded p-4 mt-4">
-          <h4 className="text-black text-2xl uppercase font-semibold">
-            {familiar.name}:
-          </h4>
-          <p className="text-gray-600 text-lg mt-2">
-            - Año Escolar:{" "}
-            <span className="font-normal">
-              {beneficioIndividual.año_escolar
-                ? beneficioIndividual.año_escolar
-                : "Omitió cargar el año escolar"}
-            </span>
-          </p>
-          {beneficioIndividual.mochila && (
-            <p className="text-gray-600 text-lg mt-2">
-              - Mochila:{" "}
-              <span className="text-green-500 font-bold">Entregar</span>
-            </p>
-          )}
-          {beneficioIndividual.guardapolvo && (
-            <p className="text-gray-600 text-lg mt-2">
-              - Guardapolvo:{" "}
-              <span className="text-green-500 font-bold">
-                Entregar Talle {beneficioIndividual.guardapolvo}
-              </span>
-            </p>
-          )}
-          {beneficioIndividual.utiles && (
-            <p className="text-gray-600 text-lg mt-2">
-              - Útiles:{" "}
-              <span className="text-green-500 font-bold">Entregar</span>
-            </p>
-          )}
-        </div>
+           )}
+
+           {currentStep === 3 && (
+            // Step 3: Resumen y Otorgar Beneficios
+            <div className="rounded w-full">
+              <h3 className="font-bold text-3xl text-black">
+                Paso 3: Resumen de Entrega
+              </h3>
+              {selectedFamiliares.map((familiarId) => {
+                const familiar = familiares.find((f) => f.id === familiarId);
+                const beneficioIndividual = beneficio[familiarId]; // Obtener el beneficio individual para este familiar
+                return (
+                  <div
+                    key={familiar.id}
+                    className="bg-gray-100 border-b-2 border-[#006084] shadow-lg rounded p-4 mt-4"
+                  >
+                    <h4 className="text-black text-2xl uppercase font-semibold">
+                      {familiar.name}:
+                    </h4>
+                    <p className="text-gray-600 text-lg mt-2">
+                      - Año Escolar:{" "}
+                      <span className="font-normal">
+                        {beneficioIndividual.año_escolar
+                          ? beneficioIndividual.año_escolar
+                          : "Omitió cargar el año escolar"}
+                      </span>
+                    </p>
+                    {beneficioIndividual.mochila && (
+                      <p className="text-gray-600 text-lg mt-2">
+                        - Mochila:{" "}
+                        <span className="text-green-500 font-bold">
+                          Entregar
+                        </span>
+                      </p>
+                    )}
+                    {beneficioIndividual.guardapolvo && (
+                      <p className="text-gray-600 text-lg mt-2">
+                        - Guardapolvo:{" "}
+                        <span className="text-green-500 font-bold">
+                          Entregar Talle {beneficioIndividual.guardapolvo}
+                        </span>
+                      </p>
+                    )}
+                    {beneficioIndividual.utiles && (
+                      <p className="text-gray-600 text-lg mt-2">
+                        - Útiles:{" "}
+                        <span className="text-green-500 font-bold">
+                          Entregar
+                        </span>
+                      </p>
+                    )}
+                  </div>
                 );
               })}
-             <div className="flex w-full h-2/6 justify-between items-end pt-6 px-4">
+              <div className="flex w-full h-2/6 justify-between items-end pt-6 px-4">
                 <button
                   className="mt-4 bg-gray-500 py-2 hover:bg-gray-900 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
                   onClick={handleBackStep}
@@ -805,38 +817,32 @@ useEffect(() => {
                   Siguiente
                 </button>
               </div>
-               
-                    
+
               {/* <div className="flex w-full h-full justify-between items-end pt-6 px-4">
-                
-              
-              </div> */}
+                    
+                  
+                  </div> */}
             </div>
-              
-              
-         
-            
           )}
 
-           {currentStep === 5 && (
+          {isLoading ? <Loader/> : currentStep === 5 && (
             <>
               {error ? (
                 <>
                   <div className="flex flex-col h-full w-full justify-center items-center space-y-4">
                     {/* <BiError className="text-[8rem] justify-center items-center text-[#006084]" /> */}
                     <p className="font-extrabold text-3xl align-middle justify-center items-center text-red-500">
-                      Ocurrio un error durante la carga de datos, por favor verificar los datos antes de reintentar:<br></br>
+                      Ocurrio un error durante la carga de datos, por favor
+                      verificar los datos antes de reintentar:<br></br>
                       {error}
                     </p>
-                     <button
+                    <button
                       className="btn w-1/3"
                       onClick={() => navigate("/home")}
                     >
                       <span>VOLVER</span>
                     </button>
                   </div>
-                  
-               
                 </>
               ) : (
                 <>
@@ -849,56 +855,69 @@ useEffect(() => {
                       Por favor, verifique si se cargaron los datos
                       correctamente y haga entrega de los items seleccionados.
                     </p>
-                     
+
                     <div>
-                  <h3 className="font-bold text-lg text-[#006084]">Resumen de entrega:</h3>
-                  <ul className="list-disc pl-6 mt-2">
-                    {selectedFamiliares.map((familiarId) => {
-                      const familiar = familiares.find((f) => f.id === familiarId);
-                      const beneficioIndividual = beneficio[familiarId];
-                      return (
-                        <ul key={familiarId} className="py-1">
-                          <div className="flex items-center">
-                            <svg className="w-4 h-2 mr-2 fill-current text-[#006084]" viewBox="0 0 20 20">
-                              <circle cx="10" cy="10" r="9" />
-                            </svg>
-                            <span className="uppercase">{familiar.name}</span>
-                          </div>
-                          <p className="ml-6 text-sm text-gray-500">
-                            Número de seguimiento: {beneficioIndividual.id}
-                          </p>
-                           <p className="ml-6 font-semibold text-sm text-gray-500">
-                            Items: 
-                          </p>
-                          <p className="ml-6 text-sm text-gray-500">
-                            {beneficioIndividual.mochila == true ? `Mochila ${beneficioIndividual.año_escolar}` : ""}
-                          </p>
-                          <p className="ml-6 text-sm text-gray-500">
-                            {beneficioIndividual.utiles == true ? `Utiles` : ""}
-                          </p>
-                          <p className="ml-6 text-sm text-gray-500">
-                            {beneficioIndividual.guardapolvo ? `Guardapolvo talle: ${beneficioIndividual.guardapolvo}` : ""}
-                          </p>
-                        </ul>
-                      );
-                    })}
-                  </ul>
-                  </div>
-                  <div className="h-full w-full items-end pb-10 justify-center flex">
-                    <button
-                      className="btn w-1/3"
-                      onClick={() => navigate("/home")}
-                    >
-                      <span>VOLVER</span>
-                    </button>
+                      <h3 className="font-bold text-lg text-[#006084]">
+                        Resumen de entrega:
+                      </h3>
+                      <ul className="list-disc pl-6 mt-2">
+                        {selectedFamiliares.map((familiarId) => {
+                          const familiar = familiares.find(
+                            (f) => f.id === familiarId
+                          );
+                          const beneficioIndividual = beneficio[familiarId];
+                          return (
+                            <ul key={familiarId} className="py-1">
+                              <div className="flex items-center">
+                                <svg
+                                  className="w-4 h-2 mr-2 fill-current text-[#006084]"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <circle cx="10" cy="10" r="9" />
+                                </svg>
+                                <span className="uppercase">
+                                  {familiar.name}
+                                </span>
+                              </div>
+                              <p className="ml-6 text-sm text-gray-500">
+                                Número de seguimiento: {beneficioIndividual.id}
+                              </p>
+                              <p className="ml-6 font-semibold text-sm text-gray-500">
+                                Items:
+                              </p>
+                              <p className="ml-6 text-sm text-gray-500">
+                                {beneficioIndividual.mochila == true
+                                  ? `Mochila ${beneficioIndividual.año_escolar}`
+                                  : ""}
+                              </p>
+                              <p className="ml-6 text-sm text-gray-500">
+                                {beneficioIndividual.utiles == true
+                                  ? `Utiles`
+                                  : ""}
+                              </p>
+                              <p className="ml-6 text-sm text-gray-500">
+                                {beneficioIndividual.guardapolvo
+                                  ? `Guardapolvo talle: ${beneficioIndividual.guardapolvo}`
+                                  : ""}
+                              </p>
+                            </ul>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                    <div className="h-full w-full items-end pb-10 justify-center flex">
+                      <button
+                        className="btn w-1/3"
+                        onClick={() => navigate("/home")}
+                      >
+                        <span>VOLVER</span>
+                      </button>
                     </div>
                   </div>
-                  
                 </>
               )}
             </>
           )}
-
 
           {currentStep === 4 && (
             // Step 4: Estado de Carga del Beneficio Otorgado
@@ -906,22 +925,24 @@ useEffect(() => {
               <h3 className=" font-bold text-3xl text-black">
                 Paso 4: Estado de Carga del Beneficio.
               </h3>
-              <p className="font-semibold text-lg text-[#006084]">Debes solicitar al trabajador que firme el remito por los items que se entregan en el momento, los que no seleccionaste quedaran pendientes para retirar.</p>
+              <p className="font-semibold text-lg text-[#006084]">
+                Debes solicitar al trabajador que firme el remito por los items
+                que se entregan en el momento, los que no seleccionaste quedaran
+                pendientes para retirar.
+              </p>
               <div className="flex flex-col w-full mt-4 justify-center items-center px-4">
                 <Files
-                    label="Subir foto de REMITO DE ENTREGA"
-                    instructions="Recuerde que debe estar firmada por el trabajador."
-                    
-                    onUpload={handleBeneficioOtorgado}
-                  />
-                  <button
+                  label="Subir foto de REMITO DE ENTREGA"
+                  instructions="Recuerde que debe estar firmada por el trabajador."
+                  onUpload={handleBeneficioOtorgado}
+                />
+                <button
                   className="mt-4 bg-gray-500 py-2 hover:bg-gray-900 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
                   onClick={handleBackStep}
                 >
                   Volver
                 </button>
-                  </div>
-           
+              </div>
             </div>
           )}
 
