@@ -825,8 +825,8 @@ const KitEscolar = () => {
             </div>
           )}
 
-          { currentStep === 5 && (
-            isLoading ? <Loader/> :
+          { currentStep === 5 && ( 
+            isLoading ? <div> </div> :           
             <>
               {error ? (
                 <>
