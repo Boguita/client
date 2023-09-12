@@ -324,8 +324,9 @@ const handleImageUpload = async () => {
     <div className="bg-gray-200 flex justify-center mt-36 h-screen w-screen sm:pl-80 ml-5">
       
    <div className="flex flex-col pt-10 rounded-3xl items-center w-2/3 h-2/3 bg-white">
-    <div className="flex h-20">
+    <div className="flex flex-col justify-center items-center h-20">
         <h2 className="text-[#006084] text-4xl font-bold">Registro del Trabajador</h2>
+        <p className="text-gray-500 font-semibold mt-1">No existe afiliado registrado con ese DNI, para continuar carga los datos correspondientes.</p>
    </div>
       
       <form
@@ -747,7 +748,7 @@ const handleImageUpload = async () => {
 
                   </div>
                   <div className="h-full w-full items-end pb-10 justify-center flex">
-              <button className="btn w-1/3" onClick={() => navigate('/home')}><span>VOLVER</span></button>
+              <button className="btn w-1/3" onClick={() => navigate(`/home/${formData.dni}`)}><span>SIGUIENTE</span></button>
                 {err && <p>{err}</p>}
                 </div>
         

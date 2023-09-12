@@ -11,7 +11,7 @@ export const AuthContexProvider = ({ children }) => {
  const login = async (inputs, setError) => {
     try {
       const res = await axios.post(
-        "https://uatre-api.onrender.com/api/auth/login",
+        "http://backuatrebeneficios.galgoproductora.com/api/auth/login",
         inputs,
         { withCredentials: true } // Asegúrate de incluir esta opción para enviar las cookies
       );
@@ -23,20 +23,21 @@ export const AuthContexProvider = ({ children }) => {
     }
   };
   
-  const loginAdmin = async (inputs) => {
+  const loginAdmin = async (inputs,setError) => {
     try {
-      const res = await axios.post("https://uatre-api.onrender.com/api/auth/admin", inputs, 
+      const res = await axios.post("http://backuatrebeneficios.galgoproductora.com/api/auth/login-aubenefits", inputs, 
       { withCredentials: true });
-      const userData = { ...res.data, token: res.data.access_token }; // Agregar el token a la respuesta
-      setCurrentUser(userData);
+      if(res.status === 200){
+      setCurrentUser(res.data);
+      }
     } catch (error) {
-      console.log(error);
+      throw(error.response.data);
     }
   };
 
   const logout = async () => {
     try {
-      await axios.post("https://uatre-api.onrender.com/api/auth/logout");
+      await axios.post("http://backuatrebeneficios.galgoproductora.com/api/auth/logout");
       setCurrentUser(null);
     } catch (error) {
       console.log(error);

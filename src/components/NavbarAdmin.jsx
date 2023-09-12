@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import Logo from '../assets/img/logo.png'
 import Avatar from "./Avatar";
-import NavBG from '../assets/img/navbg.jpg'
+import NavBG from '../assets/img/navbg-modified.webp';
 import {AiFillHome} from 'react-icons/ai'
 import {BsFillFileEarmarkBarGraphFill, BsFillPeopleFill} from 'react-icons/bs'
 
@@ -27,7 +27,7 @@ const Navbar = () => {
   return (
     <>
     {/* Barra horizontal superior */}
-      <div className={`fixed top-0 left-0 w-full z-40  px-4 py-2 bg-[#23A1D8] text-white ${fix ? 'shadow-md' : ''}`}>
+      <div className={`fixed top-0 left-0 w-full z-40  px-4 py-2 bg-[#006084] text-white ${fix ? 'shadow-md' : ''}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <img src={Logo} className="h-8 mr-2" alt="Logo" />
@@ -50,41 +50,50 @@ const Navbar = () => {
 </button>
 
 <aside id="logo-sidebar" className="fixed justify-center z-50 left-0 top-0  w-30 lg:w-72 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-cover bg-center bg-[51rem]" style={{ backgroundImage: `url(${NavBG})` }} aria-label="Sidebar">
-   <div className="flex flex-col space-y-2 h-screen px-3 py-4 overflow-y-auto relative  bg-[#0d4668] bg-opacity-80"
+  
+   <div className="flex flex-col space-y-2 h-screen px-3 py-4 overflow-y-auto relative bg-black bg-opacity-80"
     >
       
       <div className="h-full w-full">
        <Link to="/home" className={`flex items-center p-2 rounded-lg dark:text-white   ${
               location.pathname === '/dashboard' ? 'text-blue-500' : 'text-gray-700'
             }`}>
-          <img src={Logo} className="h-full mt-6 mb-6 mr-3 sm:h-full w-full" alt="UATRE Logo" />
+          <img src={Logo} className="h-full mt-6 mb-6 mr-3 sm:h-full w-full " alt="UATRE Logo" />
        </Link>
         <ul class="space-y-5 font-medium ">
             <li>
-              <Link to="/homeInfo" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+              <Link to="/admin/dashboard" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                    <AiFillHome className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" /> 
-                  <span className={`ml-3 ${location.pathname === '/home' ? 'text-blue-500' : 'text-white'}`}>Paso 1</span>
+                  <span className={`ml-3 ${location.pathname === '/admin/dashboard' ? 'text-blue-500' : 'text-white'}`}>Inicio</span>
               </Link>
           </li>
           <li>
-               <Link to="/registro-afiliado" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+               <Link to="/admin/afiliados" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                   <BsFillPeopleFill className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" />
-                   <span className={`ml-3 ${location.pathname === '/registro-afiliado' | '/home' ? 'text-blue-500' : 'text-white'}`}>Paso 2</span>
+                   <span className={`ml-3 ${location.pathname === '/admin/registro-afiliado' ? 'text-blue-500' : 'text-white'}`}>Afiliados</span>
+                  {/* <span class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">Gold</span> */}
+               </Link>
+            </li>
+               <li>
+               <Link to="/admin/delegados" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <BsFillPeopleFill className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" />
+                   <span className={`ml-3 ${location.pathname === '/admin/delegados' ? 'text-blue-500' : 'text-white'}`}>Delegados</span>
                   {/* <span class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">Gold</span> */}
                </Link>
             </li>
             
+          
             <li>
-               <Link to='/profile' className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                  <svg aria-hidden="true" className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
-                   <span className={`ml-3 ${location.pathname === '/profile' ? 'text-blue-500' : 'text-white'}`}>Perfil</span>
+               <Link to="/admin/soporte" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <svg aria-hidden="true" className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z"></path><path d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path></svg>
+                   <span className={`ml-3 ${location.pathname === '/admin/soporte' ? 'text-blue-500' : 'text-white'}`}>Beneficios</span>
+                  {/* <span class="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span> */}
                </Link>
             </li>
-            <li>
-               <Link to="/soporte" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                  <svg aria-hidden="true" className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z"></path><path d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path></svg>
-                   <span className={`ml-3 ${location.pathname === '/soporte' ? 'text-blue-500' : 'text-white'}`}>Soporte</span>
-                  {/* <span class="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span> */}
+              <li>
+               <Link to='/admin/profile' className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <svg aria-hidden="true" className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                   <span className={`ml-3 ${location.pathname === '/admin/profile' ? 'text-blue-500' : 'text-white'}`}>Perfil</span>
                </Link>
             </li>
             {/* <li>
@@ -108,7 +117,8 @@ const Navbar = () => {
                   </button>
                </Link>
                
-            </li>                 
+            </li>   
+
          </ul> 
        </div>     
      

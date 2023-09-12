@@ -65,9 +65,9 @@ const Login = () => {
 
            
             <div className="flex flex-col justify-center h-full items-center">
-            <h2 className="text-white font-bold text-2xl">Ingreso al Portal Delegados</h2>      
+            <h2 className="text-white font-bold text-2xl">Ingreso al Portal de Administradores</h2>      
             <h2 className="text-white font-bold text-8xl">BIENVENIDO</h2>
-            <p className="w-[50%] py-2 text-white font-semibold text-l"> Lorem ipsum dolor sit amet consectetur, adipisicing elit. Similique odit aliquid saepe quidem aliquam sed repudiandae magni nam doloribus explicabo minima pariatur debitis qui quos, vero blanditiis reiciendis quia asperiores!</p>
+            <p className="w-[50%] text-center py-2 text-gray-100 font-semibold text-l">Copyright © 2023 UATRE </p>
             </div>
           </div>
      
@@ -80,7 +80,6 @@ const Login = () => {
 
                   <div className="flex flex-col items-center p-8 ">
                      <h3 className="title font-extrabold text-4xl text-[#006084]">Ingresar</h3>
-                     <p className="mt-4 max-w-[450px] text-[#787779] font-semibold">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque repudiandae, quibusdam deserunt quidem optio dignissimos excepturi voluptate alias similique provident, totam soluta aut eum recusandae.</p>
                   </div>
                  
                     <form ref={yourRef} className="form-horizontal">

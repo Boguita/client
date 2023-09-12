@@ -9,6 +9,7 @@ import {AiOutlineIdcard} from 'react-icons/ai'
 import {RiBillLine} from 'react-icons/ri'
 import { useRef } from 'react';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { useLocation, useParams } from 'react-router-dom';
 
 
 
@@ -25,7 +26,11 @@ const Home = () => {
   const [expandedFamiliars, setExpandedFamiliars] = useState([]);
   const [validationErrors, setValidationErrors] = useState({});
   const [modalConyugueIsOpen, setModalConyugueIsOpen] = useState(false);
-  const yourRef = useRef(null);
+
+  const location = useLocation();
+  const { dniparams } = useParams();
+
+ 
     const [animationParent] = useAutoAnimate();
   
     const [formData, setFormData] = useState({
@@ -41,21 +46,27 @@ const Home = () => {
 
   const navigate = useNavigate();
 
-  // useEffect(() => {
-    
-  //   yourRef.current && autoAnimate(yourRef.current)
-  //   console.log(yourRef.current)
-  // }, [yourRef])
+  useEffect(() => {
+  if (dniparams) {
+      // Llama a la función para manejar la búsqueda con el DNI de la URL
+      console.log(dniparams)
+      
+      handleAffiliateDataRequest(dniparams);
+    }
+  }, [dniparams]);
+
   
   // Función para manejar las peticiones a la API para los datos de afiliados
-const handleAffiliateDataRequest = async () => {
+const handleAffiliateDataRequest = async (dniparams) => {
+  if(!dniparams) {
   if (!dni) {
     setErr('Por favor, ingresa un número de DNI antes de hacer la solicitud.');
     return;
   }
+}
 
   try {
-    const res = await api.get(`users/afiliados/${dni}`);
+    const res = await api.get(`users/afiliados/${dni ? dni : dniparams}`);
     // Almacenar los datos recibidos de la API
     console.log(res.data)
     setAffiliateData(res.data);
@@ -69,6 +80,7 @@ const handleAffiliateDataRequest = async () => {
     
     setAffiliateData(null);
     console.log(error.response.data.message)
+    
     navigate('/registro-afiliado')
   }
  
@@ -267,7 +279,7 @@ const handleAffiliateDataRequest = async () => {
 
   const getDniImg = async () => {
     affiliateData.dni_img.forEach((dni) => {
-    window.open(`https://uatre-api.onrender.com/${dni}`, '_blank');
+    window.open(`http://backuatrebeneficios.galgoproductora.com/${dni}`, '_blank');
   });
     
   }
@@ -281,7 +293,7 @@ const handleAffiliateDataRequest = async () => {
 
     if (libretaImgArray && Array.isArray(libretaImgArray)) {
       libretaImgArray.forEach((libreta) => {
-        window.open(`https://uatre-api.onrender.com/${libreta}`, '_blank');
+        window.open(`http://backuatrebeneficios.galgoproductora.com/${libreta}`, '_blank');
       });
     } else {
       console.log("La propiedad libreta_img no es un arreglo o es null.");
@@ -300,7 +312,7 @@ const handleAffiliateDataRequest = async () => {
 
     if (dniImgArray && Array.isArray(dniImgArray)) {
       dniImgArray.forEach((dni) => {
-        window.open(`https://uatre-api.onrender.com/${dni}`, '_blank');
+        window.open(`http://backuatrebeneficios.galgoproductora.com/${dni}`, '_blank');
       });
     } else {
       console.log("La propiedad dni_img no es un arreglo o es null.");
@@ -625,7 +637,7 @@ const toggleFamiliar = id => {
                               <div className='flex-col flex justify-center items-center' key={index}>
                                 
                                 <a
-                                  href={`https://uatre-api.onrender.com/${recibo}`} // Utiliza la URL de tu API
+                                  href={`http://backuatrebeneficios.galgoproductora.com/${recibo}`} // Utiliza la URL de tu API
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-blue-500 hover:underline"
