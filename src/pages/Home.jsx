@@ -29,6 +29,7 @@ const Home = () => {
   const [expandedFamiliars, setExpandedFamiliars] = useState([]);
   const [validationErrors, setValidationErrors] = useState({});
   const [modalConyugueIsOpen, setModalConyugueIsOpen] = useState(false);
+  const [modalBenefitsOpen, setModalBenefitsOpen] = useState(false);
 
   const location = useLocation();
   const { dniparams } = useParams();
@@ -395,7 +396,7 @@ const toggleFamiliar = id => {
     if(beneficiosOtorgados.length === 0) {
       return;
     } else {
-    setModalIsOpen(true);
+    setModalBenefitsOpen(true)
     }
   } catch (err) {
     console.log(err);
@@ -412,7 +413,7 @@ const toggleFamiliar = id => {
     res.status === 200 &&
     console.log(res.data);
     setIsLoading(false);
-    setModalIsOpen(false);
+    setModalBenefitsOpen(false);
     
 
   } catch (err) {
@@ -1037,7 +1038,7 @@ const toggleFamiliar = id => {
             </div>
           </Modal>
           <Modal
-            isOpen={modalIsOpen}
+            isOpen={modalBenefitsOpen}
             onRequestClose={() => setModalIsOpen(false)}
             contentLabel="Entregar Beneficio"
             style={{
