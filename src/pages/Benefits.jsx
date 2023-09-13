@@ -116,7 +116,7 @@ const handleAffiliateDataRequest = async () => {
              <div className='flex items-end h-full'>
               {isLoading ? <Loader/> : beneficio?.some((beneficio) => beneficio.tipo === 'Luna de miel' && (beneficio.estado === "Pendiente" || beneficio.estado === "Entregado"))
  ?
-              <p>Ya se otorgo un beneficio en el año actual.</p>             
+              <p className='text-red-500'>Ya se otorgo un beneficio en el año actual.</p>             
               : <button 
               onClick={() => {
                 // Redirigir a la ruta correspondiente si el usuario está autenticado
