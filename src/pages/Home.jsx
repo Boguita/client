@@ -297,7 +297,7 @@ const handleAffiliateDataRequest = async (dniparams) => {
 
   const getDniImg = async () => {
     affiliateData.dni_img.forEach((dni) => {
-    window.open(`http://backuatrebeneficios.galgoproductora.com/${dni}`, '_blank');
+    window.open(`https://uatre-api.onrender.com/${dni}`, '_blank');
   });
     
   }
@@ -311,7 +311,7 @@ const handleAffiliateDataRequest = async (dniparams) => {
 
     if (libretaImgArray && Array.isArray(libretaImgArray)) {
       libretaImgArray.forEach((libreta) => {
-        window.open(`http://backuatrebeneficios.galgoproductora.com/${libreta}`, '_blank');
+        window.open(`https://uatre-api.onrender.com/${libreta}`, '_blank');
       });
     } else {
       console.log("La propiedad libreta_img no es un arreglo o es null.");
@@ -330,7 +330,7 @@ const handleAffiliateDataRequest = async (dniparams) => {
 
     if (dniImgArray && Array.isArray(dniImgArray)) {
       dniImgArray.forEach((dni) => {
-        window.open(`http://backuatrebeneficios.galgoproductora.com/${dni}`, '_blank');
+        window.open(`https://uatre-api.onrender.com/${dni}`, '_blank');
       });
     } else {
       console.log("La propiedad dni_img no es un arreglo o es null.");
@@ -700,7 +700,7 @@ const toggleFamiliar = id => {
                               <div className='flex-col flex justify-center items-center' key={index}>
                                 
                                 <a
-                                  href={`http://backuatrebeneficios.galgoproductora.com/${recibo}`} // Utiliza la URL de tu API
+                                  href={`https://uatre-api.onrender.com/${recibo}`} // Utiliza la URL de tu API
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-blue-500 hover:underline"
