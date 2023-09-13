@@ -114,7 +114,8 @@ const handleAffiliateDataRequest = async () => {
                 La estadía incluye sólo desayuno.
              </p>
              <div className='flex items-end h-full'>
-              {isLoading ? <Loader/> : beneficio?.some((beneficio) => beneficio.tipo === 'Luna de Miel' && beneficio.estado === "Pendiente" | "Entregado") ?
+              {isLoading ? <Loader/> : beneficio?.some((beneficio) => beneficio.tipo === 'Luna de miel' && (beneficio.estado === "Pendiente" || beneficio.estado === "Entregado"))
+ ?
               <p>Ya se otorgo un beneficio en el año actual.</p>             
               : <button 
               onClick={() => {
@@ -146,7 +147,8 @@ const handleAffiliateDataRequest = async () => {
                Para acceder a este beneficio solo se necesita fotocopia del recibo de sueldo del trabajador o trabajadora afiliada, constancia de embarazo con fecha probable de parto y fotocopia del DNI de la beneficiaria. Se puede gestionar en cualquier sede del gremio.
              </p>
              <div className='flex items-end h-full'>
-              {isLoading ? <Loader/> : beneficio?.some((beneficio) => beneficio.tipo === 'Kit maternal' && beneficio.estado === "Pendiente" || "Entregado") ?
+              {isLoading ? <Loader/> : beneficio?.some((beneficio) => beneficio.tipo === 'Kit maternal' && (beneficio.estado === "Pendiente" || beneficio.estado === "Entregado"))
+ ?
               <p className='text-red-500 font-semibold'>Ya se otorgo un beneficio en el año actual.</p>             
               : 
              <button 
