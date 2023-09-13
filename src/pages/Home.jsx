@@ -1039,7 +1039,7 @@ const toggleFamiliar = id => {
           </Modal>
           <Modal
             isOpen={modalBenefitsOpen}
-            onRequestClose={() => setModalIsOpen(false)}
+            onRequestClose={() => setModalBenefitsOpen(false)}
             contentLabel="Entregar Beneficio"
             style={{
               overlay: {
@@ -1126,7 +1126,7 @@ const toggleFamiliar = id => {
                             />
                           <button
                             className="mt-4 bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
-                            onClick={() => setModalIsOpen(false)}
+                            onClick={() => setModalBenefitsOpen(false)}
                           >
                             Cerrar
                           </button>
