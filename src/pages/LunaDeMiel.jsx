@@ -629,19 +629,19 @@ return (
                   //   </p>
                   // )}
                   }
-                  <div className="flex justify-center items-center flex-col mt-4">
-                  <Files label="Subir foto de REMITO DE ENTREGA" instructions="Recuerde que debe estar firmada por el trabajador." onUpload={handleRegisterAfiliate} />
+                  <div className="flex justify-center items-end h-full flex-col mt-4">
+                  <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={handleRegisterAfiliate}
+                  >
+                    Confirmar
+                  </button>
                   </div>
                 </div>
                 {/* <div></div>
 
                 <div className="flex justify-end pt-6">
-                  <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={handleRegisterAfiliate}
-                  >
-                    Siguiente
-                  </button>
+                  
                 </div> */}
               </>
             )
@@ -702,8 +702,7 @@ return (
                       El beneficio ha sido registrado con éxito.
                     </p>
                     <p className="font-bold text-xl text-gray-500">
-                      Por favor, verifique si se cargaron los datos
-                      correctamente e informe al afiliado que un representante se pondra en contacto.
+                      Por favor, informe al afiliado que un representante se pondra en contacto para continuar con la gestion.
                     </p>
                   </div>
                   <div className="h-full w-full items-end pb-10 justify-center flex">

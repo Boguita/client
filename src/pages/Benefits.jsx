@@ -9,12 +9,14 @@ import Graphics from './Graphics';
 import Calendar from "react-calendar";
 import { IoIosArrowForward, IoIosArrowBack } from 'react-icons/io';
 import Sample from './Calendar';
+import Loader from '../components/Loader';
 
 const Benefits = () => {
 
   const [affiliateData, setAffiliateData] = useState(null);
   const [err, setErr] = useState(null);
   const [beneficio, setBeneficio] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
     const location = useLocation();
   const dni = new URLSearchParams(location.search).get("dni");
 
@@ -61,6 +63,28 @@ const handleAffiliateDataRequest = async () => {
     // Aquí podrías realizar una solicitud a la base de datos para obtener los datos del gráfico correspondientes a la fecha seleccionada
   };
 
+  const handleValidateBenefit = async () => {
+    try {
+      setIsLoading(true);
+      const res = await api.get(`tasks/beneficio/${dni}`,);
+      // Almacenar los datos recibidos de la API
+      setBeneficio(res.data)
+      setIsLoading(false);
+
+        // Restablecer el estado del error si la solicitud tiene éxito
+    }
+    catch (error) {
+      console.log(error.response.data.message)
+      setErr(error.response.data.message);
+    }
+    setIsLoading(false);
+  }
+
+  useEffect(() => {
+    handleValidateBenefit();
+  }
+  , [dni]);
+
 
 
  return (
@@ -74,17 +98,25 @@ const handleAffiliateDataRequest = async () => {
        <div className='flex flex-col md:flex-row pt-20'>
 
 
-        <div className='flex flex-col justify-center md:flex-row gap-4 md:gap-10'>
-          <div className="flex flex-col rounded-lg h-80 w-full md:w-1/4 p-4 bg-white">
+        <div className='flex flex-col justify-center md:flex-row gap-4 md:gap-10'>          
+            
+            <>
+          <div className="flex flex-col rounded-lg h-90 w-full md:w-1/4 p-4 bg-white">
               <img className='mt-2 w-12 h-12' src={PlaneIcon}>
              </img>
              <h3 className='mt-4 lg:text-3xl md:text-2xl font-extrabold'>
                Luna de Miel
              </h3>
              <p className='mt-2 text-sm md:text-base text-gray-500 font-semibold'>
-               Lorem ipsum dolor sit amet consectetur adipiscing elit, rhoncus per leo auctor tincidunt viverra praesent cubilia, vivamus cursus euismod justo erat tortor.
+               Los afiliados a UATRE podrán gozar de 1 semana en forma gratuita (7 días- 6 noches)
+                ingresando el día Lunes y retirándose el día Domingo, en cualquiera de las instalaciones
+                hoteleras, de Necochea y de la Provincia de Cordoba, pertenecientes a nuestra organización.
+                La estadía incluye sólo desayuno.
              </p>
-             <button 
+             <div className='flex items-end h-full'>
+              {isLoading ? <Loader/> : beneficio?.some((beneficio) => beneficio.tipo === 'Luna de Miel' && beneficio.estado === "Pendiente" | "Entregado") ?
+              <p>Ya se otorgo un beneficio en el año actual.</p>             
+              : <button 
               onClick={() => {
                 // Redirigir a la ruta correspondiente si el usuario está autenticado
                 
@@ -97,18 +129,26 @@ const handleAffiliateDataRequest = async () => {
               }}
              className='mt-4 bg-[#0E6F4B] w-36 font-bold text-white rounded-lg p-1 hover:bg-opacity-75'>
                VER BENEFICIO
-             </button>
+             </button> }
+             </div>
           </div>
+          </>
+     
 
-          <div className="flex flex-col rounded-lg h-80 w-full md:w-1/4 p-4 bg-white">
+
+          <div className="flex flex-col rounded-lg h-90 w-full md:w-1/4 p-4 bg-white">
               <img className='mt-2 w-12 h-12' src={MonoIcon}>
              </img>
              <h3 className='mt-4 text-3xl font-extrabold'>
                Kit Nacimiento
              </h3>
              <p className='mt-2 text-gray-500 font-semibold'>
-               Lorem ipsum dolor sit amet consectetur adipiscing elit, rhoncus per leo auctor tincidunt viverra praesent cubilia, vivamus cursus euismod justo erat tortor.
+               Para acceder a este beneficio solo se necesita fotocopia del recibo de sueldo del trabajador o trabajadora afiliada, constancia de embarazo con fecha probable de parto y fotocopia del DNI de la beneficiaria. Se puede gestionar en cualquier sede del gremio.
              </p>
+             <div className='flex items-end h-full'>
+              {isLoading ? <Loader/> : beneficio?.some((beneficio) => beneficio.tipo === 'Kit maternal' && beneficio.estado === "Pendiente" || "Entregado") ?
+              <p className='text-red-500 font-semibold'>Ya se otorgo un beneficio en el año actual.</p>             
+              : 
              <button 
               onClick={() => {
                 // Redirigir a la ruta correspondiente si el usuario está autenticado
@@ -123,17 +163,19 @@ const handleAffiliateDataRequest = async () => {
              className='mt-4 bg-[#006084] w-36 font-bold text-white rounded-lg p-1 hover:bg-opacity-75'>
                VER BENEFICIO
              </button>
+             }
+             </div>
           </div>
-          <div className="flex flex-col rounded-lg h-80 w-full md:w-1/4 p-4 bg-white">
+          <div className="flex flex-col rounded-lg h-90 w-full md:w-1/4 p-4 bg-white">
               <img className='mt-2 w-12 h-12' src={Libro}>
              </img>
              <h3 className='mt-4 text-3xl font-extrabold'>
                Kit Escolar
              </h3>
              <p className='mt-2 text-gray-500 font-semibold'>
-               Lorem ipsum dolor sit amet consectetur adipiscing elit, rhoncus per leo auctor tincidunt viverra praesent cubilia, vivamus cursus euismod justo erat tortor.
-             </p>
-             <button 
+Cada año, al comienzo del ciclo escolar, desde el gremio se distribuyen guardapolvos y un kit de mochila y útiles escolares para los hijos de cada trabajador. Se debe gestionar en la sede del gremio que se encuentre más cercana al domicilio del trabajador o trabajadora.             </p>
+             <div className='flex items-end h-full'>
+             <button
              onClick={() => {
                 // Redirigir a la ruta correspondiente si el usuario está autenticado
                 
@@ -148,6 +190,8 @@ const handleAffiliateDataRequest = async () => {
              className='mt-4 bg-[#23A1D8] w-36 font-bold text-white rounded-lg p-1 hover:bg-opacity-75'>
                VER BENEFICIO
              </button>
+             </div>
+             
           </div>
           
           {/* Repeat similar code blocks for other items */}

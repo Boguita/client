@@ -326,7 +326,7 @@ const handleImageUpload = async () => {
    <div className="flex flex-col pt-10 rounded-3xl items-center w-2/3 h-2/3 bg-white">
     <div className="flex flex-col justify-center items-center h-20">
         <h2 className="text-[#006084] text-4xl font-bold">Registro del Trabajador</h2>
-        <p className="text-gray-500 font-semibold mt-1">No existe afiliado registrado con ese DNI, para continuar carga los datos correspondientes.</p>
+        <p className="text-red-500 font-semibold mt-1">No existe afiliado registrado con ese DNI, para continuar carga los datos correspondientes.</p>
    </div>
       
       <form

@@ -470,7 +470,7 @@ const KitEscolar = () => {
                           key={familiar.id}
                           className="flex justify-around pt-1"
                         >
-                          <PiBackpackDuotone className="text-gray-400" />
+                          <TbTools  className="text-gray-400" />
                           <p
                             className={`px-1 text-xs font-semibold text-gray-400`}
                           >
@@ -487,7 +487,7 @@ const KitEscolar = () => {
                                 : "SIN ENTREGAR"}
                             </strong>
                           </p>
-                          <TbTools className="text-gray-400" />
+                          <PiBackpackDuotone className="text-gray-400" />
                           <p
                             className={`px-1 text-xs font-semibold text-gray-400`}
                           >
@@ -853,8 +853,7 @@ const KitEscolar = () => {
                       El beneficio ha sido registrado con éxito.
                     </p>
                     <p className="font-bold text-xl w-3/4 text-gray-500">
-                      Por favor, verifique si se cargaron los datos
-                      correctamente y haga entrega de los items seleccionados.
+                      Por favor, haga entrega de los items seleccionados e informe al afiliado que un representante se pondra en contacto para retirar el resto de los items si correspondiere.
                     </p>
 
                     <div>
