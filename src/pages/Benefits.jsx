@@ -116,7 +116,7 @@ const handleAffiliateDataRequest = async () => {
              <div className='flex items-end h-full'>
               {isLoading ? <Loader/> : beneficio?.some((beneficio) => beneficio.tipo === 'Luna de miel' && (beneficio.estado === "Pendiente" || beneficio.estado === "Entregado"))
  ?
-              <p className='text-red-500'>Ya se otorgo un beneficio en el año actual.</p>             
+              <p className='text-red-500 font-semibold'>Ya se otorgo un beneficio en el año actual.</p>             
               : <button 
               onClick={() => {
                 // Redirigir a la ruta correspondiente si el usuario está autenticado
@@ -129,7 +129,7 @@ const handleAffiliateDataRequest = async () => {
                  
               }}
              className='mt-4 bg-[#0E6F4B] w-36 font-bold text-white rounded-lg p-1 hover:bg-opacity-75'>
-               VER BENEFICIO
+               SOLICITAR
              </button> }
              </div>
           </div>
@@ -163,7 +163,7 @@ const handleAffiliateDataRequest = async () => {
                  
               }}
              className='mt-4 bg-[#006084] w-36 font-bold text-white rounded-lg p-1 hover:bg-opacity-75'>
-               VER BENEFICIO
+               SOLICITAR
              </button>
              }
              </div>
@@ -190,7 +190,7 @@ Cada año, al comienzo del ciclo escolar, desde el gremio se distribuyen guardap
               }}
              
              className='mt-4 bg-[#23A1D8] w-36 font-bold text-white rounded-lg p-1 hover:bg-opacity-75'>
-               VER BENEFICIO
+               SOLICITAR
              </button>
              </div>
              

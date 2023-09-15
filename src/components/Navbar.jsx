@@ -54,25 +54,42 @@ const Navbar = () => {
     >
       
       <div className="h-full w-full">
-       <Link to="/home" className={`flex items-center p-2 rounded-lg dark:text-white   ${
+       <Link to="/homeInfo" className={`flex items-center p-2 rounded-lg dark:text-white   ${
               location.pathname === '/dashboard' ? 'text-blue-500' : 'text-gray-700'
             }`}>
           <img src={Logo} className="h-full mt-6 mb-6 mr-3 sm:h-full w-full" alt="UATRE Logo" />
        </Link>
-        <ul class="space-y-5 font-medium ">
+        <ul className="space-y-5 font-medium ">
             <li>
-              <Link to="/homeInfo" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                   <AiFillHome className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" /> 
-                  <span className={`ml-3 ${location.pathname === '/home' ? 'text-blue-500' : 'text-white'}`}>Paso 1</span>
-              </Link>
+              <p  className={`flex items-center p-2 text-gray-900 ${/^\/home(\/\w+)?$/.test(location.pathname)  || location.pathname === '/registro-afiliado' ? 'text-blue-500 bg-gray-700' : 'text-white'} rounded-lg  hover:bg-gray-700 `}>
+                   <span className="flex-shrink-0 text-white text-2xl transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white">
+                  1°
+                  </span>
+                  <span className={`ml-3 ${/^\/home(\/\w+)?$/.test(location.pathname) || location.pathname === '/registro-afiliado' ? 'text-blue-500' : 'text-white'}`}>Paso</span>
+              </p>
           </li>
           <li>
-               <Link to="/registro-afiliado" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                  <BsFillPeopleFill className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" />
-                   <span className={`ml-3 ${location.pathname === '/registro-afiliado' | '/home' ? 'text-blue-500' : 'text-white'}`}>Paso 2</span>
+               <p  className={`flex items-center p-2 text-gray-900 ${location.pathname === '/beneficios' ? 'text-blue-500 bg-gray-700' : 'text-white'} rounded-lg  hover:bg-gray-700 `}>
+                    <span className="flex-shrink-0 text-white text-2xl transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white">
+                  2°
+                  </span>
+                   <span className={`ml-3 ${location.pathname === '/beneficios' | '/home' ? 'text-blue-500' : 'text-white'}`}>Paso</span>
                   {/* <span class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">Gold</span> */}
-               </Link>
+               </p>
             </li>
+
+           <li>
+               <p className={`flex items-center p-2 text-gray-900 ${location.pathname === '/luna-de-miel' || location.pathname === '/kit-escolar' || location.pathname === '/kit-maternal' ? 'text-blue-500 bg-gray-700' : 'text-white'} rounded-lg  hover:bg-gray-700 `}>
+                  <span className="flex-shrink-0 text-white text-2xl transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white">
+                  3°
+                  </span>
+                   <span className={`ml-3 ${location.pathname === '/luna-de-miel' || location.pathname === '/kit-escolar' || location.pathname === '/kit-maternal' ? 'text-blue-500 ' : 'text-white'}`}>Paso</span>
+                  {/* <span class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">Gold</span> */}
+               </p>
+            </li>
+
+        
+            
             
             <li>
                <Link to='/profile' className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
@@ -102,7 +119,7 @@ const Navbar = () => {
                </Link>
             </li>  
              <li >
-               <Link className="flex justify-center"  to="/home" > 
+               <Link className="flex justify-center"  to="/homeInfo" > 
                   <button className="btn just mt-8">                                 
                   {(<span>Nueva Solicitud</span>)}           
                   </button>

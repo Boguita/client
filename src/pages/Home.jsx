@@ -63,12 +63,13 @@ const Home = () => {
   
   // Función para manejar las peticiones a la API para los datos de afiliados
 const handleAffiliateDataRequest = async (dniparams) => {
-  if(!dniparams) {
-  if (!dni) {
+  
+
+  if (!dni && !dniparams) {
     setErr('Por favor, ingresa un número de DNI antes de hacer la solicitud.');
     return;
   }
-}
+
 
   try {
     const res = await api.get(`users/afiliados/${dni ? dni : dniparams}`);
@@ -298,7 +299,7 @@ const handleAffiliateDataRequest = async (dniparams) => {
 
   const getDniImg = async () => {
     affiliateData.dni_img.forEach((dni) => {
-    window.open(`https://uatre-api.onrender.com/${dni}`, '_blank');
+    window.open(`https://backuatrebeneficios.galgoproductora.com/${dni}`, '_blank');
   });
     
   }
@@ -312,7 +313,7 @@ const handleAffiliateDataRequest = async (dniparams) => {
 
     if (libretaImgArray && Array.isArray(libretaImgArray)) {
       libretaImgArray.forEach((libreta) => {
-        window.open(`https://uatre-api.onrender.com/${libreta}`, '_blank');
+        window.open(`https://backuatrebeneficios.galgoproductora.com/${libreta}`, '_blank');
       });
     } else {
       console.log("La propiedad libreta_img no es un arreglo o es null.");
@@ -331,7 +332,7 @@ const handleAffiliateDataRequest = async (dniparams) => {
 
     if (dniImgArray && Array.isArray(dniImgArray)) {
       dniImgArray.forEach((dni) => {
-        window.open(`https://uatre-api.onrender.com/${dni}`, '_blank');
+        window.open(`https://backuatrebeneficios.galgoproductora.com/${dni}`, '_blank');
       });
     } else {
       console.log("La propiedad dni_img no es un arreglo o es null.");

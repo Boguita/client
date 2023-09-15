@@ -17,6 +17,7 @@ const LunaDeMiel = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [dni, setDni] = useState("");
+  const [useConyugue, useSetConyugue] = useState(false);
  
   const [currentStep, setCurrentStep] = useState(1);
   const [validationErrors, setValidationErrors] = useState({});
@@ -308,6 +309,7 @@ const handleRegisterAfiliate = async (e) => {
 
 
 const validateFields = () => {
+  if(useConyugue) return true;
   setValidationErrors({}); // Limpiar cualquier error de validación previo
   const requiredFields = {
     familiares: ['name', 'dni', 'fecha_de_nacimiento', 'tel'],
@@ -402,6 +404,10 @@ const validateFields = () => {
 //   }
 // };
 
+ const handleUseConyugue = () => {
+  useSetConyugue(true);
+  };
+
 
 
 
@@ -444,21 +450,23 @@ return (
           ) : (
             currentStep === 1 && (
               <>
-                <div className="rounded-lg  p-8  bg-white ">
+                <div ref={animationParent} className="rounded-lg  p-8  bg-white ">
                   <h3 className="text-black text-2xl font-bold">
                     Datos del Conyugue
                   </h3>
 
                   {/* Display familiares checkboxes here */}
-                  {familiares.length > 0 ? (
+                  { useConyugue &&
+                  familiares.length > 0 ? (
                     familiares.map((familiar) => (
-                      <div key={familiar.id} className="flex justify-center">
-                        <div className="flex flex-col w-[95%] ">
+                      <div  key={familiar.id}  className="flex justify-center">
+                        <div  className="flex flex-col w-[95%] ">
                           <label className="font-semibold mt-4 ">
                             Nombre y Apellido
                           </label>
 
                           <div
+                          
                             key={familiar.id}
                             className={`flex  items-center mt-2 justify-between border-l-4 border-[#006084] w-[95%] bg-gray-200  `}
                           >
@@ -518,6 +526,12 @@ return (
                     ))
                   ) : (
                     <div className="flex flex-col gap-2 px-4 w-full">
+                      {familiares.length > 0 &&
+                      <>
+                      <p className="text-red-500 font-semibold mt-3">Ya existe una conyugue registrada, ¿Deseas utilizar estos datos?</p>
+                      <button onClick={() => handleUseConyugue()} className="bg-[#006084] w-1/3 font-bold text-white rounded-lg p-2 hover:bg-opacity-75">Usar datos existentes</button>
+                      </>
+                      }
                       <label className="font-semibold mt-4 ">
                         Nombre y Apellido
                       </label>
@@ -569,10 +583,15 @@ return (
                   )}
                 </div>
 
+                
+                
+                   
                 <div className="rounded-lg  p-8   bg-white ">
                   <h3 className="text-black text-2xl font-bold mb-4">
                     Libreta de Matrimonio
                   </h3>
+                  {!useConyugue ? (
+                  <>
                   <label className="font-semibold">
                     Número de Libreta
                   </label>
@@ -587,9 +606,16 @@ return (
                     {validationErrors.semanas && (
                       <p className="text-red-500">{validationErrors.semanas}</p>
                     )}
+                    
                   </div>
+                  </>
+                  ) : 
+                  <>
+                    <h3 className="font-bold text-green-500">Ya registrada en el sistema.</h3>
+                  </>
+                  }
 
-             {beneficio[0].familiar_id === null &&                  
+                    {!useConyugue &&     
                   <div className="flex flex-col justify-center items-center mt-4 rounded-xl min-h-[6rem] w-[100%] p-2">
                     <p className="font-bold">Subir foto de libreta:</p>
                     <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
@@ -629,9 +655,9 @@ return (
                   //   </p>
                   // )}
                   }
-                  <div className="flex justify-center items-end h-full flex-col mt-4">
+                  <div className="flex justify-end items-end h-[60%] flex-col mt-4">
                   <button
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    className="bg-[#0E6F4B] w-1/3 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
                     onClick={handleRegisterAfiliate}
                   >
                     Confirmar

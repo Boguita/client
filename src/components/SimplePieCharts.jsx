@@ -11,6 +11,53 @@ const SimplePieCharts = () => {
   const [err, setErr] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+
+  const handleDownload = async (index) => {
+    if (index === 2) {
+    try {
+      const res = await api.get(`tasks/luna_de_miel/excel`, {responseType: 'blob'});
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `beneficios-LunadeMiel.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+ if (index === 1) {
+    try {
+      const res = await api.get(`tasks/kit-escolar/excel`, {responseType: 'blob'});
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `beneficios-KitEscolar.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+  if (index === 0) {
+      try {
+      const res = await api.get(`tasks/kit-maternal/excel`, {responseType: 'blob'});
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `beneficios-KitMaternal.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+    }
+    catch (error) {
+      console.log(error);
+    }
+}
+}
+
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -105,7 +152,7 @@ const SimplePieCharts = () => {
                 ></span>
                 {entry.label} {entry.percent}%
                 <br></br>
-                <a className='text-sm cursor-pointer font-medium text-gray-500 flex'>Descargar listado {<FiDownload className='ml-2'/>}</a>
+                <a onClick={() => handleDownload(index)} className='text-sm cursor-pointer font-medium text-gray-500 flex'>Descargar listado {<FiDownload className='ml-2'/>}</a>
                 
               </li>
             ))}

@@ -1,9 +1,20 @@
 import React, { useState } from 'react';
 import {AiOutlineDelete} from 'react-icons/ai';
 import {IoIosArrowForward, IoIosArrowBack} from 'react-icons/io';
+import Modal from 'react-modal';
+import Avatar from '../assets/img/avatar.png';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
+import {AiOutlineWarning} from 'react-icons/ai';
+import {AiOutlineCheckCircle} from 'react-icons/ai';
+import api from '../common/Axiosconfig';
 
 const TableAfiliados = ({ data, rowsPerPage = 8,  showPagination = true }) => {
   const [currentPage, setCurrentPage] = useState(0);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedAfiliado, setSelectedAfiliado] = useState(null);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+    const [animationParent] = useAutoAnimate();
+    const [currentStep, setCurrentStep] = useState(1);
   // Estilo en línea en el componente
 const whiteRowClass = 'bg-white';
 const grayRowClass = 'bg-gray-200';
@@ -25,12 +36,29 @@ const grayRowClass = 'bg-gray-200';
     }
   };
 
+const handleOpenModal = (afiliado) => {
+  setSelectedAfiliado(afiliado);
+  setOpenModal(true);
+};
+
+const deleteAfiliado = (afiliado) => {
+  setSelectedAfiliado(afiliado);
+  setOpenDeleteModal(true);
+}
+
+const handleDeleteAfiliado = async () => {
+  const res = await api.delete(`/users/afiliados/${selectedAfiliado._id}`);
+  console.log(res.data)
+  setCurrentStep(2);
+}
+
+
   return (
-    <div className="h-full w-full bg-gray-200">
-      <div className="flex flex-col">
-        <div className="mt-4 bg-white min-h-[35rem] p-8 rounded-xl">
-          <table className="min-w-full  divide-y-4 divide-[#006084]">
-            <thead>
+    <div ref={animationParent} className="h-full w-full bg-gray-200">
+      <div  className="flex flex-col">
+        <div ref={animationParent} className="mt-4 bg-white min-h-[35rem] p-8 rounded-xl">
+          <table   className="min-w-full  divide-y-4 divide-[#006084]">
+            <thead >
               <tr>
                 <th className="px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Nombre
@@ -56,9 +84,9 @@ const grayRowClass = 'bg-gray-200';
               </tr>
             </thead>
             
-            <tbody>
+            <tbody ref={animationParent}>
               {data?.slice(startIndex, endIndex).map((row, index) => (
-                <tr key={index} className={`text-gray-600 text-sm font-semibold ${index % 2 === 0 ? grayRowClass : whiteRowClass }`}>
+                <tr  key={index} className={`text-gray-600 text-sm font-semibold ${index % 2 === 0 ? grayRowClass : whiteRowClass }`}>
                   <td className="px-6 capitalize py-3 whitespace-no-wrap">{row.name}</td>
                   <td className="px-6 py-3 whitespace-no-wrap">{row.correo}</td>
                   <td className="px-6 py-3 whitespace-no-wrap">{row.tel}</td>
@@ -66,8 +94,8 @@ const grayRowClass = 'bg-gray-200';
                   <td className="px-6 py-3 capitalize whitespace-no-wrap">{row.domicilio}</td>                
                   <td className="px-6 py-3 whitespace-no-wrap">{row.dni}</td>
                   <td className="flex items-center px-6 py-3 whitespace-no-wrap">
-                    <button className="text-[#006084] hover:text-blue-900">Ver ficha</button>
-                    <AiOutlineDelete onClick={() => console.log("seguro que desea borrar?")} className="text-[#006084] cursor-pointer hover:text-red-900 ml-2"/>
+                  <button onClick={() => handleOpenModal(row)} className="text-[#006084] hover:text-blue-900">Ver ficha</button>
+                    <AiOutlineDelete onClick={() => deleteAfiliado(row)} className="text-[#006084] cursor-pointer hover:text-red-900 ml-2"/>
                   </td>
                 </tr>
               ))}
@@ -112,7 +140,194 @@ const grayRowClass = 'bg-gray-200';
   </div>
 )}
       </div>
+       <Modal
+            isOpen={openModal}
+            onRequestClose={() => setOpenModal(false)}
+            contentLabel="Datos del Afiliado"
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+              },
+              content: {
+                border: "none",
+                background: "none",
+                color: "black",
+                top: "50%",
+                left: "55%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+                padding: "2rem",
+                width: "80%",
+                maxWidth: "40rem",
+              },
+            }}
+          >
+            
+            {/* {err && <p className="text-red-500">{err}</p>} */}
+            <div  className="mb-2">
+            {selectedAfiliado && (
+              <div  className='flex justify-center h-full w-full'>
+                    <div ref={animationParent}  className="flex flex-col rounded-2xl w-[70%]">
+                          
+                          
+                          <img className='mb-[-5px]' src={Avatar}>
+                                </img>
+
+
+                              <div className=' p-5 bg-white rounded-b-2xl grid gap-4'>
+                                <p className='mt-2 capitalize text-gray-800 font-semibold'><strong>{selectedAfiliado.name}</strong></p>
+                                <div className='grid grid-cols-2'>
+                    <div >   
+
+                      <p><strong>DNI</strong></p>
+                      <p className='text-gray-500 font-semibold'>{selectedAfiliado.dni}</p>
+
+                      <p ><strong>CUIT</strong></p>
+                      <p className='text-gray-500 font-semibold'> {selectedAfiliado.cuit}</p>
+
+                      <p><strong>Nacionalidad</strong></p>
+                      <p className='text-gray-500 font-semibold'>{selectedAfiliado.nacionalidad}</p>
+
+                      <p><strong>Sexo</strong></p>
+                      <p className='text-gray-500 font-semibold'>{selectedAfiliado.sexo}</p>
+
+                      <p><strong>Provincia</strong></p>
+                      <p className='text-gray-500 font-semibold'>{selectedAfiliado.provincia}, {selectedAfiliado.ciudad}</p>
+                    </div>
+
+                    <div>
+                      
+                      <p><strong>Estado Civil</strong></p>
+                      <p className='text-gray-500 font-semibold'>{selectedAfiliado.estado_civil}</p>
+
+                      <p><strong>Fecha de Nacimiento</strong></p>
+                      <p className='text-gray-500 font-semibold'>{selectedAfiliado.fecha_de_nacimiento}</p>
+
+                      <p><strong>Teléfono</strong></p>
+                      <p className='text-gray-500 font-semibold'>{selectedAfiliado.tel}</p>
+
+                      <p><strong>Email</strong></p>
+                      <p className='text-gray-500 font-semibold'>{selectedAfiliado.correo}</p>
+
+                      <p><strong>Domicilio</strong></p>
+                      <p className='text-gray-500 font-semibold'>{selectedAfiliado.domicilio}</p>
+
+                    
+                    </div>
+                    </div>
+
+                        <div className="flex flex-col mt-4 items-center">
+                          <button
+                            className="mt-4 bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                            onClick={() => setOpenModal(false)}
+                          >
+                            Cerrar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    </div>
+                  )}
+            </div>                          
+
+       
+          </Modal>
+           <Modal
+            isOpen={openDeleteModal}
+            onRequestClose={() => setOpenDeleteModal(false)}
+            contentLabel="Eliminar Afiliado"
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+              },
+              content: {
+                border: "none",
+                background: "white",
+                color: "black",
+                top: "50%",
+                left: "55%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+                padding: "2rem",
+                width: "80%",
+                maxWidth: "40rem",
+              },
+            }}
+          >
+            
+            {/* {err && <p className="text-red-500">{err}</p>} */}
+            <div  className="mb-2">
+            {selectedAfiliado && (
+              <div  className='flex justify-center h-full w-full'>
+                    <div ref={animationParent}  className="flex flex-col rounded-2xl w-[70%]">
+                      {currentStep === 1 &&
+                      <>
+                      <div className='flex flex-col items-center justify-center '>
+                      <AiOutlineWarning className='text-red-600 text-7xl'/>
+                      <p>¿Estas seguro que deseas eliminar este afiliado?</p>
+                      </div>
+                          
+                         
+                    
+                  
+                    
+
+                        <div className="flex mt-4 justify-around items-center">
+                           <button
+                            className="mt-4 bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                            onClick={handleDeleteAfiliado}
+                          >
+                            Confirmar
+                          </button>
+                          <button
+                            className="mt-4 bg-gray-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                            onClick={() => setOpenDeleteModal(false)}
+                          >
+                            Cerrar
+                          </button>
+                        </div>
+                        </>
+                        }
+                        {currentStep === 2 &&
+                      <>
+                      <div className='flex flex-col items-center justify-center '>
+                      <AiOutlineCheckCircle className='text-green-600 text-7xl'/>
+                      <p className='text-xl font-bold mt-2'>El afiliado se eliminó correctamente.</p>
+                      </div>
+                          
+                         
+                    
+                  
+                    
+
+                        <div className="flex mt-4 justify-center items-end">                        
+                          <button
+                            className="mt-4 bg-gray-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                            onClick={() => setOpenDeleteModal(false)}
+                          >
+                            Cerrar
+                          </button>
+                        </div>
+                        </>
+                        }
+                        </div>
+                        
+                        
+                      </div>
+                    
+                    
+                      
+                  )}
+            </div>                          
+
+       
+          </Modal>
     </div>
+
   );
 };
 

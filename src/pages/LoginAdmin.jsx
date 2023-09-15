@@ -41,7 +41,7 @@ const Login = () => {
       setIsLoading(true);      
       const res = await loginAdmin(inputs)             
       setIsLoading(false);   
-      navigate("/dashboard");  
+      navigate("/admin/dashboard");  
     } catch (err) {
       console.log(err)
       setError(err);

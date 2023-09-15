@@ -64,6 +64,7 @@ const [error, setError] = useState(null);
 const handleNextStep = async () => {
   
   setError(null); // Limpiar cualquier error previo
+  
   setCurrentStep(currentStep + 1);
 };
 
@@ -730,18 +731,15 @@ return (
           )}
           
         </div>
-        {/* {currentStep === 2 && (
+         {/* {currentStep === 3 && (
             <>
-                           
                   <div className="flex flex-col h-full w-full justify-end items-center space-y-4">
-                   <Files label="Subir foto de REMITO DE ENTREGA" instructions="Recuerde que debe estar firmada por el trabajador." id={beneficio[0].id}  />
-
+                    <img className="w-[4rem] text-[#006084]" src={Mono} />
                     <p className="font-extrabold text-3xl text-[#006084]">
                       El beneficio ha sido registrado con éxito.
                     </p>
-                    <p className="font-bold text-xl text-gray-500">
-                      Por favor, verifique si se cargaron los datos
-                      correctamente.
+                    <p className="font-bold text-xl w-[80%] text-gray-500">
+                      Por favor, haga entrega de los items correspondientes al beneficio.
                     </p>
                   </div>
                   <div className="h-full w-full items-end pb-10 justify-center flex">
@@ -752,10 +750,10 @@ return (
                       <span>VOLVER</span>
                     </button>
                   </div>
-               
-             
-            </>
-          )} */}
+                </>
+              )}
+             */}
+          
         {currentStep === 2 && (
             <>
               {error ? (
@@ -784,8 +782,7 @@ return (
                       El beneficio ha sido registrado con éxito.
                     </p>
                     <p className="font-bold text-xl w-[80%] text-gray-500">
-                      Por favor, verifique si se cargaron los datos
-                      correctamente e informe al afiliado que un representante se pondra en contacto o haga entrega si correspondiere.
+                      Por favor, informe al afiliado que un representante se pondra en contacto para continuar con la gestion del beneficio.
                     </p>
                   </div>
                   <div className="h-full w-full items-end pb-10 justify-center flex">
@@ -862,7 +859,7 @@ return (
                           </div>
 
                           <label className="font-semibold mt-2 ">
-                            Fecha de Otorgamiento
+                            Fecha de Solicitud
                           </label>
 
                           <div
