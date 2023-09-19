@@ -6,7 +6,7 @@ export const AuthContext = createContext();
   
 
 export const AuthContexProvider = ({ children }) => {
-  const navigate = useNavigate();
+
   const [currentUser, setCurrentUser] = useState(
     JSON.parse(localStorage.getItem("user")) || null
   );
@@ -43,7 +43,6 @@ export const AuthContexProvider = ({ children }) => {
     try {
       await axios.post("https://backuatrebeneficios.galgoproductora.com/api/auth/logout");
       setCurrentUser(null);
-      navigate("/");
     } catch (error) {
       console.log(error);
     }
