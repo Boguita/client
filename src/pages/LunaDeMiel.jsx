@@ -50,6 +50,7 @@ const [animationParent] = useAutoAnimate();
     fecha_de_nacimiento: "",
     tel: "",
     categoria: "Conyugue",
+    numero_libreta: "",
     id_afiliado: "",
  } );
 
@@ -92,6 +93,12 @@ const handleNextStep = async () => {
         [name]: value,
       },
     }));
+    if(name === 'numero_libreta') {
+    setFamiliares (prevFamiliares => ({
+      ...prevFamiliares,
+      [name]: value,
+    }));
+  }
   }
     
   };
@@ -102,6 +109,7 @@ const handleNextStep = async () => {
 useEffect(() => {
   const familia = familiares;
   console.log('Estado de beneficios actualizado:', beneficio[0].familiar_id); 
+  console.log('Estado de familiares actualizado:', familiares);
 }, [familiares, beneficio, selectedFiles]);
 
 
@@ -404,9 +412,9 @@ const validateFields = () => {
 //   }
 // };
 
- const handleUseConyugue = () => {
-  useSetConyugue(true);
-  };
+//  const handleUseConyugue = () => {
+//   useSetConyugue(true);
+//   };
 
 
 
@@ -456,7 +464,7 @@ return (
                   </h3>
 
                   {/* Display familiares checkboxes here */}
-                  { useConyugue &&
+                  {/* {
                   familiares.length > 0 ? (
                     familiares.map((familiar) => (
                       <div  key={familiar.id}  className="flex justify-center">
@@ -524,14 +532,14 @@ return (
                         </div>
                       </div>
                     ))
-                  ) : (
+                  ) : ( */}
                     <div className="flex flex-col gap-2 px-4 w-full">
-                      {familiares.length > 0 &&
+                      {/* {familiares.length > 0 &&
                       <>
                       <p className="text-red-500 font-semibold mt-3">Ya existe una conyugue registrada, ¿Deseas utilizar estos datos?</p>
                       <button onClick={() => handleUseConyugue()} className="bg-[#006084] w-1/3 font-bold text-white rounded-lg p-2 hover:bg-opacity-75">Usar datos existentes</button>
                       </>
-                      }
+                      } */}
                       <label className="font-semibold mt-4 ">
                         Nombre y Apellido
                       </label>
@@ -580,7 +588,7 @@ return (
                         <p className="text-red-500 ">{validationErrors.tel}</p>
                       )}
                     </div>
-                  )}
+                  {/* )} */}
                 </div>
 
                 
@@ -590,8 +598,8 @@ return (
                   <h3 className="text-black text-2xl font-bold mb-4">
                     Libreta de Matrimonio
                   </h3>
-                  {!useConyugue ? (
-                  <>
+                  {/* {!useConyugue ? (
+                  <> */}
                   <label className="font-semibold">
                     Número de Libreta
                   </label>
@@ -608,14 +616,14 @@ return (
                     )}
                     
                   </div>
-                  </>
+                  {/* </>
                   ) : 
                   <>
                     <h3 className="font-bold text-green-500">Ya registrada en el sistema.</h3>
                   </>
-                  }
-
-                    {!useConyugue &&     
+                  } */}
+{/* 
+                    {!useConyugue &&      */}
                   <div className="flex flex-col justify-center items-center mt-4 rounded-xl min-h-[6rem] w-[100%] p-2">
                     <p className="font-bold">Subir foto de libreta:</p>
                     <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
@@ -649,12 +657,8 @@ return (
                       <li key={index}>{file.name}</li>
                     ))}
                   </div>
-                  // {validationErrors.libreta && (
-                  //   <p className="text-red-500">
-                  //     {validationErrors.libreta}
-                  //   </p>
-                  // )}
-                  }
+           
+                  {/* } */}
                   <div className="flex justify-end items-end h-[60%] flex-col mt-4">
                   <button
                     className="bg-[#0E6F4B] w-1/3 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"

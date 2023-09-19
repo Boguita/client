@@ -11,6 +11,7 @@ import { useRef } from 'react';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useLocation, useParams } from 'react-router-dom';
 import Files from '../components/Files';
+import Loader from '../components/Loader';
 
 
 
@@ -24,12 +25,16 @@ const Home = () => {
    const [showButton, setShowButton] = useState(true);
    const [familiares, setFamiliares] = useState([]);
    const [modalIsOpen, setModalIsOpen] = useState(false);
+   const [modalReciboIsOpen, setModalReciboIsOpen] = useState(false);
+   const [selectedFiles, setSelectedFiles] = useState([]);
      const [beneficiosOtorgados, setBeneficiosOtorgados] = useState([]);
   const [showEmpleadorPopup, setShowEmpleadorPopup] = useState(false);
   const [expandedFamiliars, setExpandedFamiliars] = useState([]);
   const [validationErrors, setValidationErrors] = useState({});
   const [modalConyugueIsOpen, setModalConyugueIsOpen] = useState(false);
   const [modalBenefitsOpen, setModalBenefitsOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
 
   const location = useLocation();
   const { dniparams } = useParams();
@@ -94,7 +99,7 @@ const handleAffiliateDataRequest = async (dniparams) => {
       ...prevFormData,
       id_afiliado: res.data.idafiliados,
     }));
-    
+    setIsLoading(false);
      // Restablecer el estado del error si la solicitud tiene éxito
   } catch (error) {
     
@@ -103,7 +108,7 @@ const handleAffiliateDataRequest = async (dniparams) => {
     
     navigate('/registro-afiliado')
   }
- 
+ setIsLoading(false);
 };
 
   const handleDniImgChange = (e) => {
@@ -404,6 +409,40 @@ const toggleFamiliar = id => {
   }
 };
 
+ const handleReciboSueldoChange = (e) => {
+    const filesArray = Array.from(e.target.files);
+    const maxFiles = 2;
+    if (filesArray.length > maxFiles) {
+      alert(`Por favor, selecciona un máximo de ${maxFiles} archivos.`);
+      e.target.value = null;
+      return
+    }
+setSelectedFiles((prevFormData) => ({
+    ...prevFormData,
+    recibo_sueldo: filesArray,
+  }));
+
+    
+  };
+
+const handleRecibo = async () => {
+  try {
+      setIsLoading(true);
+      const reciboSueldoFormData = new FormData();
+      reciboSueldoFormData.append("dni", dni ? dni : dniparams);
+      selectedFiles.recibo_sueldo.forEach((reciboSueldo) => {
+        reciboSueldoFormData.append("recibo_sueldo", reciboSueldo);
+      });
+    const res = await api.put(`uploads/images-recibo`, reciboSueldoFormData);
+    res.status === 200 && setSuccessMessage("Los datos se cargaron correctamente.");
+    setSelectedFiles([]);
+    setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+}
+
+
  const handleUpdateBeneficio = async () => {
 
 
@@ -626,11 +665,18 @@ const toggleFamiliar = id => {
                 {/* Agregar aquí otros campos de los familiares */}
               </li>
             )}
+             { beneficiosOtorgados && beneficiosOtorgados.length > 0 ? (
+            <div>
+              <span className='text-green-500 font-semibold'>Existen beneficios pendientes de entrega.</span>
+            </div>
+            ) : ( "" )
+            }
             <div onClick={getLibretaImg}>
             <button className='mt-4 bg-[#006084] font-bold text-white rounded-lg p-2 hover:bg-opacity-75'
             
             >Ver libreta de matrimonio</button>
             </div>
+           
           </div>
         ))}
     </ul>
@@ -638,12 +684,12 @@ const toggleFamiliar = id => {
   </div>
 ) : (
   <>  <p className='text-gray-500'>No hay datos de familiares.</p>
-   <button 
+   {/* <button 
               className='mt-4 bg-[#0E6F4B] font-bold text-white rounded-lg p-2 hover:bg-opacity-75'
               onClick={() => 
               setModalConyugueIsOpen(true)}>
                 + CARGAR CONYUGUE
-              </button>
+              </button> */}
   </>
 
 )
@@ -711,6 +757,8 @@ const toggleFamiliar = id => {
                                 </a>
                               </div>
                             ))}
+                                                            <button onClick={() => setModalReciboIsOpen(true)} className='mt-4 bg-[#006084] font-bold text-white rounded-lg p-2 hover:bg-opacity-75'>Cargar nuevo Recibo</button>
+
                           
                           </div>
                         )}
@@ -887,6 +935,99 @@ const toggleFamiliar = id => {
             </div>
           </Modal>
 
+
+          <Modal            
+            isOpen={modalReciboIsOpen}
+            onRequestClose={() => setModalReciboIsOpen(false)}
+            contentLabel="Subir Recibo de Sueldo"
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+              },
+              content: {
+                border: "none",
+                background: "white",
+                color: "black",
+                top: "50%",
+                left: "50%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+                padding: "2rem",
+                width: "80%",
+                maxWidth: "40rem",
+              },
+            }}
+          >
+            <h2 className="text-2xl font-bold mb-4">Añadir Recibo de Sueldo</h2>
+            {err && <p className="text-red-500">{err}</p>}
+           
+             
+            <div className="flex flex-col justify-center items-center mt-4 rounded-xl min-h-[6rem] w-[100%] bg-gray-200 p-2">
+              <p className="font-bold">Subir Recibo:</p>
+              <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
+                PDF, JPEG, JPG, PNG.
+              </p>
+
+              <label
+                htmlFor="recibo_sueldo"
+                className="cursor-pointer mt-auto mb-2"
+              >
+                <FiDownload className="text-5xl text-[#23A1D8]" />
+              </label>
+
+              <input
+                type="file"
+                name="recibo_sueldo"
+                id="recibo_sueldo"
+                multiple
+                required
+                style={{ display: "none" }}
+                onChange={handleReciboSueldoChange}
+              />
+
+              <p className="text-xs font-semibold text-gray-600 text-center">
+                Click aquí para cargar o{" "}
+                <strong className="text-[#006084]">elegir archivos.</strong>
+                <strong className="text-red-500 text-xl">
+                  {validationErrors.recibo_sueldo}
+                </strong>
+              </p>
+               {selectedFiles.recibo_sueldo?.map((file, index) => (
+                  <li  key={index}>{file.name}</li>
+                ))}
+              {validationErrors.dni_img_familiar && (
+                <p className="text-red-500"></p>
+              )}
+              {successMessage && (
+                <p className="text-green-500 font-semibold mt-2">{successMessage}</p>
+              )}
+            </div>
+
+            <div className="flex justify-between">
+              <button
+                className="mt-4 bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+              onClick={() => {
+                setModalReciboIsOpen(false);
+                setSuccessMessage("Los datos se cargaron correctamente.");
+              }}
+
+              >
+                Cerrar
+              </button>
+              {isLoading ? <Loader/> :
+              <button
+                className="mt-4 bg-[#006084] w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                onClick={handleRecibo}
+                disabled={successMessage}
+              >
+                Confirmar
+              </button>
+              }
+            </div>
+          </Modal>
+
        
           <Modal
                     
@@ -1036,9 +1177,10 @@ const toggleFamiliar = id => {
               >
                 Confirmar
               </button>
+       
             </div>
           </Modal>
-          <Modal
+          {/* <Modal
             isOpen={modalBenefitsOpen}
             onRequestClose={() => setModalBenefitsOpen(false)}
             contentLabel="Entregar Beneficio"
@@ -1145,7 +1287,7 @@ const toggleFamiliar = id => {
                           
 
        
-          </Modal>
+          </Modal> */}
           
         <div ref={animationParent}>
       {err && <p className='text-red-500 font-bold'>{err}</p>}

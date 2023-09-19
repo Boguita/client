@@ -61,7 +61,7 @@ const KitEscolar = () => {
     if (currentStep === 2) {
       const hasSelectedItems = selectedFamiliares.every((familiarId) => {
         const familiar = beneficio[familiarId];
-        return familiar.mochila || familiar.utiles || familiar.guardapolvo;
+        return familiar.mochila || familiar.utiles || familiar.guardapolvo_confirm;
       });
 
       const hasSelectedAñoEscolar = selectedFamiliares.every((familiarId) => {
@@ -69,9 +69,36 @@ const KitEscolar = () => {
         return !!familiar.año_escolar;
       });
 
+   const hasSelectedTalle = selectedFamiliares.every((familiarId) => {
+  const familiarEnBeneficios = beneficiosOtorgados.find(
+    (beneficio) => beneficio.familiar_id === familiarId
+  );
+
+  if (familiarEnBeneficios && familiarEnBeneficios.guardapolvo) {
+    return true; // Ya existe un talle de guardapolvo en beneficiosOtorgados
+  } else {
+    // Si no existe, verifica si el familiar en beneficio tiene un talle seleccionado
+    const familiarEnBeneficio = beneficio[familiarId];
+    if (familiarEnBeneficio && familiarEnBeneficio.guardapolvo) {
+      return true; // El familiar en beneficio tiene un talle seleccionado
+    } else {
+      return false; // No hay talle de guardapolvo seleccionado
+    }
+  }
+});
+    
+
       if (!hasSelectedItems) {
         setError(
           "Debes elegir al menos un ítem a entregar para cada familiar."
+        );
+        return;
+      }
+
+      if (!hasSelectedTalle) {
+        
+        setError(
+          "Debes elegir el talle del guardapolvo antes de continuar para cada familiar."
         );
         return;
       }
@@ -95,6 +122,7 @@ const KitEscolar = () => {
       resetBeneficio[familiarId].mochila = false;
       resetBeneficio[familiarId].utiles = false;
       resetBeneficio[familiarId].guardapolvo = "";
+      resetBeneficio[familiarId].guardapolvo_confirm = false;
       resetBeneficio[familiarId].año_escolar = "";
     });
     setBeneficio(resetBeneficio);
@@ -274,6 +302,7 @@ const KitEscolar = () => {
           detalles: "",
           mochila: false,
           guardapolvo: "",
+          guardapolvo_confirm: false,
           utiles: false,
           año_escolar: "",
         };
@@ -320,7 +349,7 @@ const KitEscolar = () => {
       const res = await api.get(`/tasks/verified-kit-escolar/${queryParams}`);
 
       setBeneficiosOtorgados(res.data);
-
+      console.log("RES DE LA API",res.data)
       setIsLoading(false);
     } catch (err) {
       console.log(err);
@@ -338,7 +367,7 @@ const KitEscolar = () => {
       (beneficio) => beneficio.mochila
     );
     const guardapolvoOtorgado = beneficiosDelFamiliar.some(
-      (beneficio) => beneficio.guardapolvo
+      (beneficio) => beneficio.guardapolvo_confirm
     );
     const utilesOtorgados = beneficiosDelFamiliar.some(
       (beneficio) => beneficio.utiles
@@ -353,13 +382,29 @@ const KitEscolar = () => {
       (beneficio) => beneficio.familiar_id === numericFamiliarId
     );
 
+
+      let valorGuardapolvo = ""; 
     switch (tipoBeneficio) {
       case "mochila":
         return beneficiosDelFamiliar.some((beneficio) => beneficio.mochila);
       case "guardapolvo":
         return beneficiosDelFamiliar.some(
-          (beneficio) => beneficio.guardapolvo !== ""
+          (beneficio) => beneficio.guardapolvo_confirm
         );
+
+        case "guardapolvo_talle":
+      // Verifica si el arreglo beneficiosDelFamiliar tiene al menos un elemento
+      if (beneficiosDelFamiliar.length > 0) {
+        // Obtiene el último elemento del arreglo y accede a su propiedad guardapolvo
+        valorGuardapolvo = beneficiosDelFamiliar[beneficiosDelFamiliar.length - 1].guardapolvo;
+        console.log('Valor de guardapolvo para familiar', valorGuardapolvo);
+        return valorGuardapolvo;
+      } else {
+        // Manejo del caso cuando no se encuentra ningún beneficio para el familiar
+        return "";
+      }
+
+
       case "utiles":
         return beneficiosDelFamiliar.some((beneficio) => beneficio.utiles);
       default:
@@ -387,7 +432,8 @@ const KitEscolar = () => {
 
   useEffect(() => {
     console.log(selectedFamiliares);
-  }, [selectedFamiliares]);
+    console.log(beneficio);
+  }, [selectedFamiliares, beneficio]);
 
   return (
     <div className="bg-gray-200 h-screen w-screen sm:pl-80 ml-5">
@@ -692,6 +738,7 @@ const KitEscolar = () => {
                             : "border-[#006084]"
                         }  bg-gray-100 mt-2 px-8 h-10`}
                       >
+                        
                         <label
                           className={`mr-2 flex items-center font-semibold ${
                             isBeneficioOtorgado(familiar.id, "guardapolvo")
@@ -704,29 +751,52 @@ const KitEscolar = () => {
                           </span>
                           Guardapolvo
                         </label>
+                        <div className="flex">
+                          <input
+                            id={`checkbox_guardapolvo${familiar.id}`}
+                            name="guardapolvo_confirm"
+                            type="checkbox"
+                            className={`custom-checkbox ${
+                              isBeneficioOtorgado(familiar.id, "guardapolvo")
+                                ? "cursor-not-allowed"
+                                : "cursor-pointer"
+                            }`}
+                            disabled={isBeneficioOtorgado(
+                              familiar.id,
+                              "guardapolvo"
+                            )}
+                            checked={beneficio.guardapolvo_confirm}
+                            onChange={(e) => handleInputChange(e, familiarId)}
+                          />
+                          <label
+                            className="check"
+                            htmlFor={`checkbox_guardapolvo${familiar.id}`}
+                          >
+                            <svg className="w-18 h-18" viewBox="0 0 18 18">
+                              <path d="M1,9 L1,3.5 C1,2 2,1 3.5,1 L14.5,1 C16,1 17,2 17,3.5 L17,14.5 C17,16 16,17 14.5,17 L3.5,17 C2,17 1,16 1,14.5 L1,9 Z"></path>
+                              <polyline points="1 9 7 14 15 4"></polyline>
+                            </svg>
+                          </label>
+                        </div>
                         <select
                           name="guardapolvo"
-                          className={`bg-gray-100 ${
-                            isBeneficioOtorgado(familiar.id, "guardapolvo")
-                              ? "cursor-not-allowed"
-                              : "cursor-pointer"
-                          }`}
+                          className={`bg-gray-100 `}
                           disabled={isBeneficioOtorgado(
                             familiar.id,
-                            "guardapolvo"
+                            "guardapolvo_talle"
                           )}
-                          value={beneficio.guardapolvo}
+                          value= {isBeneficioOtorgado(familiar.id, "guardapolvo_talle") !== "" ? isBeneficioOtorgado(familiar.id, "guardapolvo_talle") : beneficio.guardapolvo}
                           onChange={(e) => handleInputChange(e, familiarId)}
                           required
                         >
-                          <option selected value="">
-                            Ninguno
+                          <option disabled selected value={""}>
+                           { isBeneficioOtorgado(familiar.id, "guardapolvo_talle") !== "" ? isBeneficioOtorgado(familiar.id, "guardapolvo_talle") : "Ninguno"}
                           </option>
                           <option value="XS">XS</option>
                           <option value="S">S</option>
                           <option value="M">M</option>
-                          <option value="M">L</option>
-                          <option value="M">XL</option>
+                          <option value="L">L</option>
+                          <option value="XL">XL</option>
                         </select>
                       </div>
                     </div>
@@ -784,11 +854,12 @@ const KitEscolar = () => {
                         </span>
                       </p>
                     )}
-                    {beneficioIndividual.guardapolvo && (
+                    {beneficioIndividual.guardapolvo_confirm && (
                       <p className="text-gray-600 text-lg mt-2">
                         - Guardapolvo:{" "}
                         <span className="text-green-500 font-bold">
-                          Entregar Talle {beneficioIndividual.guardapolvo}
+                          
+                          Entregar Talle {beneficioIndividual.guardapolvo ? beneficioIndividual.guardapolvo : isBeneficioOtorgado(familiar.id, "guardapolvo_talle")}
                         </span>
                       </p>
                     )}
@@ -896,7 +967,7 @@ const KitEscolar = () => {
                                   : ""}
                               </p>
                               <p className="ml-6 text-sm text-gray-500">
-                                {beneficioIndividual.guardapolvo
+                                {beneficioIndividual.guardapolvo_confirm
                                   ? `Guardapolvo talle: ${beneficioIndividual.guardapolvo}`
                                   : ""}
                               </p>

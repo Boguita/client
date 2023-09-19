@@ -19,8 +19,10 @@ const KitMaternal = () => {
   const location = useLocation();
   const [animationParent] = useAutoAnimate();
   const [dni, setDni] = useState("");
-
- 
+   const [useConyugue, useSetConyugue] = useState(false);
+ const [showButton, setShowButton] = useState(true);
+ const [modalMadreIsOpen, setModalMadreIsOpen] = useState(false);
+ const [madres, setMadres] = useState({});
   const [currentStep, setCurrentStep] = useState(1);
   const [validationErrors, setValidationErrors] = useState({});
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -55,9 +57,21 @@ const [error, setError] = useState(null);
     dni: "",
     fecha_de_nacimiento: "",
     tel: "",
-    categoria: "Conyugue",
+    categoria: "Madre",
     id_afiliado: "",
  } );
+
+   const [conyugue, setConyugue] = useState({
+    
+    name: "",
+    dni: "",
+    fecha_de_nacimiento: "",
+    tel: "",
+    categoria: "",
+    id_afiliado: "",
+ } );
+
+
 
 
 
@@ -103,36 +117,49 @@ const handleNextStep = async () => {
     
   };
 
-  const beneficioPendiente = async (familiarId) => {
+  const beneficioPendiente = async (familiarId, categoria) => {
   try {
      // Convertir a cadena separada por comas
     const res = await api.get(`/tasks/verified-kit-maternal/${familiarId}`);
     const beneficiosOtorgados = res.data;
     res.status === 200 &&
-    console.log(res.data)
-    setBeneficiosOtorgados(beneficiosOtorgados);
+    
+     setBeneficiosOtorgados(prevBeneficiosOtorgados => ({
+      ...prevBeneficiosOtorgados,
+      [familiarId]: {       
+ 
+          ...beneficiosOtorgados, // Nuevos beneficios
+     
+      },
+    }));
     if(beneficiosOtorgados.length === 0) {
       return;
     } else {
-    setModalIsOpen(true);
+      if(categoria === 'Madre') {
+        setModalMadreIsOpen(true);
+      } else {
+      setModalIsOpen(true);
+      }
     }
   } catch (err) {
     console.log(err);
   }
 };
 
- const handleUpdateBeneficio = async () => {
+ const handleUpdateBeneficio = async (ids) => {
 
 
   try {
     setError(null); // Limpiar cualquier error previo
-    setIsLoading(true);    
-    const res = await api.put(`/tasks/${beneficiosOtorgados[0].id}`, {estado: "Entregado"});
+    setIsLoading(true);  
+    const res = await api.put(`/tasks/${ids ? ids : beneficiosOtorgados[0].id}`, {estado: "Entregado"});
     res.status === 200 &&
     console.log(res.data);
     setIsLoading(false);
     setModalIsOpen(false);
+    setModalMadreIsOpen(false);
     handleNextStep();
+    return res;
 
   } catch (err) {
     console.log(err.response)
@@ -140,6 +167,7 @@ const handleNextStep = async () => {
 
   }
   setIsLoading(false);
+  
 };
    
   
@@ -148,9 +176,13 @@ const handleNextStep = async () => {
 
 useEffect(() => {
   const familia = familiares;
-  console.log('Estado de beneficios actualizado:', beneficio[0].familiar_id); 
-  console.log('Estado de beneficio actualizado:', beneficio);
-}, [familiares, beneficio, selectedFiles]);
+  // console.log('Estado de beneficios actualizado:', beneficio[0].familiar_id); 
+  // console.log('Estado de beneficio actualizado:', beneficio);
+  console.log('Estado de familiares actualizado:', familiares);
+  console.log(madres)
+  
+  console.log('Estado de beneficios otorgados actualizado:', beneficiosOtorgados);
+}, [familiares, beneficio, madres,beneficiosOtorgados]);
 
 
 const handleCertificadoChange = (e) => {
@@ -163,6 +195,7 @@ const handleRegisterAfiliate = async (e) => {
   
   try {
   setError(null)
+  
    const errors = validateFields();
     if (Object.keys(errors).length > 0) {
       console.log(errors);
@@ -171,7 +204,7 @@ const handleRegisterAfiliate = async (e) => {
       return;
     }
     const hasFamiliar = beneficio[0].familiar_id !== undefined && beneficio[0].familiar_id !== null && beneficio[0].familiar_id !== "";
-    if (!hasFamiliar) {
+    if (!hasFamiliar ) {
       // Si no existe un familiar registrado, registrar uno automáticamente
       const res = await api.post("/users/registro-familiar", familiares);
       const nuevoFamiliarId = res.data.familiar_id;
@@ -296,8 +329,26 @@ const handleRegisterAfiliate = async (e) => {
       return;
     }
 
+    
+    const familiaresMadre = familiaresDisponibles.filter(
+      (familiar) => familiar.categoria === 'Madre');
+    if (familiaresMadre.length === 0) {
+      setError("No se encontraron familiares con categoría 'Madre'.");
+    } else {
+     familiaresMadre.forEach(async (familiar) => {
+    const beneficioResult = await beneficioPendiente(familiar.id, familiar.categoria);
+    
+    
+});
+setMadres(familiaresMadre);
+ 
+    }
+
+      
+   
+    
     const familiaresConyugue = familiaresDisponibles.filter(
-      (familiar) => familiar.categoria === 'Conyugue'
+      (familiar) => familiar.categoria === 'Conyugue' 
     );
 
     if (familiaresConyugue.length === 0) {
@@ -327,16 +378,24 @@ const handleRegisterAfiliate = async (e) => {
     //   ...prevBeneficio,
     //   [name]: value,
     // }));
-    await setFamiliares(familiaresConyugue);
+    
+     await setConyugue(familiaresConyugue);    
      await setBeneficio(prevBeneficio => ({
       ...prevBeneficio,
       0: { // Acceder al índice 0 directamente
         ...prevBeneficio[0], // Mantener los valores existentes en el índice 0
-        afiliado_id: afiliado.idafiliados,
-        familiar_id: familiaresConyugue[0].id,
+        afiliado_id: afiliado.idafiliados,        
       },
     }));
-    await beneficioPendiente(familiaresConyugue[0].id);
+     setFamiliares(prevFamiliares => ({
+      ...prevFamiliares,
+      
+    
+      id_afiliado: afiliado.idafiliados,
+   
+    }));
+    
+    await beneficioPendiente(familiaresConyugue[0].id);   
     await setIsLoading(false);
     
   
@@ -452,7 +511,18 @@ const validateFields = () => {
 // };
 
 
-
+ const handleUseConyugue = () => {
+  useSetConyugue(true);
+  setShowButton(false);
+  setFamiliares(conyugue[0]);
+  setBeneficio(prevBeneficio => ({
+      ...prevBeneficio,
+      0: { // Acceder al índice 0 directamente
+        ...prevBeneficio[0], // Mantener los valores existentes en el índice 0
+        familiar_id: conyugue[0].id,
+      },
+    }));
+  };
 
 
 
@@ -493,15 +563,15 @@ return (
           ) : (
             currentStep === 1 && (
               <>
-                <div className="rounded-lg  p-8  bg-white ">
+                <div ref={animationParent} className="rounded-lg  p-8  bg-white ">
                   <h3 className="text-black text-2xl font-bold">
-                    Datos del Conyugue
+                    Datos de la Madre
                   </h3>
 
                   {/* Display familiares checkboxes here */}
-                  {familiares.length > 0 ? (
+                  {/* { useConyugue && familiares.length > 0 ? (
                     familiares.map((familiar) => (
-                      <div key={familiar.id} className="flex justify-center">
+                      <div ref={animationParent} key={familiar.id} className="flex justify-center">
                         <div className="flex flex-col w-[95%] ">
                           <label className="font-semibold mt-4 ">
                             Nombre y Apellido
@@ -550,11 +620,12 @@ return (
                           </label>
 
                           <div
+                          
                             key={familiar.id}
                             className={`flex  items-center mt-2 justify-between border-l-4 border-[#006084] w-[95%] bg-gray-200 " 
               }`}
                           >
-                            <label className="font-semibold text-black p-3 ">
+                            <label  className="font-semibold text-black p-3 ">
                               {familiar.tel}
                             </label>
                           </div>
@@ -565,8 +636,18 @@ return (
                         </div>
                       </div>
                     ))
-                  ) : (
-                    <div className="flex flex-col gap-2 px-4 w-full">
+                  ) : ( */}
+                     <div ref={animationParent} className="flex flex-col gap-2 px-4 w-full">
+                  {conyugue.length > 0 && showButton &&
+                       <>
+                      <p className="text-red-500 text-center font-semibold mt-3">Existe una conyugue registrada, ¿Deseas utilizar estos datos?</p>
+                      <div className="flex justify-around">
+                          <button onClick={() => handleUseConyugue()} className="bg-[#006084] w-1/3 font-bold text-white rounded-lg p-2 hover:bg-opacity-75">Usar datos existentes</button>
+                          <button onClick={() => setShowButton(false)} className="bg-red-500 w-1/3 font-bold text-white rounded-lg p-2 hover:bg-opacity-75">No</button>
+                      </div>
+                      </>
+                      }   
+                      
                       <label className="font-semibold mt-4 ">
                         Nombre y Apellido
                       </label>
@@ -575,6 +656,7 @@ return (
                         onChange={(e) => handleInputChange(e, "familiar")}
                         value={familiares.name}
                         className={"w-full p-3"}
+                        disabled={beneficio[0].familiar_id}
                       />
                       {validationErrors.name && (
                         <p className="text-red-500 ">{validationErrors.name}</p>
@@ -585,6 +667,7 @@ return (
                         onChange={(e) => handleInputChange(e, "familiar")}
                         value={familiares.dni}
                         className={"w-full p-3"}
+                        disabled={beneficio[0].familiar_id}
                       />
                       {validationErrors.dni && (
                         <p className="text-red-500">{validationErrors.dni}</p>
@@ -598,6 +681,7 @@ return (
                         value={familiares.fecha_de_nacimiento}
                         onChange={(e) => handleInputChange(e, "familiar")}
                         className={"w-full p-3"}
+                        disabled={beneficio[0].familiar_id}
                       />
                       {validationErrors.fecha_de_nacimiento && (
                         <p className="text-red-500">
@@ -606,16 +690,18 @@ return (
                       )}
                       <label className="font-semibold mt-2 ">Teléfono</label>
                       <Input
+
                         name={"tel"}
                         onChange={(e) => handleInputChange(e, "familiar")}
                         value={familiares.tel}
                         className={"w-full p-3"}
+                        disabled={beneficio[0].familiar_id}
                       />
                       {validationErrors.tel && (
                         <p className="text-red-500 ">{validationErrors.tel}</p>
                       )}
                     </div>
-                  )}
+                  {/* )} */}
                 </div>
 
                 <div ref={animationParent} className="rounded-lg  p-8   bg-white ">
@@ -827,8 +913,8 @@ return (
             <h2 className="text-2xl font-bold mb-4">Entregar beneficio pendiente.</h2>
             {error && <p className="text-red-500">{error}</p>}
             <div className="mb-2">
-             {familiares.length > 0 &&
-             familiares.map((familiar) => (
+             {conyugue.length > 0 &&
+             conyugue.map((familiar) => (
                       <div key={familiar.id} className="flex justify-center items-center">
                         <div className="flex flex-col w-[95%] ">
                           <label className="font-semibold mt-4 ">
@@ -890,6 +976,118 @@ return (
                           <button
                             className="mt-4 bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
                             onClick={() => setModalIsOpen(false)}
+                          >
+                            Cerrar
+                          </button>
+                          </div>
+
+
+                          {error && (
+                            <p className="text-red-500 mt-2">{error}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                          }
+            </div>
+                          
+
+       
+          </Modal>
+
+          <Modal
+            isOpen={modalMadreIsOpen}
+            onRequestClose={() => setModalMadreIsOpen(false)}
+            contentLabel="Entregar Beneficio"
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+              },
+              content: {
+                border: "none",
+                background: "white",
+                color: "black",
+                top: "50%",
+                left: "50%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+                padding: "2rem",
+                width: "80%",
+                maxWidth: "40rem",
+              },
+            }}
+          >
+            <h2 className="text-2xl font-bold mb-4">Entregar beneficio pendiente.</h2>
+            {error && <p className="text-red-500">{error}</p>}
+            <div className="mb-2">
+
+             {isLoading? <Loader/> : Object.keys(beneficiosOtorgados).length > 0  &&
+              madres
+                .filter((madre) => beneficiosOtorgados[madre.id] && Object.keys(beneficiosOtorgados[madre.id]).length > 0)
+                .map((madre) => (
+                      <div key={madre.id} className="flex justify-center items-center">
+                        <div className="flex flex-col w-[95%] ">
+                          <label className="font-semibold mt-4 ">
+                            Nombre y Apellido
+                          </label>
+
+                          <div
+                            key={madre.id}
+                            className={`flex  items-center mt-2 justify-between border-l-4 border-[#006084] w-[95%] bg-gray-200  `}
+                          >
+                            <label
+                              htmlFor={`familiar_${madre.id}`}
+                              className="capitalize font-semibold text-black p-3"
+                            >
+                              {madre.name}
+                            </label>
+                          </div>
+
+                          <label className="font-semibold mt-2 ">DNI</label>
+
+                          <div
+                            key={madre.id}
+                            className="flex  items-center mt-2 justify-between border-l-4 border-[#006084] w-[95%] bg-gray-200"
+                          >
+                            <label className="font-semibold text-black p-3 ">
+                              {madre.dni}
+                            </label>
+                          </div>
+
+                          <label className="font-semibold mt-2 ">
+                            Fecha de Solicitud
+                          </label>
+
+                          <div
+                            key={madre.id}
+                            className={
+                              "flex  items-center mt-2 justify-between border-l-4 border-[#006084] w-[95%] bg-gray-200"
+                            }
+                          >
+                            <label className="font-semibold text-black p-3">
+                                   {beneficiosOtorgados[madre.id] && 
+                                   <>                             
+                                   { new Date(beneficiosOtorgados[madre.id][0].fecha_otorgamiento).toLocaleDateString()}{" "}
+                                    {new Date(beneficiosOtorgados[madre.id][0].fecha_otorgamiento).toLocaleTimeString()
+                                   }
+                                   </>
+                            
+                             }
+                            </label>
+                          </div>
+
+                         
+                          <div className="flex flex-col mt-4 items-center">
+                          <Files 
+                          label="Subir foto de REMITO DE ENTREGA" 
+                          onUpload={() => handleUpdateBeneficio(beneficiosOtorgados[madre.id][0].id)}
+                          instructions="Recuerde que debe estar firmada por el trabajador." 
+                            />
+                          <button
+                            className="mt-4 bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                            onClick={() => setModalMadreIsOpen(false)}
                           >
                             Cerrar
                           </button>

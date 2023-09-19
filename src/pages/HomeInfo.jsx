@@ -8,7 +8,7 @@ const HomeInfo = () => {
   const navigate = useNavigate();
 
   return (
-  <div className="h-screen py-36 pl-80 w-full">
+  <div className="h-[30vw] py-32 pl-80 w-full">
     <div className="flex flex-col justify-center space-y-7">
     <h2 className="text-black font-bold text-4xl">DOCUMENTACIÓN NECESARIA PARA SOLICITAR
 UN BENEFICIO:</h2>
@@ -17,43 +17,49 @@ FISICAMENTE LA SIGUIENTE DOCUMENTACION</h3>
 <h3 className="text-gray-500 font-bold text-2xl">EN TODOS LOS CASOS:
 </h3>
     <ul className="text-gray-400 font-semibold text-2xl">
-      <li>- El Beneficio solo puede ser solicitado por un trabajador rural;</li>
-      <li>- El trabajador debe presentar su DNI fisicamente;</li>
-      <li>- El trabajador debe presentar su recibo de sueldo fisicamente;</li>
-      <li>- El trabajador debera firmar la DDJ delante del arministrador;</li>  
+      <li>- El Beneficio solo puede ser solicitado por un trabajador rural</li>
+      <li>- El trabajador debe presentar su DNI fisicamente</li>
+      <li>- El trabajador debe presentar su recibo de sueldo fisicamente</li>
    </ul>
   
-  <div className='flex'>
-   <img className='h-10 pr-4' src={Avion}></img>
-   <h3 className="text-gray-500 font-bold text-2xl">LUNA DE MIEL:
-  </h3>
-   </div>
-    <ul className="text-gray-400 font-semibold text-2xl">
-      <li>- Libreta de matrimonio física;</li>
-      <li>- DNI físico del conyugue;</li>
-   </ul>
+  <div className='flex pt-8 justify-evenly'>
+      <div className='flex flex-col'>
+      <img className=' object-contain h-14 pr-4' src={Avion}></img>
+      <h3 className="text-gray-500 text-center  font-bold text-2xl">LUNA DE MIEL
+      </h3>
+     
+        <ul className="text-gray-400 text-center font-semibold text-2xl">
+          <li>- Libreta de matrimonio física</li>
+          <li>- DNI físico del conyugue</li>
+      </ul>
+      </div>
 
-  <div className='flex'>
-   <img className='h-10 pr-4' src={Mono}></img>
-   <h3 className="text-gray-500 font-bold text-2xl">KIT DE NACIMIENTO:
-  </h3>
-   </div>
-    <ul className="text-gray-400 font-semibold text-2xl">
-      <li>- DNI físico de la madre;</li>
-      <li>- Certificado médico fÍsico con indicación de tiempo de gestación;</li>
-   </ul>
+ 
+      <div className='flex flex-col'>
+        
+      <img className='object-contain h-14 pr-4' src={Mono}></img>
+      <h3 className="text-gray-500 text-center font-bold text-2xl">KIT DE NACIMIENTO:
+      </h3>
+      
+        <ul className="text-gray-400 text-center font-semibold text-2xl">
+          <li>- DNI físico de la madre</li>
+          <li>- Certificado médico físico <br/> con indicación de tiempo de gestación</li>
+      </ul>
+      </div>
 
-  <div className='flex'>
-   <img className='h-10 pr-4' src={Libro}></img>
-   <h3 className="text-gray-500 font-bold text-2xl">KIT ESCOLAR:
-  </h3>
-   </div>
-    <ul className="text-gray-400 font-semibold text-2xl">
-      <li>- DNI físcio de cada hijo;</li>
-   </ul>
-
+      <div className='flex flex-col'>
+      <img className='object-contain h-14 pr-4' src={Libro}></img>
+      <h3 className="text-gray-500 text-center font-bold text-2xl">KIT ESCOLAR:
+      </h3>
+      
+        <ul className="text-gray-400 font-semibold text-2xl">
+          <li>- DNI físico de cada hijo</li>
+      </ul>
+      </div>
     </div>
-    <div className='flex px-20 justify-end w-full'>
+    </div>
+
+    <div className='flex px-20 justify-end items-center h-2/3 w-full'>
     <button 
               onClick={() => {
                 // Redirigir a la ruta correspondiente si el usuario está autenticado

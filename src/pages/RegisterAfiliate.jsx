@@ -445,11 +445,11 @@ const handleImageUpload = async () => {
                     className=" bg-gray-200 w-full pl-2 font-semibold focus:text-[#808080] focus:outline-none"
                   >
                     <option value="" disabled selected><strong className="!text-black">Nacionalidad</strong></option>
-                    {paises.map((pais, index) => (
-                      <option key={index} value={pais}>
-                        {pais}
-                      </option>
-                    ))}
+               {paises.sort().map((pais, index) => (
+                <option key={index} value={pais}>
+                  {pais}
+                </option>
+              ))}
                   </select>
                 </div>
 
@@ -463,11 +463,11 @@ const handleImageUpload = async () => {
                     className=" bg-gray-200 w-full pl-2 font-semibold focus:text-[#808080] focus:outline-none"
                   >
                     <option value="" disabled selected>Provincia</option>
-                    {provincias.map((provincia) => (
-                      <option key={provincia.id} value={provincia.nombre}>
-                        {provincia.nombre}
-                      </option>
-                    ))}
+                   {provincias.sort((a, b) => a.nombre.localeCompare(b.nombre)).map((provincia) => (
+  <option key={provincia.id} value={provincia.nombre}>
+    {provincia.nombre}
+  </option>
+))}
                   </select>
                 </div>
 
@@ -483,7 +483,7 @@ const handleImageUpload = async () => {
                       <option value="" disabled selected>
                         Ciudad
                       </option>
-                      {ciudades.map((ciudad) => (
+                      {ciudades.sort((a,b) => a.nombre.localeCompare(b.nombre)).map((ciudad) => (
                         <option key={ciudad.id} value={ciudad.nombre}>
                           {ciudad.nombre}
                         </option>
