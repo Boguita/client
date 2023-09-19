@@ -957,8 +957,8 @@ return (
                             <label className="font-semibold text-black p-3">
                                    {beneficiosOtorgados[0] && 
                                    <>                             
-                                   { new Date(beneficiosOtorgados[0].fecha_otorgamiento).toLocaleDateString()}{" "}
-                                    {new Date(beneficiosOtorgados[0].fecha_otorgamiento).toLocaleTimeString()
+                                   { new Date(beneficiosOtorgados[familiar.id][0].fecha_otorgamiento).toLocaleDateString()}{" "}
+                                    {new Date(beneficiosOtorgados[familiar.id][0].fecha_otorgamiento).toLocaleTimeString()
                                    }
                                    </>
                             
