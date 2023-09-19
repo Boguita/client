@@ -748,7 +748,7 @@ const handleRecibo = async () => {
                               <div className='flex-col flex justify-center items-center' key={index}>
                                 
                                 <a
-                                  href={`https://uatre-api.onrender.com/${recibo}`} // Utiliza la URL de tu API
+                                  href={`https://backuatrebeneficios.galgoproductora.com/${recibo}`} // Utiliza la URL de tu API
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-blue-500 hover:underline"
