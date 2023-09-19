@@ -333,7 +333,7 @@ const handleRegisterAfiliate = async (e) => {
     const familiaresMadre = familiaresDisponibles.filter(
       (familiar) => familiar.categoria === 'Madre');
     if (familiaresMadre.length === 0) {
-      setError("No se encontraron familiares con categoría 'Madre'.");
+      console.log("No se encontraron familiares con categoría 'Madre'.");
     } else {
      familiaresMadre.forEach(async (familiar) => {
     const beneficioResult = await beneficioPendiente(familiar.id, familiar.categoria);
@@ -352,7 +352,7 @@ setMadres(familiaresMadre);
     );
 
     if (familiaresConyugue.length === 0) {
-      setError("No se encontraron familiares con categoría 'Conyugue'.");
+      console.log("No se encontraron familiares con categoría 'Conyugue'.");
        setFamiliares(prevFamiliares => ({
       ...prevFamiliares,
       

@@ -968,7 +968,7 @@ const KitEscolar = () => {
                               </p>
                               <p className="ml-6 text-sm text-gray-500">
                                 {beneficioIndividual.guardapolvo_confirm
-                                  ? `Guardapolvo talle: ${beneficioIndividual.guardapolvo}`
+                                  ? `Guardapolvo talle: ${beneficioIndividual.guardapolvo ? beneficioIndividual.guardapolvo : isBeneficioOtorgado(familiar.id, "guardapolvo_talle")}`
                                   : ""}
                               </p>
                             </ul>
