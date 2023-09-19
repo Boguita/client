@@ -6,6 +6,12 @@ import PluginRewriteAll from 'vite-plugin-rewrite-all'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  
+  scripts: {
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+
   proxy: {
     // Configura aquí tu proxy
     "/api": {
