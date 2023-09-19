@@ -913,7 +913,7 @@ return (
             <h2 className="text-2xl font-bold mb-4">Entregar beneficio pendiente.</h2>
             {error && <p className="text-red-500">{error}</p>}
             <div className="mb-2">
-             {conyugue.length > 0 &&
+             {isLoading? <Loader/> : conyugue.length > 0 &&
              conyugue.map((familiar) => (
                       <div key={familiar.id} className="flex justify-center items-center">
                         <div className="flex flex-col w-[95%] ">
