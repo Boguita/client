@@ -955,7 +955,7 @@ return (
                             }
                           >
                             <label className="font-semibold text-black p-3">
-                                   {beneficiosOtorgados[0] && 
+                                   {beneficiosOtorgados[familiar.id] && 
                                    <>                             
                                    { new Date(beneficiosOtorgados[familiar.id][0].fecha_otorgamiento).toLocaleDateString()}{" "}
                                     {new Date(beneficiosOtorgados[familiar.id][0].fecha_otorgamiento).toLocaleTimeString()
