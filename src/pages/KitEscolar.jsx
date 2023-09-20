@@ -45,7 +45,8 @@ const KitEscolar = () => {
     dni: "",
     tel: "1234",
     fecha_de_nacimiento: "",
-    dni_img_familiar: null,
+    dni_img_dorso: null,
+    dni_img_frente: null,
   });
 
   const [familiares, setFamiliares] = useState([]);
@@ -147,13 +148,34 @@ const KitEscolar = () => {
     }));
   };
 
-  const handleDniImgChange = (e) => {
+  const handleDniImgDorso = (e) => {
     const filesArray = Array.from(e.target.files);
+    const maxFiles = 1;
+     if (filesArray.length > maxFiles) {
+      alert(`Por favor, selecciona un máximo de ${maxFiles} archivos.`);
+      e.target.value = null;
+      return
+    } 
     setFormData((prevFormData) => ({
       ...prevFormData,
-      dni_img_familiar: filesArray,
+      dni_img_dorso: filesArray,
     }));
-    console.log(formData.dni_img_familiar);
+    
+  };
+
+   const handleDniImgFrente = (e) => {
+    const filesArray = Array.from(e.target.files);
+    const maxFiles = 1;
+     if (filesArray.length > maxFiles) {
+      alert(`Por favor, selecciona un máximo de ${maxFiles} archivos.`);
+      e.target.value = null;
+      return
+    } 
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      dni_img_frente: filesArray,
+    }));
+    
   };
 
   const handleChangeHijo = (e) => {
@@ -172,7 +194,7 @@ const KitEscolar = () => {
   const validateFields = () => {
     setValidationErrors({}); // Limpiar cualquier error de validación previo
     const requiredFields = {
-      formData: ["name", "dni", "fecha_de_nacimiento", "dni_img_familiar"],
+      formData: ["name", "dni", "fecha_de_nacimiento", "dni_img_frente", "dni_img_dorso"],
     };
 
     const errors = {};
@@ -184,8 +206,11 @@ const KitEscolar = () => {
         }
       });
     });
-    if (!formData.dni_img_familiar || formData.dni_img_familiar.length === 0) {
-      errors.dni_img_familiar = "*";
+    if (!formData.dni_img_frente || formData.dni_img_frente.length === 0) {
+      errors.dni_img_frente = "*";
+    }
+     if (!formData.dni_img_dorso || formData.dni_img_dorso.length === 0) {
+      errors.dni_img_dorso = "*";
     }
 
     return errors;
@@ -205,19 +230,32 @@ const KitEscolar = () => {
 
     const res = await api.post("users/registro-familiar", formData);
     if (res.status === 200) {
-      handleImageUpload();
-      setModalIsOpen(false);
-      handleAfiliadoSearch(dni);
-      setIsLoading(false);
-      setError(null);
+      await handleImageUpload();
+      await setModalIsOpen(false);
+      await handleAfiliadoSearch(dni);
+      await setIsLoading(false);
+      await setError(null);
+      await setFormData({
+        id_afiliado: "",
+        name: "",
+        categoria: "Hijo/a",
+        dni: "",
+        tel: "1234",
+        fecha_de_nacimiento: "",
+        dni_img_dorso: null,
+        dni_img_frente: null,
+      })
     }
   };
 
   const handleImageUpload = async () => {
     const imgFormaData = new FormData();
     imgFormaData.append("dni", formData.dni);
-    formData.dni_img_familiar.forEach((dniImg) => {
-      imgFormaData.append("dni_img_familiar", dniImg);
+    formData.dni_img_frente.forEach((dniImg) => {
+      imgFormaData.append("dni_img_frente", dniImg);
+    });
+     formData.dni_img_dorso.forEach((dniImg) => {
+      imgFormaData.append("dni_img_dorso", dniImg);
     });
     // await Promise.all(formData.dni_img.map(loadImage));
     const responseDni = await api.post(
@@ -1097,11 +1135,11 @@ const KitEscolar = () => {
             <div className="flex flex-col justify-center items-center mt-4 rounded-xl min-h-[6rem] w-[100%] bg-gray-200 p-2">
               <p className="font-bold">Subir foto de DNI:</p>
               <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
-                Frente y Dorso.
+                Frente.
               </p>
 
               <label
-                htmlFor="dni_img_familiar"
+                htmlFor="dni_img_frente"
                 className="cursor-pointer mt-auto mb-2"
               >
                 <FiDownload className="text-5xl text-[#23A1D8]" />
@@ -1109,24 +1147,64 @@ const KitEscolar = () => {
 
               <input
                 type="file"
-                name="dni_img_familiar"
-                id="dni_img_familiar"
-                multiple
+                name="dni_img_frente"
+                id="dni_img_frente"                
                 required
                 style={{ display: "none" }}
-                onChange={handleDniImgChange}
+                onChange={handleDniImgFrente}
               />
 
               <p className="text-xs font-semibold text-gray-600 text-center">
                 Click aquí para cargar o{" "}
                 <strong className="text-[#006084]">elegir archivos.</strong>
                 <strong className="text-red-500 text-xl">
-                  {validationErrors.dni_img_familiar}
+                  {validationErrors.dni_img_frente}
                 </strong>
               </p>
-              {validationErrors.dni_img_familiar && (
+                   {formData.dni_img_frente?.map((file, index) => (
+                  <li  key={index}>{file.name}</li>
+                ))}
+              {validationErrors.dni_img_frente&& (
                 <p className="text-red-500"></p>
               )}
+            </div>
+
+                    <div className="flex flex-col justify-center items-center mt-4 rounded-xl min-h-[6rem] w-[100%] bg-gray-200 p-2">
+              <p className="font-bold">Subir foto de DNI:</p>
+              <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
+                Dorso.
+              </p>
+
+              <label
+                htmlFor="dni_img_dorso"
+                className="cursor-pointer mt-auto mb-2"
+              >
+                <FiDownload className="text-5xl text-[#23A1D8]" />
+              </label>
+
+              <input
+                type="file"
+                name="dni_img_dorso"
+                id="dni_img_dorso"               
+                required
+                style={{ display: "none" }}
+                onChange={handleDniImgDorso}
+              />
+
+              <p className="text-xs font-semibold text-gray-600 text-center">
+                Click aquí para cargar o{" "}
+                <strong className="text-[#006084]">elegir archivos.</strong>
+                <strong className="text-red-500 text-xl">
+                  {validationErrors.dni_img_dorso}
+                </strong>
+              </p>
+              {formData.dni_img_dorso?.map((file, index) => (
+                  <li  key={index}>{file.name}</li>
+                ))}
+              {validationErrors.dni_img_dorso&& (
+                <p className="text-red-500"></p>
+              )}
+               
             </div>
 
             <div className="flex justify-between">

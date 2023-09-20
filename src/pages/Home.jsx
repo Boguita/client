@@ -5,14 +5,18 @@ import Input from '../components/Input';
 import Avatar from '../assets/img/avatar.png';
 import {FiDownload} from 'react-icons/fi'
 import Modal from "react-modal";
-import {AiOutlineIdcard} from 'react-icons/ai'
+import {FaIdCard} from 'react-icons/fa'
+import {BsPostcardFill} from 'react-icons/bs'
 import {RiBillLine} from 'react-icons/ri'
 import { useRef } from 'react';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useLocation, useParams } from 'react-router-dom';
 import Files from '../components/Files';
 import Loader from '../components/Loader';
-
+import { TbJacket, TbTools } from 'react-icons/tb';
+import { PiBackpackDuotone } from 'react-icons/pi';
+import Mono from '../assets/img/mono.png';
+import Avion from '../assets/img/plane.png';
 
 
 const Home = () => {
@@ -20,19 +24,15 @@ const Home = () => {
   const [affiliateData, setAffiliateData] = useState(null);
   const [err, setErr] = useState(null);
   const [beneficio, setBeneficio] = useState(null);
-  const [showPopup, setShowPopup] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-   const [showButton, setShowButton] = useState(true);
    const [familiares, setFamiliares] = useState([]);
    const [modalIsOpen, setModalIsOpen] = useState(false);
    const [modalReciboIsOpen, setModalReciboIsOpen] = useState(false);
    const [selectedFiles, setSelectedFiles] = useState([]);
-     const [beneficiosOtorgados, setBeneficiosOtorgados] = useState([]);
-  const [showEmpleadorPopup, setShowEmpleadorPopup] = useState(false);
+  const [beneficiosOtorgados, setBeneficiosOtorgados] = useState([]);
   const [expandedFamiliars, setExpandedFamiliars] = useState([]);
   const [validationErrors, setValidationErrors] = useState({});
   const [modalConyugueIsOpen, setModalConyugueIsOpen] = useState(false);
-  const [modalBenefitsOpen, setModalBenefitsOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
 
@@ -82,18 +82,48 @@ const handleAffiliateDataRequest = async (dniparams) => {
     console.log(res.data)
     const familiaresDisponibles = res.data.familiares;
      const familiaresConyugue = familiaresDisponibles.filter(
-      (familiar) => familiar.categoria === 'Conyugue'
+      (familiar) => familiar.categoria === 'Conyugue' 
     );
 
     if (familiaresConyugue.length !== 0) {
-      await setFamiliares(familiaresConyugue);
+      await setFamiliares((prevBeneficiosOtorgados) => [
+      ...prevBeneficiosOtorgados,
+      ...familiaresConyugue,
+    ]);
 
     await beneficioPendiente(familiaresConyugue[0].id);
+    
      } 
+
+  const familiaresMadre = familiaresDisponibles.filter(
+      (familiar) => familiar.categoria === 'Madre' 
+    );
+    console.log("MADRES",familiaresMadre)
+
+    if (familiaresMadre.length !== 0) {
+       await setFamiliares((prevBeneficiosOtorgados) => [
+      ...prevBeneficiosOtorgados,
+      ...familiaresMadre,
+    ]);
+
+    await beneficioPendiente(familiaresMadre[0].id);
+     } 
+
 
     
 
     setAffiliateData(res.data);
+     await handleValidateBenefit();
+    
+      const familiaresHijos = familiaresDisponibles.filter(
+        (familiar) => familiar.categoria === "Hijo/a"
+      );
+
+      if (familiaresHijos.length === 0) {
+        console.log("No hay hijos")
+      } else {
+        comprobarBeneficios(familiaresHijos.map((familiar) => familiar.id));
+      }
     
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -113,12 +143,24 @@ const handleAffiliateDataRequest = async (dniparams) => {
 
   const handleDniImgChange = (e) => {
     const filesArray = Array.from(e.target.files);
+    const maxFiles = 1;
+     if (filesArray.length > maxFiles) {
+      alert(`Por favor, selecciona un máximo de ${maxFiles} archivos.`);
+      e.target.value = null;
+      return
+    } 
     setFormData((prevFormData) => ({
       ...prevFormData,
       dni_img_familiar: filesArray,
     }));
-    console.log(formData.dni_img_familiar);
+    
   };
+
+  useEffect(() => {
+    if (formData.dni_img_familiar) {
+      console.log(formData.dni_img_familiar);
+    }
+  }, [formData.dni_img_familiar]);
 
   const handleLibretaImgChange = (e) => {
     const filesArray = Array.from(e.target.files);
@@ -282,7 +324,7 @@ const handleAffiliateDataRequest = async (dniparams) => {
     
     // Almacenar los datos del beneficio otorgado
     setBeneficio(res.data);
-    setShowPopup(true);
+   
     console.log(beneficio)
      // Mostrar el popup
   } catch (error) {
@@ -303,9 +345,15 @@ const handleAffiliateDataRequest = async (dniparams) => {
   };
 
   const getDniImg = async () => {
-    affiliateData.dni_img.forEach((dni) => {
-    window.open(`https://backuatrebeneficios.galgoproductora.com/${dni}`, '_blank');
-  });
+   
+    window.open(`https://backuatrebeneficios.galgoproductora.com/${affiliateData.dni_img_frente}`, '_blank');
+ 
+    
+  }
+   const getDniImgDorso = async () => {
+   
+    window.open(`https://backuatrebeneficios.galgoproductora.com/${affiliateData.dni_img_dorso}`, '_blank');
+ 
     
   }
 
@@ -328,22 +376,21 @@ const handleAffiliateDataRequest = async (dniparams) => {
   }
 }
 
- const getDniImgHijo = async (familiarId) => {
+ const getDniImgHijo = async (familiarId, lado) => {
   // Busca el familiar por su ID
   const familiar = affiliateData.familiares.find((fam) => fam.id === familiarId);
 
-  if (familiar) {
-    const dniImgArray = familiar.dni_img;
-
-    if (dniImgArray && Array.isArray(dniImgArray)) {
-      dniImgArray.forEach((dni) => {
-        window.open(`https://backuatrebeneficios.galgoproductora.com/${dni}`, '_blank');
-      });
-    } else {
-      console.log("La propiedad dni_img no es un arreglo o es null.");
-    }
-  } else {
+  if (!familiar) {
     console.log("No se encontró el familiar con el ID proporcionado.");
+    return;
+  }
+
+  const imagenDNI = lado === "frente" ? familiar.dni_img_frente : lado === "dorso" ? familiar.dni_img_dorso : null;
+
+  if (imagenDNI) {
+    window.open(`https://backuatrebeneficios.galgoproductora.com/${imagenDNI}`, '_blank');
+  } else {
+    console.log(`No se encontró una imagen del ${lado === "frente" ? "frente" : lado === "dorso" ? "dorso" : "DNI"}.`);
   }
 };
 
@@ -362,23 +409,24 @@ const handleAffiliateDataRequest = async (dniparams) => {
   
 };
 
-// useEffect(() => {
-//   console.log(affiliateData?.familiares.length)
-//   }
-// , [affiliateData]
-// );
-
-
 useEffect(() => {
-  const hijos = affiliateData?.familiares.filter((familiar) => familiar.categoria === 'Hijo/a');
-  if (hijos?.length >= 5) {
-    setShowButton(false);
-    console.log("Mostrar botón: false, límite de 5 hijos alcanzado");
-  } else {
-    setShowButton(true);
-    console.log("Mostrar botón: true");
+  console.log("Beneficios otorgados",beneficiosOtorgados)
+  console.log("Familiares",familiares)
   }
-}, [affiliateData?.familiares]);
+, [beneficiosOtorgados, familiares]
+);
+
+
+// useEffect(() => {
+//   const hijos = affiliateData?.familiares.filter((familiar) => familiar.categoria === 'Hijo/a');
+//   if (hijos?.length >= 5) {
+//     setShowButton(false);
+//     console.log("Mostrar botón: false, límite de 5 hijos alcanzado");
+//   } else {
+//     setShowButton(true);
+//     console.log("Mostrar botón: true");
+//   }
+// }, [affiliateData?.familiares]);
 
 
 
@@ -391,23 +439,104 @@ const toggleFamiliar = id => {
   
 };
 
+ const handleValidateBenefit = async () => {
+    try {
+      setIsLoading(true);
+      const res = await api.get(`tasks/beneficio/${dni}`,);
+     const lunademiel = res.data;
+
+// Filtrar los elementos con categoría "Luna de Miel"
+const lunademielFiltrado = lunademiel.filter((elemento) => elemento.tipo === 'Luna de miel');
+      // Almacenar los datos recibidos de la API
+      setBeneficiosOtorgados((prevBeneficiosOtorgados) => [
+      ...prevBeneficiosOtorgados,
+      ...lunademielFiltrado,
+    ]);
+      setIsLoading(false);
+      console.log(res.data)
+
+        // Restablecer el estado del error si la solicitud tiene éxito
+    }
+    catch (error) {
+      console.log(error.response.data.message)
+      setErr(error.response.data.message);
+    }
+    setIsLoading(false);
+  }
+
   const beneficioPendiente = async (familiarId) => {
   try {
      // Convertir a cadena separada por comas
     const res = await api.get(`/tasks/verified-kit-maternal/${familiarId}`);
-    const beneficiosOtorgados = res.data;
+    const kitmaternal = res.data;
     res.status === 200 &&
-    console.log(res.data)
-    setBeneficiosOtorgados(beneficiosOtorgados);
+    setBeneficiosOtorgados((prevBeneficiosOtorgados) => [
+      ...prevBeneficiosOtorgados,
+      ...kitmaternal,
+    ]);
+    //  console.log("RES DE kit maternal",res.data)
     if(beneficiosOtorgados.length === 0) {
       return;
     } else {
-    setModalBenefitsOpen(true)
+    console.log("qsy")
     }
   } catch (err) {
     console.log(err);
   }
 };
+
+const comprobarBeneficios = async (familiarIds) => {
+    try {
+      const queryParams = familiarIds.join(","); // Convertir a cadena separada por comas
+      const res = await api.get(`/tasks/verified-kit-escolar/${queryParams}`);
+      const kitescolar = res.data;
+    setBeneficiosOtorgados((prevBeneficiosOtorgados) => [
+      ...prevBeneficiosOtorgados,
+      ...kitescolar,
+    ]);
+      // console.log("RES DE LA API",res.data)
+      setIsLoading(false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+   const isBeneficioOtorgado = (familiarId, tipoBeneficio) => {
+    const numericFamiliarId = parseInt(familiarId, 10);
+    const beneficiosDelFamiliar = beneficiosOtorgados.filter(
+      (beneficio) => beneficio.familiar_id === numericFamiliarId
+    );
+
+
+      let valorGuardapolvo = ""; 
+    switch (tipoBeneficio) {
+      case "mochila":
+        return beneficiosDelFamiliar.some((beneficio) => beneficio.mochila);
+      case "guardapolvo":
+        return beneficiosDelFamiliar.some(
+          (beneficio) => beneficio.guardapolvo_confirm
+        );
+
+        case "guardapolvo_talle":
+      // Verifica si el arreglo beneficiosDelFamiliar tiene al menos un elemento
+      if (beneficiosDelFamiliar.length > 0) {
+        // Obtiene el último elemento del arreglo y accede a su propiedad guardapolvo
+        valorGuardapolvo = beneficiosDelFamiliar[beneficiosDelFamiliar.length - 1].guardapolvo;
+        console.log('Valor de guardapolvo para familiar', valorGuardapolvo);
+        return valorGuardapolvo;
+      } else {
+        // Manejo del caso cuando no se encuentra ningún beneficio para el familiar
+        return "";
+      }
+
+
+      case "utiles":
+        return beneficiosDelFamiliar.some((beneficio) => beneficio.utiles);
+      default:
+        return false; // Tipo de beneficio no reconocido
+    }
+  };
+
 
  const handleReciboSueldoChange = (e) => {
     const filesArray = Array.from(e.target.files);
@@ -437,32 +566,33 @@ const handleRecibo = async () => {
     res.status === 200 && setSuccessMessage("Los datos se cargaron correctamente.");
     setSelectedFiles([]);
     setIsLoading(false);
+    handleAffiliateDataRequest();
     } catch (error) {
       console.log(error);
     }
 }
 
 
- const handleUpdateBeneficio = async () => {
+//  const handleUpdateBeneficio = async () => {
 
 
-  try {
-    setErr(null); // Limpiar cualquier error previo
-    setIsLoading(true);    
-    const res = await api.put(`/tasks/${beneficiosOtorgados[0].id}`, {estado: "Entregado"});
-    res.status === 200 &&
-    console.log(res.data);
-    setIsLoading(false);
-    setModalBenefitsOpen(false);
+//   try {
+//     setErr(null); // Limpiar cualquier error previo
+//     setIsLoading(true);    
+//     const res = await api.put(`/tasks/${beneficiosOtorgados[0].id}`, {estado: "Entregado"});
+//     res.status === 200 &&
+//     console.log(res.data);
+//     setIsLoading(false);
+
     
 
-  } catch (err) {
-    console.log(err.response)
-    setErr(err.response.data.error? err.response.data.error : "Error al entregar el beneficio");
+//   } catch (err) {
+//     console.log(err.response)
+//     setErr(err.response.data.error? err.response.data.error : "Error al entregar el beneficio");
 
-  }
-  setIsLoading(false);
-};
+//   }
+//   setIsLoading(false);
+// };
    
   
 
@@ -524,7 +654,7 @@ const handleRecibo = async () => {
     <p className='text-gray-500 font-semibold'>{affiliateData.tel}</p>
 
     <p><strong>Email</strong></p>
-    <p className='text-gray-500 font-semibold'>{affiliateData.correo}</p>
+    <p className='text-gray-500 break-all font-semibold'>{affiliateData.correo}</p>
 
      <p><strong>Domicilio</strong></p>
     <p className='text-gray-500 font-semibold'>{affiliateData.domicilio}</p>
@@ -537,18 +667,21 @@ const handleRecibo = async () => {
         <div className='flex h-28 gap-x-4'>       
           <div onClick={getDniImg}  className='flex flex-col cursor-pointer justify-center items-center w-[50%] rounded-2xl mt-5  bg-white'>
                 
-            <AiOutlineIdcard className='text-5xl text-[#23A1D8]'></AiOutlineIdcard>
-            <p className='text-[#23A1D8] hover:underline font-semibold'>Ver foto del DNI</p> 
+            <FaIdCard className='text-5xl text-[#23A1D8]'></FaIdCard>
+            <p className='text-[#23A1D8] text-sm hover:underline font-semibold'>Ver Frente del DNI</p> 
+           
+            
+          </div>
+          <div onClick={getDniImgDorso}  className='flex flex-col cursor-pointer justify-center items-center w-[50%] rounded-2xl mt-5  bg-white'>
+                
+            <BsPostcardFill className='text-5xl text-[#23A1D8]'></BsPostcardFill>
+            <p className='text-[#23A1D8] text-sm hover:underline font-semibold'>Ver Dorso del DNI</p> 
            
             
           </div>
          
 
-         <button
-          className='mt-5 bg-[#0E6F4B] w-[50%]  font-bold text-white rounded-2xl p-1 hover:bg-opacity-75'
-          onClick={handleGrantBenefit}>
-          OTORGAR BENEFICIO
-        </button> 
+   
 
               
         </div>
@@ -575,6 +708,64 @@ const handleRecibo = async () => {
               <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
               {familiar.name} <span className='text-[#006084] pr-1'>{expandedFamiliars[familiar.id] ? "Ver menos" : "Ver más"}</span>
             </p>
+               {
+                        <div
+                          key={familiar.id}
+                          className="flex w-80 pt-1"
+                        >
+                          <TbTools  className="text-gray-400" />
+                          <p
+                            className={`px-1 text-xs font-semibold text-gray-400`}
+                          >
+                            Útiles:{" "}
+                            <strong
+                              className={`px-1 text-xs font-semibold ${
+                                isBeneficioOtorgado(familiar.id, "utiles")
+                                  ? "text-green-500"
+                                  : "text-red-500"
+                              }`}
+                            >
+                              {isBeneficioOtorgado(familiar.id, "utiles")
+                                ? "ENTREGADO"
+                                : "SIN ENTREGAR"}
+                            </strong>
+                          </p>
+                          <PiBackpackDuotone className="text-gray-400" />
+                          <p
+                            className={`px-1 text-xs font-semibold text-gray-400`}
+                          >
+                            Mochila:{" "}
+                            <strong
+                              className={`px-1 text-xs font-semibold ${
+                                isBeneficioOtorgado(familiar.id, "mochila")
+                                  ? "text-green-500"
+                                  : "text-red-500"
+                              }`}
+                            >
+                              {isBeneficioOtorgado(familiar.id, "mochila")
+                                ? "ENTREGADO"
+                                : "SIN ENTREGAR"}
+                            </strong>
+                          </p>
+                          <TbJacket className="text-gray-400" />
+                          <p
+                            className={`px-1 text-xs font-semibold text-gray-400`}
+                          >
+                            Guardapolvo:{" "}
+                            <strong
+                              className={`px-1 text-xs font-semibold ${
+                                isBeneficioOtorgado(familiar.id, "guardapolvo")
+                                  ? "text-green-500"
+                                  : "text-red-500"
+                              }`}
+                            >
+                              {isBeneficioOtorgado(familiar.id, "guardapolvo")
+                                ? "ENTREGADO"
+                                : "SIN ENTREGAR"}
+                            </strong>
+                          </p>
+                        </div>
+                      }
 
             {expandedFamiliars[familiar.id] && (
               <li   key={index} className="w-80 p-2 ">
@@ -588,10 +779,14 @@ const handleRecibo = async () => {
                   <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
                   {familiar.fecha_de_nacimiento}
                 </p>
-                <div id={familiar.id} onClick={() => getDniImgHijo(familiar.id)} className='p-2 mt-2 flex items-center justify-center w-full pl-6'>               
-                <button className='bg-[#23A1D8] font-bold text-white rounded-lg p-2 hover:bg-opacity-75' >
+                <div id={familiar.id} className='p-2 mt-2 flex items-center justify-between w-full pl-6'>               
+                <button onClick={() => getDniImgHijo(familiar.id, "frente")} className='bg-[#23A1D8] font-bold text-white text-sm rounded-lg p-2 hover:bg-opacity-75' >
                   
-                  VER DNI
+                  VER FRENTE
+                </button>
+                 <button onClick={() => getDniImgHijo(familiar.id, "dorso")} className='bg-[#23A1D8] font-bold text-sm text-white rounded-lg p-2 hover:bg-opacity-75' >
+                  
+                  VER DORSO
                 </button>
                 </div> 
               
@@ -602,27 +797,70 @@ const handleRecibo = async () => {
           </div>
         ))}
     </ul>
-    {showButton && (
-  <button 
-    className='mt-4 bg-[#006084] font-bold text-white rounded-lg p-2 hover:bg-opacity-75'
-    onClick={() => setModalIsOpen(true)}>
-    + CARGAR HIJO
-  </button>
-)}
+   
+  
   </div>
 ) : (
   <>
   <p className='text-gray-500'>No hay datos de familiares.</p>
-     <button 
-              className='mt-4 bg-[#006084] font-bold text-white rounded-lg p-2 hover:bg-opacity-75'
-              onClick={() => setModalIsOpen(true)}>
-                + CARGAR HIJO
-              </button>
+
   </>
 
 )}
 
+{isLoading ? (
+  <Loader />
+) : (
+  <div className="flex h-3/4 items-end justify-around">
+    {Object.keys(beneficiosOtorgados).length > 0 && (
+      <>
+ 
+        {familiares
+          .filter((familiar) =>
+            beneficiosOtorgados.some(
+              (beneficio) =>
+                beneficio.familiar_id === familiar.id &&
+                beneficio.estado === 'Pendiente' &&
+                beneficio.tipo === 'Kit maternal'
+            )
+          )
+          .map((familiar) => (
+            <div key={familiar.id} className="flex justify-center items-center">
+              <div className="flex flex-col items-center">
+                <img className="w-auto h-8" src={Mono} alt="Mono" />
+                <p className="font-semibold text-gray-400">Kit Nacimiento</p>
+                <span className='font-semibold'>{familiar.name}</span>
+              </div>
+            </div>
+          ))}
+      </>
+    )}
 
+    {Object.keys(beneficiosOtorgados).length > 0 && (
+      <>
+    
+        {familiares
+          .filter((familiar) =>
+            beneficiosOtorgados.some(
+              (beneficio) =>
+                beneficio.familiar_id === familiar.id &&
+                beneficio.estado === 'Pendiente' &&
+                beneficio.tipo === 'Luna de miel'
+            )
+          )
+          .map((familiar) => (
+            <div key={familiar.id} className="flex justify-center items-center">
+              <div className="flex flex-col items-center">
+                <img className="w-auto h-8" src={Avion} alt="Avion" />
+                <p className="font-semibold text-gray-400">Luna de Miel</p>
+                <span  className='font-semibold'>{familiar.name}</span>
+              </div>
+            </div>
+          ))}
+      </>
+    )}
+  </div>
+)}
               </div>
 
               <div  className=''>
@@ -665,12 +903,7 @@ const handleRecibo = async () => {
                 {/* Agregar aquí otros campos de los familiares */}
               </li>
             )}
-             { beneficiosOtorgados && beneficiosOtorgados.length > 0 ? (
-            <div>
-              <span className='text-green-500 font-semibold'>Existen beneficios pendientes de entrega.</span>
-            </div>
-            ) : ( "" )
-            }
+          
             <div onClick={getLibretaImg}>
             <button className='mt-4 bg-[#006084] font-bold text-white rounded-lg p-2 hover:bg-opacity-75'
             
@@ -701,7 +934,7 @@ const handleRecibo = async () => {
         <div className='flex'>
               {affiliateData.datos_empleador && (
                         <div >
-                                <h2 className="font-bold text-3xl mb-5">Datos del Empleador</h2>
+                                <h2 className="font-bold text-3xl mb-5">Datos del Empleador:</h2>
                                 {affiliateData.datos_empleador && (
                                   <div>
                                     {(() => {
@@ -751,22 +984,28 @@ const handleRecibo = async () => {
                                   href={`https://backuatrebeneficios.galgoproductora.com/${recibo}`} // Utiliza la URL de tu API
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-blue-500 hover:underline"
+                                  className="text-[#23A1D8] hover:underline"
                                 >
                                   Ver Recibo de Sueldo {index + 1}
                                 </a>
                               </div>
                             ))}
-                                                            <button onClick={() => setModalReciboIsOpen(true)} className='mt-4 bg-[#006084] font-bold text-white rounded-lg p-2 hover:bg-opacity-75'>Cargar nuevo Recibo</button>
+                                                            <a onClick={() => setModalReciboIsOpen(true)} className='mt-2 font-bold text-green-500  text-xs rounded-lg p-2 hover:bg-opacity-75'>Actualizar Recibo de Sueldo</a>
 
                           
+                          </div>
+                        )}
+                            <div className='flex justify-center items-end h-1/3'>
+                            <button
+                              className='mt-5 bg-[#0E6F4B]   font-bold text-white rounded-2xl p-3 hover:bg-opacity-75'
+                              onClick={handleGrantBenefit}>
+                              OTORGAR BENEFICIO
+                            </button> 
+                            </div>
+
                           </div>
                         )}
                         
-                          
-
-                          </div>
-                        )}
                         
                         </div>
                
@@ -803,8 +1042,9 @@ const handleRecibo = async () => {
         </div>
         
       )}
-        <Modal
-            
+      
+
+        {/* <Modal            
             isOpen={modalIsOpen}
             onRequestClose={() => setModalIsOpen(false)}
             contentLabel="Editar Familiares"
@@ -880,11 +1120,47 @@ const handleRecibo = async () => {
                 onChange={handleChangeHijo}
               />
             </div>
-
             <div className="flex flex-col justify-center items-center mt-4 rounded-xl min-h-[6rem] w-[100%] bg-gray-200 p-2">
               <p className="font-bold">Subir foto de DNI:</p>
               <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
-                Frente y Dorso.
+                Frente.
+              </p>
+
+              <label
+                htmlFor="dni_img_familiar"
+                className="cursor-pointer mt-auto mb-2"
+              >
+                <FiDownload className="text-5xl text-[#23A1D8]" />
+              </label>
+
+              <input
+                type="file"
+                name="dni_img_familiar"
+                id="dni_img_familiar"
+                multiple
+                required
+                style={{ display: "none" }}
+                onChange={handleDniImgChange}
+              />
+
+              <p className="text-xs font-semibold text-gray-600 text-center">
+                Click aquí para cargar o{" "}
+                <strong className="text-[#006084]">elegir archivos.</strong>
+                <strong className="text-red-500 text-xl">
+                  {validationErrors.dni_img_familiar}
+                </strong>
+              </p>
+               {formData.dni_img_familiar?.map((file, index) => (
+                  <li  key={index}>{file.name}</li>
+                ))}
+              {validationErrors.dni_img_familiar && (
+                <p className="text-red-500"></p>
+              )}
+            </div>
+             <div className="flex flex-col justify-center items-center mt-4 rounded-xl min-h-[6rem] w-[100%] bg-gray-200 p-2">
+              <p className="font-bold">Subir foto de DNI:</p>
+              <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
+                Dorso.
               </p>
 
               <label
@@ -934,7 +1210,7 @@ const handleRecibo = async () => {
               </button>
             </div>
           </Modal>
-
+ */}
 
           <Modal            
             isOpen={modalReciboIsOpen}
@@ -1010,7 +1286,7 @@ const handleRecibo = async () => {
                 className="mt-4 bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
               onClick={() => {
                 setModalReciboIsOpen(false);
-                setSuccessMessage("Los datos se cargaron correctamente.");
+            
               }}
 
               >

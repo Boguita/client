@@ -6,6 +6,8 @@ import Avatar from "./Avatar";
 import NavBG from '../assets/img/navbg.jpg'
 import {AiFillHome} from 'react-icons/ai'
 import {BsFillFileEarmarkBarGraphFill, BsFillPeopleFill} from 'react-icons/bs'
+import {BiSupport} from 'react-icons/bi'
+import { FiLogOut } from "react-icons/fi";
 
 const Navbar = () => {
   const { currentUser, logout } = useContext(AuthContext);
@@ -58,13 +60,13 @@ const Navbar = () => {
    <div className="flex flex-col space-y-2 h-screen px-3 py-4 overflow-y-auto relative  bg-[#0d4668] bg-opacity-80"
     >
       
-      <div className="h-full w-full">
+      <div className="h-full w-full ">
        <Link to="/homeInfo" className={`flex items-center p-2 rounded-lg dark:text-white   ${
               location.pathname === '/dashboard' ? 'text-blue-500' : 'text-gray-700'
             }`}>
           <img src={Logo} className="h-full mt-6 mb-6 mr-3 sm:h-full w-full" alt="UATRE Logo" />
        </Link>
-        <ul className="space-y-5 font-medium ">
+        <ul className="flex flex-col space-y-5 font-medium justify-between">
             <li>
               <p  className={`flex items-center p-2 text-gray-900 ${/^\/homeInfo(\/\w+)?$/.test(location.pathname)  ? 'text-blue-500 bg-gray-700' : 'text-white'} rounded-lg `}>
                    <span className="flex-shrink-0 text-white text-2xl transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white">
@@ -103,51 +105,31 @@ const Navbar = () => {
                   {/* <span class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">Gold</span> */}
                </p>
             </li>
+             </ul>
+      </div>
 
         
-            
-            
-            {/* <li>
-               <Link to='/profile' className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                  <svg aria-hidden="true" className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
-                   <span className={`ml-3 ${location.pathname === '/profile' ? 'text-blue-500' : 'text-white'}`}>Perfil</span>
-               </Link>
-            </li> */}
-            <li>
-               <Link to="/soporte" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                  <svg aria-hidden="true" className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z"></path><path d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path></svg>
-                   <span className={`ml-3 ${location.pathname === '/soporte' ? 'text-blue-500' : 'text-white'}`}>Soporte</span>
-                  {/* <span class="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span> */}
-               </Link>
-            </li>
-            {/* <li>
-               <a href="#" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                   <BsFillFileEarmarkBarGraphFill className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white"/>
-                  <span class="flex-1 ml-3 whitespace-nowrap">Reportes</span>
-               </a>
-            </li> */}
-            <li>
-               <Link>
-               <span onClick={handleLogout} className="cursor-pointer flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                  <svg aria-hidden="true" class="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path></svg>                
-                  {(<span  class="flex-1 ml-3 whitespace-nowrap">Salir</span>)}           
-               </span>
-               </Link>
-            </li>  
-             <li >
-               <Link className="flex justify-center"  to="/homeInfo" > 
-                  <button className="btn just mt-8">                                 
-                  {(<span>Nueva Solicitud</span>)}           
-                  </button>
-               </Link>
-               
-            </li>                 
-         </ul> 
-       </div>     
-     
+          <ul className="flex flex-col space-y-5 font-medium mt-auto"> {/* mt-auto para separar estos elementos */}
+        <li>
+          <Link to="/soporte" className={`flex items-center p-2 text-gray-900 ${location.pathname === '/soporte' ? 'text-blue-500' : 'text-white'} rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700`}>
+            <BiSupport className="text-2xl"/>
+            <span className={`ml-3 ${location.pathname === '/soporte' ? 'text-blue-500' : 'text-white'}`}>Soporte</span>
+          </Link>
+        </li>
+        <li>
+          <Link>
+            <span onClick={handleLogout} className="cursor-pointer flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+              <FiLogOut className="text-2xl"/>
+              {(<span class="flex-1 ml-3 whitespace-nowrap">Salir</span>)}
+            </span>
+          </Link>
+        </li>
+      </ul>
+    </div>
+         
       
 
-     </div> 
+    
      
 </aside>
 </>

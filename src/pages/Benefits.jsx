@@ -58,10 +58,7 @@ const handleAffiliateDataRequest = async () => {
     return formattedDate;
   };
 
-    const handleDateChange = (date) => {
-    setSelectedDate(date);
-    // Aquí podrías realizar una solicitud a la base de datos para obtener los datos del gráfico correspondientes a la fecha seleccionada
-  };
+
 
   const handleValidateBenefit = async () => {
     try {
@@ -70,6 +67,7 @@ const handleAffiliateDataRequest = async () => {
       // Almacenar los datos recibidos de la API
       setBeneficio(res.data)
       setIsLoading(false);
+      console.log(res.data)
 
         // Restablecer el estado del error si la solicitud tiene éxito
     }

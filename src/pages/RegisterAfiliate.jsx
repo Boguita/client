@@ -32,7 +32,8 @@ const RegisterAfiliate = () => {
         cuit_empleador: '',
         actividad: '',
     },
-    dni_img: null,
+    dni_img_frente: null,
+    dni_img_dorso: null,
     recibo_sueldo: null,
     ddjj: null,
   });
@@ -46,7 +47,8 @@ const RegisterAfiliate = () => {
     const requiredFields = ['name', 'dni', 'tel', 'nacionalidad', 'cuit', 'domicilio', 'correo', 'estado_civil', 'fecha_de_nacimiento', 'sexo'];
     return requiredFields.every(field => formData[field] !== '');
     } else if (currentStep === 2) {
-      return formData.dni_img !== null && formData.ddjj !== null;
+      return formData.dni_img_frente !== null && formData.dni_img_dorso
+      // formData.ddjj !== null;
     } else if (currentStep === 3) {
       const requiredFields = ['datos_empleador.razon_social', 'datos_empleador.cuit_empleador', 'datos_empleador.actividad'];
       return requiredFields.every(field => formData[field] !== '') && formData.recibo_sueldo !== null;
@@ -212,19 +214,33 @@ useEffect(() => {
 
 
 
-    const handleDniImgChange = (e) => {
+     const handleDniImgDorso = (e) => {
     const filesArray = Array.from(e.target.files);
-    const maxFiles = 2;
-    if (filesArray.length > maxFiles) {
+    const maxFiles = 1;
+     if (filesArray.length > maxFiles) {
       alert(`Por favor, selecciona un máximo de ${maxFiles} archivos.`);
       e.target.value = null;
       return
-    }
-  setFormData((prevFormData) => ({
-    ...prevFormData,
-    dni_img: filesArray,
-  }));
-  console.log(formData.dni_img);
+    } 
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      dni_img_dorso: filesArray,
+    }));
+    
+  };
+
+   const handleDniImgFrente = (e) => {
+    const filesArray = Array.from(e.target.files);
+    const maxFiles = 1;
+     if (filesArray.length > maxFiles) {
+      alert(`Por favor, selecciona un máximo de ${maxFiles} archivos.`);
+      e.target.value = null;
+      return
+    } 
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      dni_img_frente: filesArray,
+    }));
     
   };
 
@@ -244,21 +260,21 @@ setFormData((prevFormData) => ({
     
   };
 
-  const handleDdjjChange = (e) => {
-    const filesArray = Array.from(e.target.files);
-    const maxFiles = 2;
-    if (filesArray.length > maxFiles) {
-      alert(`Por favor, selecciona un máximo de ${maxFiles} archivos.`);
-      e.target.value = null;
-      return
-    }
-setFormData((prevFormData) => ({
-    ...prevFormData,
-    ddjj: filesArray,
-  }));
-  console.log(formData.ddjj);
+//   const handleDdjjChange = (e) => {
+//     const filesArray = Array.from(e.target.files);
+//     const maxFiles = 2;
+//     if (filesArray.length > maxFiles) {
+//       alert(`Por favor, selecciona un máximo de ${maxFiles} archivos.`);
+//       e.target.value = null;
+//       return
+//     }
+// setFormData((prevFormData) => ({
+//     ...prevFormData,
+//     ddjj: filesArray,
+//   }));
+//   console.log(formData.ddjj);
     
-  };
+//   };
 
 // const loadImage = (imageFile) => {
 //   return new Promise((resolve) => {
@@ -270,14 +286,16 @@ setFormData((prevFormData) => ({
 
 const handleImageUpload = async () => {
     try {
-      console.log(formData.dni_img)
-      console.log(formData.recibo_sueldo)
+
       // Upload DNI images
       const dniFormData = new FormData();
       dniFormData.append("dni", formData.dni);
-      formData.dni_img.forEach((dniImg) => {
-        dniFormData.append("dni_img", dniImg);
-      });
+      formData.dni_img_frente.forEach((dniImg) => {
+      dniFormData.append("dni_img_frente", dniImg);
+    });
+     formData.dni_img_dorso.forEach((dniImg) => {
+      dniFormData.append("dni_img_dorso", dniImg);
+    });
       // await Promise.all(formData.dni_img.map(loadImage));
       const responseDni = await api.post("/uploads/images-dni", dniFormData);
    
@@ -556,35 +574,62 @@ const handleImageUpload = async () => {
       {currentStep === 2 && (
         <>
        <div className="flex flex-col justify-center items-center bg-gray-200 rounded-xl min-h-[10rem] w-[90%] p-2">
-  <p className="font-bold">Adjuntar DNI:</p>
+  <p className="font-bold">Adjuntar DNI Frente:</p>
   <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
-    Recuerda subir frente y dorso.
+    La imagen debe tener buena iluminación y apreciarse los datos completos.
   </p>
 
-  <label htmlFor="dni_img" className="cursor-pointer mt-auto mb-2">
+  <label htmlFor="dni_img_frente" className="cursor-pointer mt-auto mb-2">
     <FiDownload className='text-5xl text-[#23A1D8]' />
   </label>
 
   <input
     type="file"
-    name="dni_img"
-    id="dni_img"
-    multiple
+    name="dni_img_frente"
+    id="dni_img_frente"
     required
     style={{ display: 'none' }}
-    onChange={handleDniImgChange}
+    onChange={handleDniImgFrente}
   />
 
   <p className="text-xs font-semibold text-gray-600 text-center">
     Suelte el archivo aquí para cargar o <strong className="text-[#006084]">elegir archivos.</strong>
   </p>
-   {formData.dni_img &&
-    formData.dni_img.map((file, index) => (
+   {formData.dni_img_frente &&
+    formData.dni_img_frente.map((file, index) => (
       file.name && <li className="text-sm" key={index}>{file.name}</li>
     ))}
 </div>
 
+ <div className="flex flex-col justify-center items-center bg-gray-200 rounded-xl min-h-[10rem] w-[90%] p-2">
+  <p className="font-bold">Adjuntar DNI Dorso:</p>
+  <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
+    La imagen debe tener buena iluminación y apreciarse los datos completos.
+  </p>
 
+  <label htmlFor="dni_img_dorso" className="cursor-pointer mt-auto mb-2">
+    <FiDownload className='text-5xl text-[#23A1D8]' />
+  </label>
+
+  <input
+    type="file"
+    name="dni_img_dorso"
+    id="dni_img_dorso"
+    required
+    style={{ display: 'none' }}
+    onChange={handleDniImgDorso}
+  />
+
+  <p className="text-xs font-semibold text-gray-600 text-center">
+    Suelte el archivo aquí para cargar o <strong className="text-[#006084]">elegir archivos.</strong>
+  </p>
+   {formData.dni_img_dorso &&
+    formData.dni_img_dorso.map((file, index) => (
+      file.name && <li className="text-sm" key={index}>{file.name}</li>
+    ))}
+</div>
+
+{/* 
       <div className="flex flex-col justify-center items-center bg-gray-200 rounded-xl min-h-[10rem] w-[90%] p-2">
   <p className="font-bold">Adjuntar Declaración Jurada:</p>
   <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
@@ -612,7 +657,7 @@ const handleImageUpload = async () => {
     formData.ddjj.map((file, index) => (
       file.name && <li className="text-sm" key={index}>{file.name}</li>
     ))}
-</div>  
+</div>   */}
     
       
          <div className="flex justify-between pt-10">
