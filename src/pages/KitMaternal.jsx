@@ -333,7 +333,7 @@ const handleRegisterAfiliate = async (e) => {
     const res = await api.get(`users/afiliados/${dni}`);
     const familiaresDisponibles = res.data.familiares;
     const afiliado = res.data;
-    
+    console.log("familiares", familiaresDisponibles)
 
     if (familiaresDisponibles === null) {
       setError("No se encontraron datos de familiares.");
@@ -1061,7 +1061,7 @@ return (
             {error && <p className="text-red-500">{error}</p>}
             <div className="mb-2">
 
-             {isLoading? <Loader/> : Object.keys(beneficiosOtorgados).length > 0  &&
+             {isLoading? <Loader/> : Object.keys(beneficiosOtorgados).length > 0 && madres.length > 0 &&
               madres
                 .filter((madre) => beneficiosOtorgados[madre.id] && Object.keys(beneficiosOtorgados[madre.id]).length > 0)
                 .map((madre) => (
