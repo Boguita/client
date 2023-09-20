@@ -28,6 +28,7 @@ const KitMaternal = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [disabled, setDisabled] = useState(false);
   const [beneficiosOtorgados, setBeneficiosOtorgados] = useState([]);
 const [beneficio, setBeneficio] = useState({
 
@@ -116,6 +117,31 @@ const handleNextStep = async () => {
   }
     
   };
+
+  const handleValidateBenefit = async () => {
+    try {
+      
+      const res = await api.get(`tasks/beneficio/${dni}`,);
+      const benefit = res.data
+      const beneficioMaternal = benefit.filter((beneficio) => beneficio.tipo === 'Kit maternal');
+      const beneficioMaternalAño = beneficioMaternal.filter((beneficio) => beneficio.fecha_otorgamiento.includes(new Date().getFullYear()));
+      if(beneficioMaternalAño.length > 0) {
+        setDisabled(true);
+      }
+     
+      console.log(res.data)
+
+        // Restablecer el estado del error si la solicitud tiene éxito
+    }
+    catch (error) {
+      console.log(error)
+      setIsLoading(false);
+      // setError(error.response.data.message);
+    }
+    
+  }
+
+
 
   const beneficioPendiente = async (familiarId, categoria) => {
   try {
@@ -396,6 +422,7 @@ setMadres(familiaresMadre);
     }));
     
     await beneficioPendiente(familiaresConyugue[0].id);   
+    await handleValidateBenefit();
     await setIsLoading(false);
     
   
@@ -802,16 +829,26 @@ return (
                     </p>
                   )}
                 </div>
-                <div></div>
-
-                <div className="flex justify-end pt-6">
-                  <button
-                    className="mt-4 bg-[#006084] w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
-                    onClick={handleRegisterAfiliate}
-                  >
-                    Siguiente
-                  </button>
+                <div>
+                             {error && (
+                            <p className="text-red-500 mt-2">{error}</p>
+                          )}
                 </div>
+
+             <div className="flex justify-end pt-6">
+  {disabled ? (
+    <p className="font-bold text-red-500">Ya se otorgó un beneficio durante el año actual.</p>
+  ) : (  
+    <button
+      className="mt-4 bg-[#006084] w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+      onClick={handleRegisterAfiliate}
+    >
+      Siguiente
+    </button>
+  )
+}
+</div>
+
               </>
             )
           )}
@@ -915,6 +952,7 @@ return (
             <div className="mb-2">
              {isLoading? <Loader/> : conyugue.length > 0 &&
              conyugue.map((familiar) => (
+              Object.keys(beneficiosOtorgados[familiar.id]).length > 0 &&
                       <div key={familiar.id} className="flex justify-center items-center">
                         <div className="flex flex-col w-[95%] ">
                           <label className="font-semibold mt-4 ">
@@ -1106,7 +1144,7 @@ return (
 
        
           </Modal>
-    
+ 
   </div>
 
   

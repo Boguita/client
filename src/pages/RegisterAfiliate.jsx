@@ -6,13 +6,14 @@ import axios from "axios";
 import Loader from "../components/Loader";
 import {BsCheck2Circle} from 'react-icons/bs'
 import { FiDownload } from 'react-icons/fi';
-
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 const RegisterAfiliate = () => {
   const [err, setError] = useState(null);
   const [currentStep, setCurrentStep] = useState(1);
    const [provincias, setProvincias] = useState([]); // Estado para almacenar las provincias
   const [ciudades, setCiudades] = useState([]);
   const [paises, setPaises] = useState([]);
+      const [animationParent] = useAutoAnimate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -72,6 +73,12 @@ const RegisterAfiliate = () => {
   setError(null); // Limpiar cualquier error previo
   setCurrentStep(currentStep + 1);
 };
+
+const handleBackStep = () => {
+  setError(null); // Limpiar cualquier error previo
+  setCurrentStep(currentStep - 1);
+};
+
 
 const comprobarAfiliado = async () => {
   const res = await api.get(`/users/comprobar-afiliado/${formData.dni}`);
@@ -342,7 +349,7 @@ const handleImageUpload = async () => {
     <div className="bg-gray-200 flex justify-center mt-36 h-screen w-screen sm:pl-80 ml-5">
       
    <div className="flex flex-col pt-10 rounded-3xl items-center w-2/3 h-2/3 bg-white">
-    <div className="flex flex-col justify-center items-center h-20">
+    <div ref={animationParent} className="flex flex-col justify-center items-center h-20">
         <h2 className="text-[#006084] text-4xl font-bold">Registro del Trabajador</h2>
         {currentStep === 1 &&
         <p className="text-red-500 font-semibold mt-1">No existe afiliado registrado con ese DNI, para continuar carga los datos correspondientes.</p>
@@ -356,7 +363,7 @@ const handleImageUpload = async () => {
         
         {currentStep === 1 && (
           <>
-        <div className="mb-4">
+        <div ref={animationParent} className="mb-4">
           
           <Input
             type="text"
@@ -548,7 +555,14 @@ const handleImageUpload = async () => {
           />
         </div>
 
-         <div className="flex justify-between pt-10">
+         <div   className="flex justify-between pt-10">
+            <button
+               type="button"
+                className="bg-[#23A1D8] hover:bg-[#006084] text-white font-bold py-2 px-4 rounded"
+                onClick={() => navigate("/home")}
+              >
+                Volver
+              </button>
              
           {err && <p className="text-red-500">{err}</p>}
               
@@ -556,7 +570,7 @@ const handleImageUpload = async () => {
             </div>
 
              <div className="flex justify-end pt-10">
-             
+           
           
               <button
                type="button"
@@ -573,7 +587,7 @@ const handleImageUpload = async () => {
 
       {currentStep === 2 && (
         <>
-       <div className="flex flex-col justify-center items-center bg-gray-200 rounded-xl min-h-[10rem] w-[90%] p-2">
+       <div ref={animationParent} className="flex flex-col justify-center items-center bg-gray-200 rounded-xl min-h-[10rem] w-[90%] p-2">
   <p className="font-bold">Adjuntar DNI Frente:</p>
   <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
     La imagen debe tener buena iluminación y apreciarse los datos completos.
@@ -661,6 +675,13 @@ const handleImageUpload = async () => {
     
       
          <div className="flex justify-between pt-10">
+              <button
+               type="button"
+                className="bg-[#23A1D8] hover:bg-[#006084] text-white font-bold py-2 px-4 rounded"
+                onClick={handleBackStep}
+              >
+                Volver
+              </button>
              
           {err && <p className="text-red-500">{err}</p>}
               

@@ -145,10 +145,7 @@ const handleAffiliateDataRequest = async () => {
                Para acceder a este beneficio solo se necesita fotocopia del recibo de sueldo del trabajador o trabajadora afiliada, constancia de embarazo con fecha probable de parto y fotocopia del DNI de la beneficiaria. Se puede gestionar en cualquier sede del gremio.
              </p>
              <div className='flex items-end h-full'>
-              {/* {isLoading ? <Loader/> : beneficio?.some((beneficio) => beneficio.tipo === 'Kit maternal' && (beneficio.estado === "Pendiente" || beneficio.estado === "Entregado"))
- ?
-              <p className='text-red-500 font-semibold'>Ya se otorgo un beneficio en el año actual.</p>             
-              :  */}
+             
              <button 
               onClick={() => {
                 // Redirigir a la ruta correspondiente si el usuario está autenticado
@@ -163,7 +160,7 @@ const handleAffiliateDataRequest = async () => {
              className='mt-4 bg-[#006084] w-36 font-bold text-white rounded-lg p-1 hover:bg-opacity-75'>
                SOLICITAR
              </button>
-             {/* } */}
+            
              </div>
           </div>
           <div className="flex flex-col rounded-lg h-90 w-full md:w-1/4 p-4 bg-white">

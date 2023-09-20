@@ -66,10 +66,21 @@ const KitEscolar = () => {
       });
 
       const hasSelectedAñoEscolar = selectedFamiliares.every((familiarId) => {
-        const familiar = beneficio[familiarId];
-        return !!familiar.año_escolar;
-      });
-
+        const familiarEnBeneficios = beneficiosOtorgados.find(
+          (beneficio) => beneficio.familiar_id === familiarId
+        );
+             if (familiarEnBeneficios && familiarEnBeneficios.año_escolar) {
+    return true; // Ya existe un año escolar en beneficiosOtorgados
+  } else {
+    // Si no existe, verifica si el familiar en beneficio tiene un año escolar seleccionado
+    const familiarEnBeneficio = beneficio[familiarId];
+    if (familiarEnBeneficio && familiarEnBeneficio.año_escolar) {
+      return true; // El familiar en beneficio tiene un talle seleccionado
+    } else {
+      return false; // No hay talle de guardapolvo seleccionado
+    }
+  }
+});
    const hasSelectedTalle = selectedFamiliares.every((familiarId) => {
   const familiarEnBeneficios = beneficiosOtorgados.find(
     (beneficio) => beneficio.familiar_id === familiarId
@@ -91,7 +102,7 @@ const KitEscolar = () => {
 
       if (!hasSelectedItems) {
         setError(
-          "Debes elegir al menos un ítem a entregar para cada familiar."
+          "Debes elegir al menos un ítem a entregar para cada hijo/a."
         );
         return;
       }
@@ -99,14 +110,14 @@ const KitEscolar = () => {
       if (!hasSelectedTalle) {
         
         setError(
-          "Debes elegir el talle del guardapolvo antes de continuar para cada familiar."
+          "Debes elegir el talle del guardapolvo antes de continuar para cada hijo/a."
         );
         return;
       }
 
       if (!hasSelectedAñoEscolar) {
         setError(
-          "Debes elegir el año escolar antes de continuar para cada familiar."
+          "Debes elegir el año escolar antes de continuar para cada hijo/a."
         );
         return;
       }
@@ -422,6 +433,7 @@ const KitEscolar = () => {
 
 
       let valorGuardapolvo = ""; 
+      let valorAño = ""; 
     switch (tipoBeneficio) {
       case "mochila":
         return beneficiosDelFamiliar.some((beneficio) => beneficio.mochila);
@@ -434,9 +446,21 @@ const KitEscolar = () => {
       // Verifica si el arreglo beneficiosDelFamiliar tiene al menos un elemento
       if (beneficiosDelFamiliar.length > 0) {
         // Obtiene el último elemento del arreglo y accede a su propiedad guardapolvo
-        valorGuardapolvo = beneficiosDelFamiliar[beneficiosDelFamiliar.length - 1].guardapolvo;
-        console.log('Valor de guardapolvo para familiar', valorGuardapolvo);
+        valorGuardapolvo = beneficiosDelFamiliar[0].guardapolvo;
+
         return valorGuardapolvo;
+      } else {
+        // Manejo del caso cuando no se encuentra ningún beneficio para el familiar
+        return "";
+      }
+
+     case "año_escolar":
+      // Verifica si el arreglo beneficiosDelFamiliar tiene al menos un elemento
+      if (beneficiosDelFamiliar.length > 0) {
+        // Obtiene el último elemento del arreglo y accede a su propiedad guardapolvo
+        valorAño = beneficiosDelFamiliar[0].año_escolar;
+        console.log('Valor de añ0 para familiar', valorAño);
+        return valorAño;
       } else {
         // Manejo del caso cuando no se encuentra ningún beneficio para el familiar
         return "";
@@ -657,7 +681,11 @@ const KitEscolar = () => {
                         </label>
                         <select
                           name="año_escolar"
-                          value={beneficio.año_escolar}
+                           disabled={isBeneficioOtorgado(
+                            familiar.id,
+                            "año_escolar"
+                          )}
+                          value= {isBeneficioOtorgado(familiar.id, "año_escolar") !== "" ? isBeneficioOtorgado(familiar.id, "año_escolar") : beneficio.año_escolar}
                           onChange={(e) => handleInputChange(e, familiarId)}
                           required
                           className="cursor-pointer bg-gray-100"
@@ -777,6 +805,7 @@ const KitEscolar = () => {
                         }  bg-gray-100 mt-2 px-8 h-10`}
                       >
                         
+                        
                         <label
                           className={`mr-2 flex items-center font-semibold ${
                             isBeneficioOtorgado(familiar.id, "guardapolvo")
@@ -789,7 +818,27 @@ const KitEscolar = () => {
                           </span>
                           Guardapolvo
                         </label>
-                        <div className="flex">
+                        <div className="flex gap-x-4">
+                            <select
+                          name="guardapolvo"
+                          className={`bg-gray-100 `}
+                          disabled={isBeneficioOtorgado(
+                            familiar.id,
+                            "guardapolvo_talle"
+                          )}
+                          value= {isBeneficioOtorgado(familiar.id, "guardapolvo_talle") !== "" ? isBeneficioOtorgado(familiar.id, "guardapolvo_talle") : beneficio.guardapolvo}
+                          onChange={(e) => handleInputChange(e, familiarId)}
+                          required
+                        >
+                          <option disabled selected value={""}>
+                           { isBeneficioOtorgado(familiar.id, "guardapolvo_talle") !== "" ? isBeneficioOtorgado(familiar.id, "guardapolvo_talle") : "Ninguno"}
+                          </option>
+                          <option value="XS">XS</option>
+                          <option value="S">S</option>
+                          <option value="M">M</option>
+                          <option value="L">L</option>
+                          <option value="XL">XL</option>
+                        </select>
                           <input
                             id={`checkbox_guardapolvo${familiar.id}`}
                             name="guardapolvo_confirm"
@@ -816,26 +865,7 @@ const KitEscolar = () => {
                             </svg>
                           </label>
                         </div>
-                        <select
-                          name="guardapolvo"
-                          className={`bg-gray-100 `}
-                          disabled={isBeneficioOtorgado(
-                            familiar.id,
-                            "guardapolvo_talle"
-                          )}
-                          value= {isBeneficioOtorgado(familiar.id, "guardapolvo_talle") !== "" ? isBeneficioOtorgado(familiar.id, "guardapolvo_talle") : beneficio.guardapolvo}
-                          onChange={(e) => handleInputChange(e, familiarId)}
-                          required
-                        >
-                          <option disabled selected value={""}>
-                           { isBeneficioOtorgado(familiar.id, "guardapolvo_talle") !== "" ? isBeneficioOtorgado(familiar.id, "guardapolvo_talle") : "Ninguno"}
-                          </option>
-                          <option value="XS">XS</option>
-                          <option value="S">S</option>
-                          <option value="M">M</option>
-                          <option value="L">L</option>
-                          <option value="XL">XL</option>
-                        </select>
+                      
                       </div>
                     </div>
                   </div>
@@ -879,9 +909,7 @@ const KitEscolar = () => {
                     <p className="text-gray-600 text-lg mt-2">
                       - Año Escolar:{" "}
                       <span className="font-normal">
-                        {beneficioIndividual.año_escolar
-                          ? beneficioIndividual.año_escolar
-                          : "Omitió cargar el año escolar"}
+                       {beneficioIndividual.año_escolar ? beneficioIndividual.año_escolar : isBeneficioOtorgado(familiar.id, "año_escolar")}
                       </span>
                     </p>
                     {beneficioIndividual.mochila && (
@@ -996,12 +1024,12 @@ const KitEscolar = () => {
                               </p>
                               <p className="ml-6 text-sm text-gray-500">
                                 {beneficioIndividual.mochila == true
-                                  ? `Mochila ${beneficioIndividual.año_escolar}`
+                                  ? `Mochila`
                                   : ""}
                               </p>
                               <p className="ml-6 text-sm text-gray-500">
                                 {beneficioIndividual.utiles == true
-                                  ? `Utiles`
+                                  ? `Utiles  ${beneficioIndividual.año_escolar ? beneficioIndividual.año_escolar : isBeneficioOtorgado(familiar.id, "año_escolar")}`
                                   : ""}
                               </p>
                               <p className="ml-6 text-sm text-gray-500">

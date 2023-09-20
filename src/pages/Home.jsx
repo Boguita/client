@@ -91,7 +91,7 @@ const handleAffiliateDataRequest = async (dniparams) => {
       ...familiaresConyugue,
     ]);
 
-    await beneficioPendiente(familiaresConyugue[0].id);
+    // await beneficioPendiente(familiaresConyugue[0].id);
     
      } 
 
@@ -106,7 +106,7 @@ const handleAffiliateDataRequest = async (dniparams) => {
       ...familiaresMadre,
     ]);
 
-    await beneficioPendiente(familiaresMadre[0].id);
+    // await beneficioPendiente(familiaresMadre[0].id);
      } 
 
 
@@ -452,6 +452,12 @@ const lunademielFiltrado = lunademiel.filter((elemento) => elemento.tipo === 'Lu
       ...prevBeneficiosOtorgados,
       ...lunademielFiltrado,
     ]);
+    const kitnacimientoFiltrado = lunademiel.filter((elemento) => elemento.tipo === 'Kit maternal');
+      // Almacenar los datos recibidos de la API
+      setBeneficiosOtorgados((prevBeneficiosOtorgados) => [
+      ...prevBeneficiosOtorgados,
+      ...kitnacimientoFiltrado,
+    ]);
       setIsLoading(false);
       console.log(res.data)
 
@@ -464,26 +470,26 @@ const lunademielFiltrado = lunademiel.filter((elemento) => elemento.tipo === 'Lu
     setIsLoading(false);
   }
 
-  const beneficioPendiente = async (familiarId) => {
-  try {
-     // Convertir a cadena separada por comas
-    const res = await api.get(`/tasks/verified-kit-maternal/${familiarId}`);
-    const kitmaternal = res.data;
-    res.status === 200 &&
-    setBeneficiosOtorgados((prevBeneficiosOtorgados) => [
-      ...prevBeneficiosOtorgados,
-      ...kitmaternal,
-    ]);
-    //  console.log("RES DE kit maternal",res.data)
-    if(beneficiosOtorgados.length === 0) {
-      return;
-    } else {
-    console.log("qsy")
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
+//   const beneficioPendiente = async (familiarId) => {
+//   try {
+//      // Convertir a cadena separada por comas
+//     const res = await api.get(`/tasks/verified-kit-maternal/${familiarId}`);
+//     const kitmaternal = res.data;
+//     res.status === 200 &&
+//     setBeneficiosOtorgados((prevBeneficiosOtorgados) => [
+//       ...prevBeneficiosOtorgados,
+//       ...kitmaternal,
+//     ]);
+//     //  console.log("RES DE kit maternal",res.data)
+//     if(beneficiosOtorgados.length === 0) {
+//       return;
+//     } else {
+//     console.log("qsy")
+//     }
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
 
 const comprobarBeneficios = async (familiarIds) => {
     try {
@@ -820,7 +826,8 @@ const handleRecibo = async () => {
             beneficiosOtorgados.some(
               (beneficio) =>
                 beneficio.familiar_id === familiar.id &&
-                beneficio.estado === 'Pendiente' &&
+                  beneficio.fecha_otorgamiento.includes(new Date().getFullYear()) &&
+                (beneficio.estado === 'Pendiente' || beneficio.estado === 'Entregado') &&
                 beneficio.tipo === 'Kit maternal'
             )
           )
@@ -829,7 +836,7 @@ const handleRecibo = async () => {
               <div className="flex flex-col items-center">
                 <img className="w-auto h-8" src={Mono} alt="Mono" />
                 <p className="font-semibold text-gray-400">Kit Nacimiento</p>
-                <span className='font-semibold'>{familiar.name}</span>
+                <span className='font-semibold capitalize'>{familiar.name}</span>
               </div>
             </div>
           ))}
@@ -853,7 +860,7 @@ const handleRecibo = async () => {
               <div className="flex flex-col items-center">
                 <img className="w-auto h-8" src={Avion} alt="Avion" />
                 <p className="font-semibold text-gray-400">Luna de Miel</p>
-                <span  className='font-semibold'>{familiar.name}</span>
+                <span  className='font-semibold capitalize'>{familiar.name}</span>
               </div>
             </div>
           ))}

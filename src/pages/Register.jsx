@@ -138,7 +138,7 @@ enim ad minim veniam, quis nos</p>
                     className=" bg-[#F0F0F0] pl-3 text-sm font-semibold focus:text-[#808080] focus:outline-none w-full"
                   >
                     <option value="" disabled selected>Nacionalidad</option>
-                    {paises.map((pais, index) => (
+                    {paises.sort().map((pais, index) => (
                       <option key={index} value={pais}>
                         {pais}
                       </option>
@@ -190,7 +190,7 @@ enim ad minim veniam, quis nos</p>
                     className=" bg-[#F0F0F0] pl-3 text-sm font-semibold focus:text-[#808080] focus:outline-none w-full"
                   >
                     <option value="" disabled selected>Provincia</option>
-                    {provincias.map((provincia) => (
+                    {provincias.sort().map((provincia) => (
                       <option key={provincia.id} value={provincia.nombre}>
                         {provincia.nombre}
                       </option>
@@ -209,7 +209,7 @@ enim ad minim veniam, quis nos</p>
                       <option value="" disabled selected>
                         Ciudad
                       </option>
-                      {ciudades.map((ciudad) => (
+                      {ciudades.sort().map((ciudad) => (
                         <option key={ciudad.id} value={ciudad.nombre}>
                           {ciudad.nombre}
                         </option>
