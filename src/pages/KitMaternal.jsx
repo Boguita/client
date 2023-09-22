@@ -188,9 +188,9 @@ const handleNextStep = async () => {
     return res;
 
   } catch (err) {
-    console.log(err.response)
-    setError(err.response.data.error? err.response.data.error : "Error al entregar el beneficio");
-
+    console.log(err)
+    setError( "Error al entregar el beneficio");
+     setIsLoading(false);
   }
   setIsLoading(false);
   
@@ -1008,7 +1008,7 @@ return (
                           <div className="flex flex-col mt-4 items-center">
                           <Files 
                           label="Subir foto de REMITO DE ENTREGA" 
-                          onUpload={handleUpdateBeneficio}
+                          onUpload={() => handleUpdateBeneficio(beneficiosOtorgados[familiar.id][0].id)}
                           instructions="Recuerde que debe estar firmada por el trabajador." 
                             />
                           <button

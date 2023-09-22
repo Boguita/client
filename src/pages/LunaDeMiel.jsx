@@ -659,7 +659,7 @@ return (
                   </div>
            
                   {/* } */}
-                  <div className="flex justify-end items-end h-[60%] flex-col mt-4">
+                  <div className="flex justify-end items-end mt-20 flex-col">
                   <button
                     className="bg-[#0E6F4B] w-1/3 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
                     onClick={handleRegisterAfiliate}

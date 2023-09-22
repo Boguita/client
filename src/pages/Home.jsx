@@ -609,7 +609,7 @@ const handleRecibo = async () => {
 
 
   return (
-    <div  className="h-screen py-36 pl-80 w-full ">
+    <div  className="h-full mt-20 py-2 pl-80 w-full ">
       <div className='flex flex-col justify-center'>        
         <h1 className="mt-4 text-3xl font-extrabold ">{affiliateData ? 'Perfil del Trabajador: Revisar Datos' : 'INGRESA EL NUMERO DE DNI DEL TRABAJADOR'}</h1>
         <p className='text-gray-500 font-semibold mt-4'>{affiliateData ? '' : 'Ingrese un número de DNI para comenzar.'}</p>
@@ -618,9 +618,9 @@ const handleRecibo = async () => {
  
       { affiliateData ? (
         // Mostrar los datos del afiliado
-        <div  className="flex">
+        <div  className="flex h-full">
           {/* ... Código para mostrar los datos del afiliado ... */}
-           <div  className="flex flex-col rounded-2xl w-[25%] mt-4 ">
+           <div  className="flex flex-col h-full rounded-2xl w-[25%] mt-3 ">
          
         
          <img className='mb-[-5px]' src={Avatar}>
@@ -670,17 +670,17 @@ const handleRecibo = async () => {
   </div>
 </div>
 
-        <div className='flex h-28 gap-x-4'>       
-          <div onClick={getDniImg}  className='flex flex-col cursor-pointer justify-center items-center w-[50%] rounded-2xl mt-5  bg-white'>
+        <div className='flex h-20 gap-x-4'>       
+          <div onClick={getDniImg}  className='flex flex-col cursor-pointer justify-center items-center w-[50%] rounded-2xl mt-2  bg-white'>
                 
-            <FaIdCard className='text-5xl text-[#23A1D8]'></FaIdCard>
+            <FaIdCard className='text-4xl text-[#23A1D8]'></FaIdCard>
             <p className='text-[#23A1D8] text-sm hover:underline font-semibold'>Ver Frente del DNI</p> 
            
             
           </div>
-          <div onClick={getDniImgDorso}  className='flex flex-col cursor-pointer justify-center items-center w-[50%] rounded-2xl mt-5  bg-white'>
+          <div onClick={getDniImgDorso}  className='flex flex-col cursor-pointer justify-center items-center w-[50%] rounded-2xl mt-2  bg-white'>
                 
-            <BsPostcardFill className='text-5xl text-[#23A1D8]'></BsPostcardFill>
+            <BsPostcardFill className='text-4xl text-[#23A1D8]'></BsPostcardFill>
             <p className='text-[#23A1D8] text-sm hover:underline font-semibold'>Ver Dorso del DNI</p> 
            
             
@@ -694,30 +694,31 @@ const handleRecibo = async () => {
     </div>
 
       {/* Cuadro de datos de familiares */}
-  <div className="flex ml-10 justify-between rounded-lg w-[70%] p-5 mt-4 bg-white">
+  <div className="flex ml-5 justify-between rounded-lg w-[71%] p-5 mt-3 bg-white">
 
-                <div className=''>
-                <h3 className='font-bold text-3xl mb-5'>Hijos:</h3>
+                <div className='h-full'>
+                <h3 className='font-bold text-2xl mb-5'>Hijos:</h3>
                   {affiliateData.familiares && affiliateData.familiares.some(familiar => familiar.categoria === 'Hijo/a') ? (
-  <div >
-    
+  <div className='flex h-[90%] flex-col justify-between' >
+  
+    <div> 
     <ul >
       {affiliateData.familiares
         .filter(familiar => familiar.categoria === 'Hijo/a')
         .map((familiar, index) => (
           <div onClick={() => toggleFamiliar(familiar.id)} key={index} ref={animationParent} >
             <p 
-              className='p-2 bg-[#d8d8d8] capitalize font-semibold text-gray-800 relative w-80 mt-4 pl-6 cursor-pointer flex flex-row justify-between'
+              className='p-2 bg-[#d8d8d8] items-center capitalize font-semibold text-gray-800 relative w-[16vw] mt-4 pl-6 cursor-pointer flex flex-row justify-between'
              
             >
                
               <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
-              {familiar.name} <span className='text-[#006084] pr-1'>{expandedFamiliars[familiar.id] ? "Ver menos" : "Ver más"}</span>
+              {familiar.name} <span className='text-[#006084] text-sm pr-1'>{expandedFamiliars[familiar.id] ? "Ver menos" : "Ver más"}</span>
             </p>
                {
                         <div
                           key={familiar.id}
-                          className="flex w-80 pt-1"
+                          className="flex w-[16vw] pt-1"
                         >
                           <TbTools  className="text-gray-400" />
                           <p
@@ -774,7 +775,7 @@ const handleRecibo = async () => {
                       }
 
             {expandedFamiliars[familiar.id] && (
-              <li   key={index} className="w-80 p-2 ">
+              <li   key={index} className="w-[16vw] p-2 ">
                 <p><strong>DNI:</strong></p>
                 <p className='p-2 bg-gray-200 relative pl-6'>
                   <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
@@ -803,21 +804,11 @@ const handleRecibo = async () => {
           </div>
         ))}
     </ul>
-   
-  
   </div>
-) : (
-  <>
-  <p className='text-gray-500'>No hay datos de familiares.</p>
-
-  </>
-
-)}
-
-{isLoading ? (
+    {isLoading ? (
   <Loader />
 ) : (
-  <div className="flex h-3/4 items-end justify-around">
+  <div className="flex items-end justify-around">
     {Object.keys(beneficiosOtorgados).length > 0 && (
       <>
  
@@ -827,7 +818,7 @@ const handleRecibo = async () => {
               (beneficio) =>
                 beneficio.familiar_id === familiar.id &&
                   beneficio.fecha_otorgamiento.includes(new Date().getFullYear()) &&
-                (beneficio.estado === 'Pendiente' || beneficio.estado === 'Entregado') &&
+                (beneficio.estado === 'Entregado') &&
                 beneficio.tipo === 'Kit maternal'
             )
           )
@@ -836,7 +827,8 @@ const handleRecibo = async () => {
               <div className="flex flex-col items-center">
                 <img className="w-auto h-8" src={Mono} alt="Mono" />
                 <p className="font-semibold text-gray-400">Kit Nacimiento</p>
-                <span className='font-semibold capitalize'>{familiar.name}</span>
+                <span className='font-semibold text-sm capitalize'>{familiar.name}</span>
+                <span className='font-semibold text-sm text-green-500'>Entregado</span>
               </div>
             </div>
           ))}
@@ -851,7 +843,7 @@ const handleRecibo = async () => {
             beneficiosOtorgados.some(
               (beneficio) =>
                 beneficio.familiar_id === familiar.id &&
-                beneficio.estado === 'Pendiente' &&
+                beneficio.estado === 'Entregado' &&
                 beneficio.tipo === 'Luna de miel'
             )
           )
@@ -860,7 +852,8 @@ const handleRecibo = async () => {
               <div className="flex flex-col items-center">
                 <img className="w-auto h-8" src={Avion} alt="Avion" />
                 <p className="font-semibold text-gray-400">Luna de Miel</p>
-                <span  className='font-semibold capitalize'>{familiar.name}</span>
+                <span  className='font-semibold text-sm capitalize'>{familiar.name}</span>
+                <span className='font-semibold text-sm text-green-500'>Entregado</span>
               </div>
             </div>
           ))}
@@ -868,12 +861,81 @@ const handleRecibo = async () => {
     )}
   </div>
 )}
+ 
+  </div>
+) : (
+  <>
+  <p className='text-gray-500'>No hay datos de familiares.</p>
+
+  {isLoading ? (
+  <Loader />
+) : (
+  <div className="flex h-full items-end justify-around">
+    {Object.keys(beneficiosOtorgados).length > 0 && (
+      <>
+ 
+        {familiares
+          .filter((familiar) =>
+            beneficiosOtorgados.some(
+              (beneficio) =>
+                beneficio.familiar_id === familiar.id &&
+                  beneficio.fecha_otorgamiento.includes(new Date().getFullYear()) &&
+                (beneficio.estado === 'Entregado') &&
+                beneficio.tipo === 'Kit maternal'
+            )
+          )
+          .map((familiar) => (
+            <div key={familiar.id} className="flex justify-center items-center">
+              <div className="flex flex-col items-center">
+                <img className="w-auto h-8" src={Mono} alt="Mono" />
+                <p className="font-semibold text-gray-400">Kit Nacimiento</p>
+                <span className='font-semibold text-sm capitalize'>{familiar.name}</span>
+                <span className='font-semibold text-sm text-green-500'>Entregado</span>
               </div>
+            </div>
+          ))}
+      </>
+    )}
+
+    {Object.keys(beneficiosOtorgados).length > 0 && (
+      <>
+    
+        {familiares
+          .filter((familiar) =>
+            beneficiosOtorgados.some(
+              (beneficio) =>
+                beneficio.familiar_id === familiar.id &&
+                beneficio.estado === 'Entregado' &&
+                beneficio.tipo === 'Luna de miel'
+            )
+          )
+          .map((familiar) => (
+            <div key={familiar.id} className="flex justify-center items-center">
+              <div className="flex flex-col items-center">
+                <img className="w-auto h-8" src={Avion} alt="Avion" />
+                <p className="font-semibold text-gray-400">Luna de Miel</p>
+                <span  className='font-semibold text-sm capitalize'>{familiar.name}</span>
+                <span className='font-semibold text-sm text-green-500'>Entregado</span>
+              </div>
+            </div>
+          ))}
+      </>
+    )}
+  </div>
+)}
+
+  </>
+
+)}
+
+
+              </div>
+              
 
               <div  className=''>
-              <h3 className='font-bold text-3xl mb-5'>Datos del Conyugue:</h3>
+              <h3 className='font-bold  text-2xl mb-5'>Datos del Conyugue:</h3>
                   {affiliateData.familiares && affiliateData.familiares.some(familiar => familiar.categoria === 'Conyugue') ? (
-  <div >
+  <div className='flex h-[90%] flex-col' >
     
     <ul >
       {affiliateData.familiares
@@ -881,16 +943,16 @@ const handleRecibo = async () => {
         .map((familiar, index) => (
           <div onClick={() => toggleFamiliar(familiar.id)} key={index} ref={animationParent} >
             <p
-              className='p-2 capitalize bg-[#d8d8d8] font-semibold text-gray-800 relative w-80 mt-4 pl-6 cursor-pointer flex flex-row justify-between'
+              className='p-2 items-center capitalize bg-[#d8d8d8] font-semibold text-gray-800 relative w-[16vw] mt-4 pl-6 cursor-pointer flex flex-row justify-between'
              
             >
                
               <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
-              {familiar.name} <span  className='text-[#006084] pr-1'>{expandedFamiliars[familiar.id] ? "Ver menos" : "Ver más"}</span>
+              {familiar.name} <span  className='text-[#006084] text-sm  pr-1'>{expandedFamiliars[familiar.id] ? "Ver menos" : "Ver más"}</span>
             </p>
 
             {expandedFamiliars[familiar.id] && (
-              <li key={index} className="w-80 p-4 mb-4">
+              <li key={index} className="w-[16vw] p-4 mb-4">
                 <p><strong>DNI:</strong></p>
                 <p className='p-2 bg-gray-200 relative pl-6'>
                   <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
@@ -912,7 +974,7 @@ const handleRecibo = async () => {
             )}
           
             <div onClick={getLibretaImg}>
-            <button className='mt-4 bg-[#006084] font-bold text-white rounded-lg p-2 hover:bg-opacity-75'
+            <button className='mt-4 bg-[#006084] font-bold text-sm text-white rounded-lg p-2 hover:bg-opacity-75'
             
             >Ver libreta de matrimonio</button>
             </div>
@@ -941,7 +1003,7 @@ const handleRecibo = async () => {
         <div className='flex'>
               {affiliateData.datos_empleador && (
                         <div >
-                                <h2 className="font-bold text-3xl mb-5">Datos del Empleador:</h2>
+                                <h2 className="font-bold text-2xl mb-5">Datos del Empleador:</h2>
                                 {affiliateData.datos_empleador && (
                                   <div>
                                     {(() => {
@@ -951,19 +1013,19 @@ const handleRecibo = async () => {
                                           <div>
                                             <p><strong>Razon Social:</strong></p>
                                             <p
-                                               className='p-2 capitalize bg-gray-200 font-semibold text-gray-800 relative w-80 mt-2 pl-6'
+                                               className='p-2 capitalize bg-gray-200 font-semibold text-gray-800 relative w-[16vw] mt-2 pl-6'
                                             >                
                                               <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
                                               {empleador.razon_social} 
                                               
                                             </p>
                                             <p><strong>CUIT:</strong></p>
-                                              <p className='p-2 bg-gray-200 relative pl-6'>
+                                              <p className='p-2 bg-gray-200 w-[16vw] relative pl-6'>
                                                 <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
                                                 {empleador.cuit_empleador}
                                               </p>
                                               <p><strong>Actividad:</strong></p>
-                                              <p className='p-2 capitalize bg-gray-200 relative pl-6'>
+                                              <p className='p-2 capitalize bg-gray-200 w-[16vw] relative pl-6'>
                                                 <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
                                                 {empleador.actividad}
                                               </p>                                            
@@ -981,7 +1043,7 @@ const handleRecibo = async () => {
 
                 
                                     {affiliateData.recibo_sueldo && affiliateData.recibo_sueldo.length > 0 && (
-                          <div className='flex flex-col cursor-pointer justify-center items-center rounded-2xl p-2 mt-5  bg-gray-200'>
+                          <div className='flex flex-col cursor-pointer justify-center w-[16vw] items-center rounded-2xl p-2 mt-5  bg-gray-200'>
                             <RiBillLine className='text-3xl'/>
                             {affiliateData.recibo_sueldo.map((recibo, index) => (
                               
@@ -1015,6 +1077,7 @@ const handleRecibo = async () => {
                         
                         
                         </div>
+                        
                
                                 
   </div>
@@ -1027,7 +1090,7 @@ const handleRecibo = async () => {
         </div>
       ) :  (
         // Mostrar campo de búsqueda si no hay datos de afiliado
-        <div ref={animationParent} className="flex flex-col h-full justify-center items-center">
+        <div ref={animationParent} className="flex flex-col h-full mt-48 justify-center items-center">
           <div ref={animationParent} className='flex flex-col w-[40rem] h-[14rem] items-center justify-center align-middle rounded-lg bg-white'>
           <label className='flex font-bold w-full mt-[-15px] pl-24 pb-2' htmlFor='dni'>DNI</label>
           <Input
