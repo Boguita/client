@@ -24,6 +24,12 @@ const Navbar = () => {
   console.log(location.pathname)
   window.addEventListener("scroll", onScroll)
 
+    const handleLogout = () => {
+      logout();
+      navigate("/admin/login");
+   }
+
+
   return (
     <>
     {/* Barra horizontal superior */}
@@ -55,8 +61,8 @@ const Navbar = () => {
     >
       
       <div className="h-full w-full">
-       <Link to="/home" className={`flex items-center p-2 rounded-lg dark:text-white   ${
-              location.pathname === '/dashboard' ? 'text-blue-500' : 'text-gray-700'
+       <Link to="/admin/dashboard" className={`flex items-center p-2 rounded-lg dark:text-white   ${
+              location.pathname === '/admin/dashboard' ? 'text-blue-500' : 'text-gray-700'
             }`}>
           <img src={Logo} className="h-full mt-6 mb-6 mr-3 sm:h-full w-full " alt="UATRE Logo" />
        </Link>
@@ -75,18 +81,18 @@ const Navbar = () => {
                </Link>
             </li>
                <li>
-               <Link to="/admin/delegados" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+               <Link to="/admin/administradores" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                   <BsFillPeopleFill className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" />
-                   <span className={`ml-3 ${location.pathname === '/admin/delegados' ? 'text-blue-500' : 'text-white'}`}>Delegados</span>
+                   <span className={`ml-3 ${location.pathname === '/admin/administradores' ? 'text-blue-500' : 'text-white'}`}>Administradores</span>
                   {/* <span class="inline-flex items-center justify-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">Gold</span> */}
                </Link>
             </li>
             
           
             <li>
-               <Link to="/admin/soporte" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+               <Link to="/admin/beneficios" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                   <svg aria-hidden="true" className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z"></path><path d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path></svg>
-                   <span className={`ml-3 ${location.pathname === '/admin/soporte' ? 'text-blue-500' : 'text-white'}`}>Beneficios</span>
+                   <span className={`ml-3 ${location.pathname === '/admin/beneficios' ? 'text-blue-500' : 'text-white'}`}>Beneficios</span>
                   {/* <span class="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span> */}
                </Link>
             </li>
@@ -103,21 +109,21 @@ const Navbar = () => {
                </a>
             </li> */}
             <li>
-               <Link to="/">
-               <span className="cursor-pointer flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+               <Link to="/admin/login">
+               <span onClick={handleLogout} className="cursor-pointer flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
                   <svg aria-hidden="true" class="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path></svg>                
-                  {(<span onClick={logout} class="flex-1 ml-3 whitespace-nowrap">Salir</span>)}           
+                  {(<span  class="flex-1 ml-3 whitespace-nowrap">Salir</span>)}           
                </span>
                </Link>
             </li>  
-             <li >
+             {/* <li >
                <Link className="flex justify-center"  to="/home" > 
                   <button className="btn just mt-8">                                 
                   {(<span>Nueva Solicitud</span>)}           
                   </button>
                </Link>
                
-            </li>   
+            </li>    */}
 
          </ul> 
        </div>     

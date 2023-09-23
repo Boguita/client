@@ -119,27 +119,38 @@ const handleNextStep = async () => {
   };
 
   const handleValidateBenefit = async () => {
-    try {
-      
-      const res = await api.get(`tasks/beneficio/${dni}`,);
-      const benefit = res.data
-      const beneficioMaternal = benefit.filter((beneficio) => beneficio.tipo === 'Kit maternal');
-      const beneficioMaternalAño = beneficioMaternal.filter((beneficio) => beneficio.fecha_otorgamiento.includes(new Date().getFullYear()));
-      if(beneficioMaternalAño.length > 0) {
-        setDisabled(true);
-      }
-     
-      console.log(res.data)
+  try {
+    const res = await api.get(`tasks/beneficio/${dni}`);
+    if (!res.data) {
+      // La respuesta está vacía o nula, manejar este caso apropiadamente
+      console.log('No se encontraron beneficios para el DNI proporcionado.');
+       setIsLoading(false);
+      return;
+    }
 
-        // Restablecer el estado del error si la solicitud tiene éxito
+    const benefit = res.data;
+
+    // Filtra beneficios por tipo "Kit maternal" y estado "Aprobado" o "Entregado"
+    const beneficioMaternal = benefit.filter(
+      (beneficio) =>
+        beneficio.tipo === 'Kit maternal' &&
+        (beneficio.estado === 'Aprobado' || beneficio.estado === 'Entregado' || beneficio.estado === 'Pendiente') &&
+        beneficio.fecha_otorgamiento.includes(new Date().getFullYear())
+    );
+
+    if (beneficioMaternal.length > 0) {
+      setDisabled(true);
     }
-    catch (error) {
-      console.log(error)
-      setIsLoading(false);
-      // setError(error.response.data.message);
-    }
-    
+
+    console.log(res.data);
+    // Restablecer el estado del error si la solicitud tiene éxito
+  } catch (error) {
+    console.log(error);
+    setIsLoading(false);
+    // setError(error.response.data.message);
   }
+};
+
 
 
 
@@ -550,7 +561,15 @@ const validateFields = () => {
       },
     }));
   };
+const getCurrentDate = () => {
+  const date = new Date();
+  const year = date.getFullYear();
+  let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Asegura que tenga 2 dígitos
+  let day = date.getDate().toString().padStart(2, '0'); // Asegura que tenga 2 dígitos
 
+  // Formatea la fecha como "YYYY-MM-DD"
+  return `${year}-${month}-${day}`;
+};
 
 
 useEffect(() => {
@@ -664,7 +683,7 @@ return (
                       </div>
                     ))
                   ) : ( */}
-                     <div ref={animationParent} className="flex flex-col gap-2 px-4 w-full">
+                     <div  ref={animationParent} className="flex flex-col gap-2 px-4 w-full">
                   {conyugue.length > 0 && showButton &&
                        <>
                       <p className="text-red-500 text-center font-semibold mt-3">Existe una conyugue registrada, ¿Deseas utilizar estos datos?</p>
@@ -683,7 +702,7 @@ return (
                         onChange={(e) => handleInputChange(e, "familiar")}
                         value={familiares.name}
                         className={"w-full p-3"}
-                        disabled={beneficio[0].familiar_id}
+                        disabled={beneficio[0].familiar_id || disabled}
                       />
                       {validationErrors.name && (
                         <p className="text-red-500 ">{validationErrors.name}</p>
@@ -694,7 +713,7 @@ return (
                         onChange={(e) => handleInputChange(e, "familiar")}
                         value={familiares.dni}
                         className={"w-full p-3"}
-                        disabled={beneficio[0].familiar_id}
+                        disabled={beneficio[0].familiar_id || disabled}
                       />
                       {validationErrors.dni && (
                         <p className="text-red-500">{validationErrors.dni}</p>
@@ -708,7 +727,7 @@ return (
                         value={familiares.fecha_de_nacimiento}
                         onChange={(e) => handleInputChange(e, "familiar")}
                         className={"w-full p-3"}
-                        disabled={beneficio[0].familiar_id}
+                        disabled={beneficio[0].familiar_id || disabled}
                       />
                       {validationErrors.fecha_de_nacimiento && (
                         <p className="text-red-500">
@@ -722,7 +741,7 @@ return (
                         onChange={(e) => handleInputChange(e, "familiar")}
                         value={familiares.tel}
                         className={"w-full p-3"}
-                        disabled={beneficio[0].familiar_id}
+                        disabled={beneficio[0].familiar_id || disabled}
                       />
                       {validationErrors.tel && (
                         <p className="text-red-500 ">{validationErrors.tel}</p>
@@ -745,6 +764,7 @@ return (
                       value={beneficio.semana}
                       className={"w-[95%] p-3"}
                       placeholder={"12345"}
+                      disabled={disabled}
                     />
                     {validationErrors.semanas && (
                       <p className="text-red-500">{validationErrors.semanas}</p>
@@ -761,6 +781,8 @@ return (
                       value={beneficio.fecha_de_parto}
                       className={"w-[95%] p-3"}
                       placeholder={"12345"}
+                      min={getCurrentDate()}
+                         disabled={disabled}
                     />
                     {validationErrors.fecha_de_parto && (
                       <p className="text-red-500">
@@ -773,6 +795,7 @@ return (
                     <select
                       name="cantidad"
                       onChange={handleInputChange}
+                         disabled={disabled}
                       value={beneficio.cantidad}
                       className={
                         "w-[95%] !border-l-4 !border-[#006084] bg-gray-200 pl-3 text-base font-semibold focus:outline-none p-3"
@@ -809,6 +832,7 @@ return (
                       id="certificado"
                       multiple
                       required
+                         disabled={disabled}
                       style={{ display: "none" }}
                       onChange={handleCertificadoChange}
                     />

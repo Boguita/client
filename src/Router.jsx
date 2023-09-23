@@ -26,6 +26,11 @@ import Home from "./pages/Home";
 import ResetPassword from "./pages/ResetPassword";
 import ForgotPassword from "./pages/ForgotPassword";
 import Afiliados from "./pages/Afiliados";
+import Administradores from "./pages/Administradores";
+import LunaDeMielAdmin from "./pages/LunaDeMielAdmin";
+import BenefitsAdmin from "./pages/BenefitsAdmin";
+import KitMaternalAdmin from "./pages/KitMaternalAdmin";
+import KitEscolarAdmin from "./pages/KitEscolarAdmin";
 
 
 const PrivateRoute = ({children, redirectTo="/"}) => {
@@ -38,15 +43,19 @@ const PrivateRoute = ({children, redirectTo="/"}) => {
   );  
 };
 
-const AdminRoute = ({children, redirectTo="/admin"}) => {
+const AdminRoute = ({ children, redirectTo = "/admin/login" }) => {
   const { currentUser } = useContext(AuthContext);
-  if (!currentUser?.username) {
-    return <Navigate to={redirectTo} />
-  }  
-    return ( children ? children : 
-   <Outlet/>
-  );  
+
+  // Verifica si el usuario no es administrador (area no existe o es null)
+  const isNotAdmin = !currentUser?.area || currentUser?.area !== "admin";
+
+  if (isNotAdmin) {
+    return <Navigate to={redirectTo} />;
+  }
+
+  return children ? children : <Outlet />;
 };
+
 
 
 
@@ -82,8 +91,12 @@ export const AppRouter = () => {
       <Route element={<AdminRoute/>}> 
         <Route path='/' element={<LayoutAdmin/>}>      
             <Route path='/admin/dashboard' element={<DashboardAdmin/>} /> 
-            <Route path='/admin/beneficios' element={<Benefits />} />
-            <Route path='/admin/afiliados' element={<Afiliados />} />          
+            <Route path='/admin/beneficios' element={<BenefitsAdmin />} />
+            <Route path='/admin/luna-de-miel' element={<LunaDeMielAdmin />} />
+            <Route path='/admin/kit-nacimiento' element={<KitMaternalAdmin />} />
+            <Route path='/admin/kit-escolar' element={<KitEscolarAdmin />} />
+            <Route path='/admin/afiliados' element={<Afiliados />} />    
+            <Route path='/admin/administradores' element={<Administradores />} />      
             <Route path='/admin/profile' element={<Profile />} />
             <Route path='/admin/soporte' element={<Soporte />} />                
           </Route>      

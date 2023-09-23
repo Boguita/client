@@ -7,7 +7,7 @@ import { useAutoAnimate } from '@formkit/auto-animate/react';
 import {AiOutlineWarning} from 'react-icons/ai';
 import {AiOutlineCheckCircle} from 'react-icons/ai';
 import api from '../common/Axiosconfig';
-
+import Loader from '../components/Loader';
 const TableAfiliados = ({ data, rowsPerPage = 8,  showPagination = true }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [openModal, setOpenModal] = useState(false);
@@ -15,6 +15,8 @@ const TableAfiliados = ({ data, rowsPerPage = 8,  showPagination = true }) => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [animationParent] = useAutoAnimate();
     const [currentStep, setCurrentStep] = useState(1);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
   // Estilo en línea en el componente
 const whiteRowClass = 'bg-white';
 const grayRowClass = 'bg-gray-200';
@@ -42,14 +44,24 @@ const handleOpenModal = (afiliado) => {
 };
 
 const deleteAfiliado = (afiliado) => {
+  console.log("llega a la funcion",afiliado)
   setSelectedAfiliado(afiliado);
   setOpenDeleteModal(true);
 }
 
 const handleDeleteAfiliado = async () => {
-  const res = await api.delete(`/users/afiliados/${selectedAfiliado._id}`);
-  console.log(res.data)
-  setCurrentStep(2);
+  try {
+  setLoading(true);
+  const res = await api.delete(`/users/afiliados/${selectedAfiliado}`);
+  res.status === 200 ? 
+  setCurrentStep(2)
+  : setError("Hubo un error al eliminar el afiliado");
+  setLoading(false);
+  } catch (error) {
+    setError("Hubo un error al eliminar el afiliado");
+    setLoading(false)
+  }
+  
 }
 
 
@@ -93,9 +105,10 @@ const handleDeleteAfiliado = async () => {
                   <td className="px-6 py-3 text-[#006084] whitespace-no-wrap">{row.ciudad}</td>
                   <td className="px-6 py-3 capitalize whitespace-no-wrap">{row.domicilio}</td>                
                   <td className="px-6 py-3 whitespace-no-wrap">{row.dni}</td>
+            
                   <td className="flex items-center px-6 py-3 whitespace-no-wrap">
                   <button onClick={() => handleOpenModal(row)} className="text-[#006084] hover:text-blue-900">Ver ficha</button>
-                    <AiOutlineDelete onClick={() => deleteAfiliado(row)} className="text-[#006084] cursor-pointer hover:text-red-900 ml-2"/>
+                    <AiOutlineDelete onClick={() => deleteAfiliado(row.idafiliados)} className="text-[#006084] cursor-pointer hover:text-red-900 ml-2"/>
                   </td>
                 </tr>
               ))}
@@ -169,7 +182,7 @@ const handleDeleteAfiliado = async () => {
             <div  className="mb-2">
             {selectedAfiliado && (
               <div  className='flex justify-center h-full w-full'>
-                    <div ref={animationParent}  className="flex flex-col rounded-2xl w-[70%]">
+                    <div ref={animationParent}  className="flex flex-col rounded-2xl w-[85%]">
                           
                           
                           <img className='mb-[-5px]' src={Avatar}>
@@ -209,7 +222,7 @@ const handleDeleteAfiliado = async () => {
                       <p className='text-gray-500 font-semibold'>{selectedAfiliado.tel}</p>
 
                       <p><strong>Email</strong></p>
-                      <p className='text-gray-500 font-semibold'>{selectedAfiliado.correo}</p>
+                      <p className='text-gray-500 break-all font-semibold'>{selectedAfiliado.correo}</p>
 
                       <p><strong>Domicilio</strong></p>
                       <p className='text-gray-500 font-semibold'>{selectedAfiliado.domicilio}</p>
@@ -277,12 +290,14 @@ const handleDeleteAfiliado = async () => {
                     
 
                         <div className="flex mt-4 justify-around items-center">
+                          {loading ? <Loader /> :
                            <button
                             className="mt-4 bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
                             onClick={handleDeleteAfiliado}
                           >
                             Confirmar
                           </button>
+}
                           <button
                             className="mt-4 bg-gray-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
                             onClick={() => setOpenDeleteModal(false)}
@@ -322,6 +337,7 @@ const handleDeleteAfiliado = async () => {
                     
                       
                   )}
+                  {error && <p className="font-semibold text-red-500">{error}</p>}
             </div>                          
 
        
