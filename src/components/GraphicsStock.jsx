@@ -221,8 +221,18 @@ useEffect(() => {
     return <div>Cargando datos...</div>;
   }
 
+  const talle6 = parseInt(data.talle6, 10) || 0;
+const talle8 = parseInt(data.talle8, 10) || 0;
+const talle10 = parseInt(data.talle10, 10) || 0;
+const talle12 = parseInt(data.talle12, 10) || 0;
+const talle14 = parseInt(data.talle14, 10) || 0;
+const talle16 = parseInt(data.talle16, 10) || 0;
+const talle18 = parseInt(data.talle18, 10) || 0;
+
+const totalTalles = talle6 + talle8 + talle10 + talle12 + talle14 + talle16 + talle18;
+
   const chartData = [
-    { name: 'Guardapolvo', value: data.talle6 + data.talle8 + data.talle10 + data.talle12 + data.talle14 + data.talle16 + data.talle18 },
+    { name: 'Guardapolvo', value: totalTalles },
     { name: 'Mochila', value: data.mochila },
     { name: 'Útiles', value: data.utiles },
     {name: 'Talles', value:[data.talle6, data.talle8, data.talle10, data.talle12, data.talle14, data.talle16, data.talle18]}
@@ -474,7 +484,7 @@ useEffect(() => {
                 <TbTools className='inline-block mr-2'/> Útiles: {chartData[2].value}
               </li>
               <li className={`text-[${COLORS[0]}] font-bold`}>
-                <TbJacket className='inline-block mr-2'/> Guardapolvos: {chartData[2].value}
+                <TbJacket className='inline-block mr-2'/> Guardapolvos: {chartData[0].value}
           <button className='text-xs pl-2' onClick={() => setMostrarTalles(!mostrarTalles)}>
         {mostrarTalles ? 'Ocultar Talles' : 'Ver Talles'}
       </button>
