@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../common/Axiosconfig';
 import {IoIosAddCircle} from 'react-icons/io';
-import PlaneIcon from '../assets/img/plane.png';
-import MonoIcon from '../assets/img/mono.png';
 import Libro from '../assets/img/libro-abierto.png';
 import Graphics from './Graphics';
 import Calendar from "react-calendar";
@@ -14,8 +12,8 @@ import SimplePieCharts from '../components/SimplePieCharts';
 import Input from '../components/Input';
 import Loader from '../components/Loader';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
-import Mono from '../assets/img/mono.png';
 import TableKitEscolar from '../components/TableKitEscolar';
+import GraphicsStock from '../components/GraphicsStock';
 
 const KitEscolarAdmin = () => {
   const [dni, setDni] = useState('');
@@ -89,9 +87,9 @@ useEffect(() => {
 // }, [searchKeyword, users]);
 
 
-  const approvedUsers = beneficios?.filter(beneficio => beneficio.estado === 'Aprobado');
+  const approvedUsers = beneficios?.filter(beneficio => beneficio.estado === 'Enviado');
   const rejectedUsers = beneficios?.filter(beneficio => beneficio.estado === 'Rechazado');
-  const pendingUsers = beneficios?.filter(beneficio => beneficio.estado === 'Entregado');
+  const pendingUsers = beneficios?.filter(beneficio => beneficio.estado === 'Pendiente');
   const successUsers = beneficios?.filter(beneficio => beneficio.estado === 'Entregado');
 
 
@@ -101,16 +99,18 @@ useEffect(() => {
                 <div className=' h-[90%] w-[90%]'>
                   <div className='flex flex-col justify-around'>
                        <div className="flex h-20">
-                          <img className=" w-12 h-12" src={Mono}></img>
+                          <img className=" w-12 h-12" src={Libro}></img>
                           <div className="flex flex-col pl-4">
                             <h2 className=" text-black text-3xl font-extrabold">
                               Kit Escolar
                             </h2>
+                            
                            
                           </div>
                         </div>
                     {isLoading ? <Loader/> :
                     <>
+                     <GraphicsStock />
                            <div ref={animationParent}>
                         <h2 className='text-black font-extrabold text-xl'>Pendientes</h2>
                         <TableKitEscolar data={pendingUsers} onUpdateUserData={handleUpdateUserData} />

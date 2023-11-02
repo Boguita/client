@@ -31,6 +31,7 @@ import LunaDeMielAdmin from "./pages/LunaDeMielAdmin";
 import BenefitsAdmin from "./pages/BenefitsAdmin";
 import KitMaternalAdmin from "./pages/KitMaternalAdmin";
 import KitEscolarAdmin from "./pages/KitEscolarAdmin";
+import Seccionales from "./pages/SeccionalesAdmin";
 
 
 const PrivateRoute = ({children, redirectTo="/"}) => {
@@ -96,7 +97,8 @@ export const AppRouter = () => {
             <Route path='/admin/kit-nacimiento' element={<KitMaternalAdmin />} />
             <Route path='/admin/kit-escolar' element={<KitEscolarAdmin />} />
             <Route path='/admin/afiliados' element={<Afiliados />} />    
-            <Route path='/admin/administradores' element={<Administradores />} />      
+            <Route path='/admin/administradores' element={<Administradores />} />   
+            <Route path='/admin/seccionales' element={<Seccionales />} />   
             <Route path='/admin/profile' element={<Profile />} />
             <Route path='/admin/soporte' element={<Soporte />} />                
           </Route>      

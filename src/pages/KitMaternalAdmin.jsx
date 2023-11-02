@@ -16,6 +16,7 @@ import Loader from '../components/Loader';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import Mono from '../assets/img/mono.png';
 import TableKitMaternal from '../components/TableKitMaternal';
+import GraphicsStockMaternal from '../components/GraphicStockMaternal';
 
 const KitMaternalAdmin = () => {
   const [dni, setDni] = useState('');
@@ -89,7 +90,7 @@ useEffect(() => {
 // }, [searchKeyword, users]);
 
 
-  const approvedUsers = beneficios?.filter(beneficio => beneficio.estado === 'Aprobado');
+  const approvedUsers = beneficios?.filter(beneficio => beneficio.estado === 'Enviado');
   const rejectedUsers = beneficios?.filter(beneficio => beneficio.estado === 'Rechazado');
   const pendingUsers = beneficios?.filter(beneficio => beneficio.estado === 'Pendiente');
   const successUsers = beneficios?.filter(beneficio => beneficio.estado === 'Entregado');
@@ -111,6 +112,7 @@ useEffect(() => {
                         </div>
                     {isLoading ? <Loader/> :
                     <>
+                    <GraphicsStockMaternal />
                            <div ref={animationParent}>
                         <h2 className='text-black font-extrabold text-xl'>Pendientes</h2>
                         <TableKitMaternal data={pendingUsers} onUpdateUserData={handleUpdateUserData} />
@@ -121,7 +123,7 @@ useEffect(() => {
                       </div>
                
                       <div className='flex flex-col gap-x-8'>
-                        <h2 className='text-black font-extrabold text-xl'>Aprobados</h2>
+                        <h2 className='text-black font-extrabold text-xl'>Enviados</h2>
                         <TableKitMaternal data={approvedUsers} onUpdateUserData={handleUpdateUserData} />
                       </div>
 

@@ -17,12 +17,14 @@ const Register = () => {
     provincia: "",
     ciudad: "",
     domicilio: "",
+    seccional:"",    
     tel: "",
     email: "",
     password: "",
     repeat_password: "",
      // Agregar el estado para la provincia seleccionada
   });
+  const [seccionales, setSeccionales] = useState([]); // Estado para almacenar las seccionales
   const [err, setError] = useState(null);
   const [provincias, setProvincias] = useState([]); // Estado para almacenar las provincias
   const [ciudades, setCiudades] = useState([]);
@@ -38,14 +40,31 @@ const Register = () => {
     if (e.target.name === "provincia") {
     try {
       const res = await axios.get(
-        `https://apis.datos.gob.ar/georef/api/localidades?provincia=${e.target.value}&campos=id,nombre&max=100`
+        `https://apis.datos.gob.ar/georef/api/localidades?provincia=${e.target.value}&campos=id,nombre&max=1000`
       );
       setCiudades(res.data.localidades);
     } catch (error) {
       console.error("Error fetching cities:", error);
     }
   }
-  };
+  if(e.target.name === 'ciudad') {
+    try {    api.get("/tasks/seccionales") 
+    .then((res) => {
+const response = res.data.filter((seccional) => seccional.ciudad.toLowerCase() === e.target.value.toLowerCase());
+
+      
+      setSeccionales(response);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+    }
+    catch (error) {
+      console.error("Error fetching cities:", error);
+    }
+
+  }
+}
 
   useEffect(() => {
     axios.get("https://apis.datos.gob.ar/georef/api/provincias?campos=id,nombre").then((res) => {
@@ -59,6 +78,17 @@ const Register = () => {
     }
     );
   }, []);
+
+  // useEffect(() => {
+  //   api.get("/tasks/seccionales") 
+  //   .then((res) => {
+  //     console.log(res.data)
+  //     setSeccionales(res.data);
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+  // }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -74,27 +104,25 @@ const Register = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen w-screen" style={{ backgroundImage:`url(${BgRegister})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-      <div className="w-full h-full" style={{ backgroundImage: 'linear-gradient(rgba(235, 235, 235, 0.7), rgba(235, 235, 235, 0.7))' }}>
+    <div className="flex flex-col  min-h-screen w-screen" style={{ backgroundImage:`url(${BgRegister})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <div className="w-full  h-full" style={{ backgroundImage: 'linear-gradient(rgba(235, 235, 235, 0.7), rgba(235, 235, 235, 0.7))' }}>
         <div className="p-5 bg-[#006084]">
           <div onClick={()=> {navigate("/login")}} className="logo-register cursor-pointer">
-                <img className="w-1/6" src={Logo} alt="LOGO UATRE"></img>
+                <img className="w-1/2 2xl:w-1/6 xl:w-1/6 lg:w-1/4 md:w-1/5 sm:w-1/3 " src={Logo} alt="LOGO UATRE"></img>
               </div>
 
         </div>
-        <div className="flex justify-center pt-4 w-full ">
-          <div className="w-[65%]  h-full rounded-3xl bg-white">
+        <div className="flex max-sm:bg-white justify-center pt-4 w-full ">
+          <div className=" 2xl:w-[65%] xl:w-[65%] lg:w-[55%] md:w-[55%] sm:w-[80%] w-[80%]   h-full rounded-3xl bg-white">
             <div className="form-container ">
               { currentStep === 1 && (
                 <>
               <div className="flex flex-col justify-center items-center">
 
-              <h3 className="pb-4 text-[#006084] text-4xl font-extrabold">Registro de Administrador</h3>
-              <p className="pb-6 text-base w-2/3 font-semibold text-gray-500">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy
-nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi
-enim ad minim veniam, quis nos</p>
+              <h3 className="pb-4 mt-4 text-[#006084] text-2xl text-center lg:text-3xl xl:text-4xl 2xl:text-4xl  font-extrabold">Registro de Administrador</h3>
+  
               </div>
-              <form className="grid grid-cols-2 gap-x-8">
+              <form className="mt-8 xl:grid xl:grid-cols-2 xl:gap-x-8">
                 <div className="">
                   <Input
                     required
@@ -190,11 +218,14 @@ enim ad minim veniam, quis nos</p>
                     className=" bg-[#F0F0F0] pl-3 text-sm font-semibold focus:text-[#808080] focus:outline-none w-full"
                   >
                     <option value="" disabled selected>Provincia</option>
-                    {provincias.sort().map((provincia) => (
-                      <option key={provincia.id} value={provincia.nombre}>
-                        {provincia.nombre}
-                      </option>
-                    ))}
+                  {provincias
+                      .sort((a, b) => a.nombre.localeCompare(b.nombre))
+                      .map((provincia) => (
+                        <option key={provincia.id} value={provincia.nombre}>
+                          {provincia.nombre}
+                        </option>
+                      ))}
+
                   </select>
                 </div>
                 
@@ -209,7 +240,9 @@ enim ad minim veniam, quis nos</p>
                       <option value="" disabled selected>
                         Ciudad
                       </option>
-                      {ciudades.sort().map((ciudad) => (
+                      {ciudades
+                      .sort((a, b) => a.nombre.localeCompare(b.nombre))
+                      .map((ciudad) => (
                         <option key={ciudad.id} value={ciudad.nombre}>
                           {ciudad.nombre}
                         </option>
@@ -226,6 +259,26 @@ enim ad minim veniam, quis nos</p>
                     className="form-control"
                   />
                 </div>
+                           <div className="py-3 mb-6 !border-l-4 !border-[#006084] bg-[#F0F0F0]">
+                    <select
+                      id="seccional"
+                      name="seccional"
+                      value={inputs.seccional}
+                      onChange={handleChange}
+                      className=" bg-[#F0F0F0] pl-3 text-sm font-semibold focus:text-[#808080] focus:outline-none w-full"
+                    >
+                      <option value="" disabled selected>
+                        Seccional
+                      </option>
+                      {seccionales
+                      .sort((a, b) => a.nombre.localeCompare(b.nombre))
+                      .map((seccional) => (
+                        <option key={seccional.idseccionales} value={seccional.idseccionales}>
+                          {seccional.nombre}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
                 <div className="">
                   <Input
@@ -271,8 +324,8 @@ enim ad minim veniam, quis nos</p>
 
                 
               </form>
-              <div className="justify-center items-center flex flex-col">
-              <button className="btn  w-1/3" onClick={handleSubmit}><span>REGISTRARME</span></button>
+              <div className="justify-center pb-4 items-center flex flex-col">
+              <button className="btn  w-32 2xl:w-1/3 xl:w-1/3 lg:w-1/3 md:1/3" onClick={handleSubmit}><span className="!text-xs">REGISTRARME</span></button>
                 {err && <p className="text-red-500 pt-1">{err}</p>}
                 </div>
                 </>

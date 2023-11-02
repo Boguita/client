@@ -63,7 +63,7 @@ const Files = ({label, instructions, onUpload}) => {
       const res = await onUpload()
       console.log(res) // Espera a que onUpload se complete
       if(res.status === 200) {
-      console.log("LLegan estas ids a fotos", res.data.ids)
+      console.log("LLegan estas ids a fotos", res.data)
       const id = res.data.ids;
       await handleUpload(id);
       } // Espera a que handleUpload se complete

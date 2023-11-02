@@ -77,18 +77,18 @@ const Login = () => {
                  
                     <form ref={yourRef} className="form-horizontal">
                         <div className="form-group relative">
-                            <div className="absolute left-0 top-0 h-full w-1 bg-[#006084]"></div>
+         
                             <input 
                                 required
                                 type="text"
                                 placeholder="Email"
                                 name="email"
                                 onChange={handleChange}
-                                className='form-control p-2 bg-[#d8d8d8] font-semibold text-gray-800 w-80 mt-4 pl-6 pr-4'
+                                className='form-control p-2 bg-[#d8d8d8]  border-l-4 border-[#006084] font-semibold text-gray-800 w-80 mt-4 pl-6 pr-4'
                             />
                         </div>
                         <div className="form-group relative">
-                            <div className="absolute left-0 top-0 h-full w-1 bg-[#006084]"></div>
+
                             <input 
                                 
                                 required
@@ -96,7 +96,7 @@ const Login = () => {
                                 placeholder="Contraseña"
                                 name="password"
                                 onChange={handleChange}
-                                className='form-control p-2 bg-[#d8d8d8] font-semibold text-gray-800 w-80 mt-4 pl-6 pr-4'
+                                className='form-control p-2 bg-[#d8d8d8]  border-l-4 border-[#006084] font-semibold text-gray-800 w-80 mt-4 pl-6 pr-4'
                             />
                             
                         </div>

@@ -55,8 +55,8 @@ const handleSubmit = async (e) => {
 };
 
   return (
-    <div className="ml-64 w-screen h-screen bg-gray-100 flex justify-center items-center">
-      <div className="max-w-3xl bg-white p-8 rounded shadow w-full">
+    <div className="md:ml-64 max-md:p-12 max-sm:pt-52 w-screen h-screen bg-gray-100 flex justify-center items-center">
+      <div className="max-w-3xl max-xl:max-w-xl max-lg:max-w-lg bg-white p-8 rounded shadow w-full">
         <h1 className="text-2xl font-semibold mb-4">Soporte</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

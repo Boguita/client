@@ -33,6 +33,8 @@ const KitEscolar = () => {
   const [beneficio, setBeneficio] = useState({});
   const [error, setError] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
+  const [stock, setStock] = useState([]);
+  const [stockTalle, setStockTalle] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [showButton, setShowButton] = useState(true);
 
@@ -47,6 +49,7 @@ const KitEscolar = () => {
     fecha_de_nacimiento: "",
     dni_img_dorso: null,
     dni_img_frente: null,
+    
   });
 
   const [familiares, setFamiliares] = useState([]);
@@ -56,31 +59,102 @@ const KitEscolar = () => {
   //   setSelectedFamiliares(selectedFamiliarIds);
   // };
 
+  // const comprobarStocks = async (seccional) => {
+  //   try {
+  //     const res = await api.get(`/tasks/stock-maternal/${seccional}`);
+  //     const stocks = res.data;
+  //     console.log(stocks);
+  //     return stocks;
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+
+const descontarStock = async (seccional) => {
+  try {
+    const copyBenefit = {
+      
+      talles: [], // Aquí puedes incluir la lógica para obtener los talles correctos
+      utiles: 0,
+      mochila: 0,
+      funcion: 'restar',
+    };
+
+    // Itera sobre los índices (IDs de familiares) del objeto beneficio
+    Object.keys(beneficio).forEach((familiarId) => {
+      const { guardapolvo_confirm, mochila, utiles, guardapolvo } = beneficio[familiarId];
+
+      // Verifica si los campos guardapolvo_confirm, mochila y utiles son true para incrementar los valores respectivos
+     const incrementValues = {
+  guardapolvo: guardapolvo_confirm ? 1 : 0,
+  mochila: mochila ? 1 : 0,
+  utiles: utiles ? 1 : 0,
+};
+
+      // Incrementa los valores en copyBenefit solo si los campos correspondientes son true
+      
+      copyBenefit.utiles += incrementValues.utiles;
+      copyBenefit.mochila += incrementValues.mochila;
+
+      // Agrega el talle del guardapolvo al array de talles solo si guardapolvo_confirm es true
+      if (guardapolvo_confirm) {
+        console.log("Guardapolvo contiene este talle", guardapolvo)
+        const talleGuardapolvo = !guardapolvo ? isBeneficioOtorgado(familiarId, "guardapolvo_talle") : guardapolvo;
+
+        console.log("Llega este talle",talleGuardapolvo)
+        copyBenefit.talles.push("talle"+talleGuardapolvo);        
+      }
+    });
+
+    console.log("esto se envia a descontar", copyBenefit);
+    // Realiza la solicitud a la API con el objeto copyBenefit
+    const res = await api.put(`/tasks/stock-escolar-individual/${seccional}`, copyBenefit);
+    const stocks = res.data;
+    console.log(stocks);
+    return stocks;
+    
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+
+
   const handleNextStep = async () => {
     if (!selectedFamiliares.length) return;
 
     if (currentStep === 2) {
       const hasSelectedItems = selectedFamiliares.every((familiarId) => {
         const familiar = beneficio[familiarId];
+        const familiarEnBeneficios = beneficiosOtorgados.find(
+          (beneficio) => beneficio.familiar_id === familiarId
+        );
+     
+        if(familiarEnBeneficios && (familiarEnBeneficios.año_escolar && familiarEnBeneficios.guardapolvo)) {
+          console.log("CONTENIDO DE AÑO Y TALLE", familiarEnBeneficios.año_escolar, familiarEnBeneficios.guardapolvo);
         return familiar.mochila || familiar.utiles || familiar.guardapolvo_confirm;
+        } else {
+        return true;
+        }
       });
+
 
       const hasSelectedAñoEscolar = selectedFamiliares.every((familiarId) => {
         const familiarEnBeneficios = beneficiosOtorgados.find(
           (beneficio) => beneficio.familiar_id === familiarId
         );
              if (familiarEnBeneficios && familiarEnBeneficios.año_escolar) {
-    return true; // Ya existe un año escolar en beneficiosOtorgados
-  } else {
-    // Si no existe, verifica si el familiar en beneficio tiene un año escolar seleccionado
-    const familiarEnBeneficio = beneficio[familiarId];
-    if (familiarEnBeneficio && familiarEnBeneficio.año_escolar) {
-      return true; // El familiar en beneficio tiene un talle seleccionado
-    } else {
-      return false; // No hay talle de guardapolvo seleccionado
-    }
-  }
-});
+        return true; // Ya existe un año escolar en beneficiosOtorgados
+      } else {
+        // Si no existe, verifica si el familiar en beneficio tiene un año escolar seleccionado
+        const familiarEnBeneficio = beneficio[familiarId];
+        if (familiarEnBeneficio && familiarEnBeneficio.año_escolar) {
+          return true; // El familiar en beneficio tiene un talle seleccionado
+        } else {
+          return false; // No hay talle de guardapolvo seleccionado
+        }
+      }
+    });
    const hasSelectedTalle = selectedFamiliares.every((familiarId) => {
   const familiarEnBeneficios = beneficiosOtorgados.find(
     (beneficio) => beneficio.familiar_id === familiarId
@@ -99,13 +173,7 @@ const KitEscolar = () => {
   }
 });
     
-
-      if (!hasSelectedItems) {
-        setError(
-          "Debes elegir al menos un ítem a entregar para cada hijo/a."
-        );
-        return;
-      }
+  
 
       if (!hasSelectedTalle) {
         
@@ -115,12 +183,23 @@ const KitEscolar = () => {
         return;
       }
 
+
       if (!hasSelectedAñoEscolar) {
         setError(
           "Debes elegir el año escolar antes de continuar para cada hijo/a."
         );
         return;
       }
+
+      if (!hasSelectedItems) { 
+        setError(
+          "Debes elegir al menos un ítem a entregar para cada hijo/a."
+        );
+        return;
+      }
+ 
+
+    
     }
 
     setError(null); // Limpiar cualquier error previo
@@ -157,6 +236,9 @@ const KitEscolar = () => {
         [name]: inputValue,
       },
     }));
+    
+    if(name === "guardapolvo")
+    comprobarStockTalle(value);
   };
 
   const handleDniImgDorso = (e) => {
@@ -343,17 +425,19 @@ const KitEscolar = () => {
       const initialBeneficios = familiaresHijos.reduce((acc, familiar) => {
         acc[familiar.id] = {
           usuario_otorgante: currentUser?.username,
+          seccional_id:currentUser?.seccional_id,
           id: "",
           tipo: "Kit escolar",
-          estado: "Entregado",
+          estado: "Pendiente",
           afiliado_id: res.data.idafiliados,
           familiar_id: familiar.id,
-          detalles: "",
+          detalles: currentUser?.seccional,
           mochila: false,
           guardapolvo: "",
           guardapolvo_confirm: false,
           utiles: false,
           año_escolar: "",
+          seccional: currentUser?.provincia + ", " + currentUser?.ciudad,
         };
         return acc;
       }, {});
@@ -380,6 +464,7 @@ const KitEscolar = () => {
       });
 
       setBeneficio(updatedBeneficio);
+      descontarStock(currentUser?.seccional_id);
       setIsLoading(false);
       handleNextStep();
 
@@ -496,6 +581,57 @@ const KitEscolar = () => {
     console.log(selectedFamiliares);
     console.log(beneficio);
   }, [selectedFamiliares, beneficio]);
+
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await api.get(`tasks/stock-escolar/${currentUser?.seccional_id}`);
+        const apiData = res.data;
+
+        // Ahora apiData contiene la información de seccional y stock
+        setStock(apiData.seccional);
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error.response.data.message);
+        setIsLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [currentUser?.seccional_id]);
+
+const comprobarStockTalle = (talle) => {
+  console.log("se activa y llega esto:", talle)
+  // Verifica si el talle existe en el objeto de stock
+  if (stock[`talle${talle}`] !== undefined) {
+    // Si existe, devuelve la cantidad de ese talle
+    console.log("entro")
+    console.log(stock[`talle${talle}`])
+    setStockTalle(stock[`talle${talle}`]);
+    return stock[`talle${talle}`];
+  } else {
+    // Si no existe, devuelve 0 o un valor predeterminado, según tus necesidades
+    return 0;
+  }
+};
+
+// useEffect(() => {
+//   const updatedBeneficio = { ...beneficio };
+
+//   selectedFamiliares.forEach((familiarId) => {
+//     const familiar = updatedBeneficio[familiarId];
+//     if (familiar.mochila && familiar.guardapolvo_confirm && familiar.utiles) {
+//       familiar.estado = "Entregado"; // Actualiza el campo 'estado' a 'Entregado' si todos los beneficios están marcados como entregados
+//     } else {
+//       familiar.estado = "Pendiente"; // Si no todos los beneficios están marcados, establece 'estado' como 'Pendiente'
+//     }
+//   });
+
+//   setBeneficio(updatedBeneficio);
+// }, [ selectedFamiliares]);
+
+
 
   return (
     <div className="bg-gray-200 h-screen w-screen sm:pl-80 ml-5">
@@ -693,10 +829,10 @@ const KitEscolar = () => {
                           <option disabled selected value="">
                             Seleccionar Año
                           </option>
-                          <option value="Pre-Jardin">Pre-Jardin</option>
+                          
                           <option value="Jardín">Jardin</option>
-                          <option value="1° A 3° Grado">1° A 3° Grado</option>
-                          <option value="4° A 6° Grado">4° A 6° Grado</option>
+                          <option value="Primario">Primario</option>
+                          <option value="Secundario">Secundario</option>
                         </select>
                       </div>
 
@@ -747,7 +883,11 @@ const KitEscolar = () => {
                             </svg>
                           </label>
                         </div>
+                        
                       </div>
+                      <p className="text-md text-center text-gray-400">
+                        Stock disponible: <span className={`${stock.mochila > 0 ? 'text-green-500' : "text-red-500"}`}>{stock.mochila}</span>
+                      </p>
 
                       <div
                         className={`flex items-center justify-between border-l-4 ${
@@ -797,6 +937,9 @@ const KitEscolar = () => {
                           </label>
                         </div>
                       </div>
+                       <p className="text-md text-center text-gray-400">
+                        Stock disponible: <span className={`${stock.utiles > 0 ? 'text-green-500' : "text-red-500"}`}>{stock.utiles}</span>
+                      </p>
                       <div
                         className={`flex items-center justify-between border-l-4 ${
                           isBeneficioOtorgado(familiar.id, "guardapolvo")
@@ -833,11 +976,13 @@ const KitEscolar = () => {
                           <option disabled selected value={""}>
                            { isBeneficioOtorgado(familiar.id, "guardapolvo_talle") !== "" ? isBeneficioOtorgado(familiar.id, "guardapolvo_talle") : "Ninguno"}
                           </option>
-                          <option value="XS">XS</option>
-                          <option value="S">S</option>
-                          <option value="M">M</option>
-                          <option value="L">L</option>
-                          <option value="XL">XL</option>
+                          <option value="6">6</option>
+                          <option value="8">8</option>
+                          <option value="10">10</option>
+                          <option value="12">12</option>
+                          <option value="14">14</option>
+                          <option value="16">16</option>
+                           <option value="18">18</option>
                         </select>
                           <input
                             id={`checkbox_guardapolvo${familiar.id}`}
@@ -867,6 +1012,10 @@ const KitEscolar = () => {
                         </div>
                       
                       </div>
+                        <p className="text-md text-center text-gray-400">
+                        Stock disponible: <span className={`${stockTalle > 0 ? 'text-green-500' : "text-red-500"}`}>{stockTalle}</span>
+                      </p>
+                      
                     </div>
                   </div>
                 );
@@ -912,28 +1061,28 @@ const KitEscolar = () => {
                        {beneficioIndividual.año_escolar ? beneficioIndividual.año_escolar : isBeneficioOtorgado(familiar.id, "año_escolar")}
                       </span>
                     </p>
-                    {beneficioIndividual.mochila && (
+                    { (
                       <p className="text-gray-600 text-lg mt-2">
                         - Mochila:{" "}
-                        <span className="text-green-500 font-bold">
-                          Entregar
+                        <span className={`${beneficioIndividual.mochila == true ? 'text-green-500' : 'text-yellow-500'}  font-bold`}>
+                          {beneficioIndividual.mochila == true ? 'Entregar' : 'Pendiente'}
                         </span>
                       </p>
                     )}
-                    {beneficioIndividual.guardapolvo_confirm && (
+                    { (
                       <p className="text-gray-600 text-lg mt-2">
                         - Guardapolvo:{" "}
-                        <span className="text-green-500 font-bold">
+                        <span className={`font-bold ${beneficioIndividual.guardapolvo_confirm ? 'text-green-500' : 'text-yellow-500'} `}>
                           
-                          Entregar Talle {beneficioIndividual.guardapolvo ? beneficioIndividual.guardapolvo : isBeneficioOtorgado(familiar.id, "guardapolvo_talle")}
+                          {beneficioIndividual.guardapolvo_confirm ? 'Entregar Talle' : 'Pendiente Talle'}{beneficioIndividual.guardapolvo ? beneficioIndividual.guardapolvo : isBeneficioOtorgado(familiar.id, "guardapolvo_talle")}
                         </span>
                       </p>
                     )}
-                    {beneficioIndividual.utiles && (
+                       { (
                       <p className="text-gray-600 text-lg mt-2">
                         - Útiles:{" "}
-                        <span className="text-green-500 font-bold">
-                          Entregar
+                        <span className={`${beneficioIndividual.utiles == true ? 'text-green-500' : 'text-yellow-500'}  font-bold`}>
+                          {beneficioIndividual.utiles == true ? 'Entregar' : 'Pendiente'}
                         </span>
                       </p>
                     )}
@@ -1057,17 +1206,35 @@ const KitEscolar = () => {
           )}
 
           {currentStep === 4 && (
-            // Step 4: Estado de Carga del Beneficio Otorgado
-            <div className="w-full space-y-6">
-              <h3 className=" font-bold text-3xl text-black">
-                Paso 4: Estado de Carga del Beneficio.
-              </h3>
-              <p className="font-semibold text-lg text-[#006084]">
-                Debes solicitar al trabajador que firme el remito por los items
-                que se entregan en el momento, los que no seleccionaste quedaran
-                pendientes para retirar.
-              </p>
-              <div className="flex flex-col w-full mt-4 justify-center items-center px-4">
+  <div className="w-full space-y-6">
+    {selectedFamiliares.map((familiarId) => {
+      const familiar = familiares.find((f) => f.id === familiarId);
+      const beneficioIndividual = beneficio[familiarId]; // Obtener el beneficio individual para este familiar
+
+      return (
+        <div key={familiarId}>
+          <h3 className="font-bold text-3xl text-black">
+            Paso 4: Estado de Carga del Beneficio.
+          </h3>
+          <p className="font-semibold mt-8 text-lg text-[#006084]">
+            {beneficioIndividual.mochila === false &&
+            beneficioIndividual.utiles === false &&
+            beneficioIndividual.guardapolvo_confirm === false
+              ? "Debes informar al trabajador que los items quedarán pendientes de entrega y que será informado vía correo electrónico cuando el beneficio esté disponible para retirar."
+              : "Debes solicitar al trabajador que firme el remito por los items que se entregan en el momento, los que no seleccionaste quedarán pendientes para retirar."}
+          </p>
+          <div className="flex flex-col w-full mt-4 justify-center items-center px-4">
+            {beneficioIndividual.mochila === false &&
+            beneficioIndividual.utiles === false &&
+            beneficioIndividual.guardapolvo_confirm === false ? (
+              <button
+                className="mt-4 bg-[#0E6F4B] py-2 hover:bg-gray-900 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                onClick={handleBeneficioOtorgado}
+              >
+                Confirmar
+              </button>
+            ) : (
+              <>
                 <Files
                   label="Subir foto de REMITO DE ENTREGA"
                   instructions="Recuerde que debe estar firmada por el trabajador."
@@ -1079,9 +1246,15 @@ const KitEscolar = () => {
                 >
                   Volver
                 </button>
-              </div>
-            </div>
-          )}
+              </>
+            )}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+)}
+
 
           <Modal
             isOpen={modalIsOpen}

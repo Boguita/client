@@ -87,7 +87,7 @@ const handleAffiliateDataRequest = async () => {
 
  return (
   <div className="min-h-screen pl-4 md:pl-80 bg-gray-200">
-    <div className='py-8 md:py-36'>
+    <div className='py-28 md:py-36'>
         <div className='flex flex-col md:w-2/3'>
           <h1 className="text-black font-extrabold text-2xl md:text-3xl">Selecciona el beneficio a otorgar</h1>
           <p className='text-gray-500 font-semibold mt-4 md:mt-2'>Recuerda estar atento con la informacion <br/> proporcionada por el sistema.</p>
@@ -96,13 +96,13 @@ const handleAffiliateDataRequest = async () => {
        <div className='flex flex-col md:flex-row pt-20'>
 
 
-        <div className='flex flex-col justify-center md:flex-row gap-4 md:gap-10'>          
+        <div className='flex flex-col justify-around pr-8 md:flex-row gap-2 md:gap-4'>          
             
             <>
-          <div className="flex flex-col rounded-lg h-90 w-full md:w-1/4 p-4 bg-white">
+          <div className="flex flex-col rounded-lg h-90 w-full  p-4 bg-white">
               <img className='mt-2 w-12 h-12' src={PlaneIcon}>
              </img>
-             <h3 className='mt-4 lg:text-3xl md:text-2xl font-extrabold'>
+             <h3 className='mt-4 xl:text-3xl lg:text-2xl md:text-2xl text-2xl font-extrabold'>
                Luna de Miel
              </h3>
              <p className='mt-2 text-sm md:text-base text-gray-500 font-semibold'>
@@ -135,10 +135,10 @@ const handleAffiliateDataRequest = async () => {
      
 
 
-          <div className="flex flex-col rounded-lg h-90 w-full md:w-1/4 p-4 bg-white">
+          <div className="flex flex-col rounded-lg h-90 w-full  p-4 bg-white">
               <img className='mt-2 w-12 h-12' src={MonoIcon}>
              </img>
-             <h3 className='mt-4 text-3xl font-extrabold'>
+             <h3 className='mt-4 xl:text-3xl lg:text-2xl md:text-2xl text-2xl font-extrabold'>
                Kit Nacimiento
              </h3>
              <p className='mt-2 text-gray-500 font-semibold'>
@@ -168,10 +168,10 @@ const handleAffiliateDataRequest = async () => {
             
              </div>
           </div>
-          <div className="flex flex-col rounded-lg h-90 w-full md:w-1/4 p-4 bg-white">
+          <div className="flex flex-col rounded-lg h-90 w-full p-4 bg-white">
               <img className='mt-2 w-12 h-12' src={Libro}>
              </img>
-             <h3 className='mt-4 text-3xl font-extrabold'>
+             <h3 className='mt-4 xl:text-3xl lg:text-2xl md:text-2xl text-2xl font-extrabold'>
                Kit Escolar
              </h3>
              <p className='mt-2 text-gray-500 font-semibold'>

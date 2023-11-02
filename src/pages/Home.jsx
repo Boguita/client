@@ -609,21 +609,21 @@ const handleRecibo = async () => {
 
 
   return (
-    <div  className="h-full mt-20 py-2 pl-80 w-full ">
-      <div className='flex flex-col justify-center'>        
-        <h1 className="mt-4 text-3xl font-extrabold ">{affiliateData ? 'Perfil del Trabajador: Revisar Datos' : 'INGRESA EL NUMERO DE DNI DEL TRABAJADOR'}</h1>
-        <p className='text-gray-500 font-semibold mt-4'>{affiliateData ? '' : 'Ingrese un número de DNI para comenzar.'}</p>
+    <div  className="h-full mt-20 py-2 md:pl-80 w-full ">
+      <div className='flex flex-col p-2 md:p-0 justify-center'>        
+        <h1 className="mt-4 text-2xl max-md:text-center md:text-3xl font-extrabold ">{affiliateData ? 'Perfil del Trabajador: Revisar Datos' : 'INGRESA EL NUMERO DE DNI DEL TRABAJADOR'}</h1>
+        <p className='text-gray-500 font-semibold md:mt-4'>{affiliateData ? '' : 'Ingrese un número de DNI para comenzar.'}</p>
       </div>
 
  
       { affiliateData ? (
         // Mostrar los datos del afiliado
-        <div  className="flex h-full">
+        <div  className="flex max-xl:items-center max-xl:flex-col max-xl:px-10 h-full">
           {/* ... Código para mostrar los datos del afiliado ... */}
-           <div  className="flex flex-col h-full rounded-2xl w-[25%] mt-3 ">
+           <div  className="flex flex-col h-full  rounded-2xl max-xl:p-0 xl:w-[25%] xl:mt-3 ">
          
         
-         <img className='mb-[-5px]' src={Avatar}>
+         <img className='mb-[-8px] md:mb-[-10px]' src={Avatar}>
               </img>
 
 
@@ -694,21 +694,21 @@ const handleRecibo = async () => {
     </div>
 
       {/* Cuadro de datos de familiares */}
-  <div className="flex ml-5 justify-between rounded-lg w-[71%] p-5 mt-3 bg-white">
+  <div className="flex w-full max-xl:flex-col md:ml-5 justify-between rounded-lg xl:w-[71%] p-5 mt-3 bg-white">
 
-                <div className='h-full'>
+                <div className='h-full max-xl:flex flex-col max-xl:items-center max-xl:justify-center max-xl:w-full'>
                 <h3 className='font-bold text-2xl mb-5'>Hijos:</h3>
                   {affiliateData.familiares && affiliateData.familiares.some(familiar => familiar.categoria === 'Hijo/a') ? (
-  <div className='flex h-[90%] flex-col justify-between' >
+  <div className='flex h-[90%] max-xl:w-full max-xl:h-full   flex-col xl:justify-between' >
   
-    <div> 
+    <div className="max-xl:w-full   max-xl:h-full "> 
     <ul >
       {affiliateData.familiares
         .filter(familiar => familiar.categoria === 'Hijo/a')
         .map((familiar, index) => (
-          <div onClick={() => toggleFamiliar(familiar.id)} key={index} ref={animationParent} >
+          <div className='max-xl:w-full max-xl:flex max-xl:flex-col max-xl:justify-center max-xl:items-center ' onClick={() => toggleFamiliar(familiar.id)} key={index} ref={animationParent} >
             <p 
-              className='p-2 bg-[#d8d8d8] items-center capitalize font-semibold text-gray-800 relative w-[16vw] mt-4 pl-6 cursor-pointer flex flex-row justify-between'
+              className='p-2 bg-[#d8d8d8] items-center capitalize font-semibold text-gray-800 relative w-full xl:w-[16vw] mt-4 pl-6 cursor-pointer flex flex-row justify-between'
              
             >
                
@@ -718,7 +718,7 @@ const handleRecibo = async () => {
                {
                         <div
                           key={familiar.id}
-                          className="flex w-[16vw] pt-1"
+                          className="flex w-5/6 md:w-[16vw] pt-1"
                         >
                           <TbTools  className="text-gray-400" />
                           <p
@@ -775,7 +775,7 @@ const handleRecibo = async () => {
                       }
 
             {expandedFamiliars[familiar.id] && (
-              <li   key={index} className="w-[16vw] p-2 ">
+              <li   key={index} className="w-5/6 xl:w-[16vw] p-2 ">
                 <p><strong>DNI:</strong></p>
                 <p className='p-2 bg-gray-200 relative pl-6'>
                   <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
@@ -786,7 +786,7 @@ const handleRecibo = async () => {
                   <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
                   {familiar.fecha_de_nacimiento}
                 </p>
-                <div id={familiar.id} className='p-2 mt-2 flex items-center justify-between w-full pl-6'>               
+                <div id={familiar.id} className='p-2 mt-2 flex items-center justify-between md:w-full md:pl-6'>               
                 <button onClick={() => getDniImgHijo(familiar.id, "frente")} className='bg-[#23A1D8] font-bold text-white text-sm rounded-lg p-2 hover:bg-opacity-75' >
                   
                   VER FRENTE
@@ -805,124 +805,14 @@ const handleRecibo = async () => {
         ))}
     </ul>
   </div>
-    {isLoading ? (
-  <Loader />
-) : (
-  <div className="flex items-end justify-around">
-    {Object.keys(beneficiosOtorgados).length > 0 && (
-      <>
- 
-        {familiares
-          .filter((familiar) =>
-            beneficiosOtorgados.some(
-              (beneficio) =>
-                beneficio.familiar_id === familiar.id &&
-                  beneficio.fecha_otorgamiento.includes(new Date().getFullYear()) &&
-                (beneficio.estado === 'Entregado') &&
-                beneficio.tipo === 'Kit maternal'
-            )
-          )
-          .map((familiar) => (
-            <div key={familiar.id} className="flex justify-center items-center">
-              <div className="flex flex-col items-center">
-                <img className="w-auto h-8" src={Mono} alt="Mono" />
-                <p className="font-semibold text-gray-400">Kit Nacimiento</p>
-                <span className='font-semibold text-sm capitalize'>{familiar.name}</span>
-                <span className='font-semibold text-sm text-green-500'>Entregado</span>
-              </div>
-            </div>
-          ))}
-      </>
-    )}
-
-    {Object.keys(beneficiosOtorgados).length > 0 && (
-      <>
-    
-        {familiares
-          .filter((familiar) =>
-            beneficiosOtorgados.some(
-              (beneficio) =>
-                beneficio.familiar_id === familiar.id &&
-                beneficio.estado === 'Entregado' &&
-                beneficio.tipo === 'Luna de miel'
-            )
-          )
-          .map((familiar) => (
-            <div key={familiar.id} className="flex justify-center items-center">
-              <div className="flex flex-col items-center">
-                <img className="w-auto h-8" src={Avion} alt="Avion" />
-                <p className="font-semibold text-gray-400">Luna de Miel</p>
-                <span  className='font-semibold text-sm capitalize'>{familiar.name}</span>
-                <span className='font-semibold text-sm text-green-500'>Entregado</span>
-              </div>
-            </div>
-          ))}
-      </>
-    )}
-  </div>
-)}
+  
  
   </div>
 ) : (
   <>
   <p className='text-gray-500'>No hay datos de familiares.</p>
 
-  {isLoading ? (
-  <Loader />
-) : (
-  <div className="flex h-full items-end justify-around">
-    {Object.keys(beneficiosOtorgados).length > 0 && (
-      <>
- 
-        {familiares
-          .filter((familiar) =>
-            beneficiosOtorgados.some(
-              (beneficio) =>
-                beneficio.familiar_id === familiar.id &&
-                  beneficio.fecha_otorgamiento.includes(new Date().getFullYear()) &&
-                (beneficio.estado === 'Entregado') &&
-                beneficio.tipo === 'Kit maternal'
-            )
-          )
-          .map((familiar) => (
-            <div key={familiar.id} className="flex justify-center items-center">
-              <div className="flex flex-col items-center">
-                <img className="w-auto h-8" src={Mono} alt="Mono" />
-                <p className="font-semibold text-gray-400">Kit Nacimiento</p>
-                <span className='font-semibold text-sm capitalize'>{familiar.name}</span>
-                <span className='font-semibold text-sm text-green-500'>Entregado</span>
-              </div>
-            </div>
-          ))}
-      </>
-    )}
-
-    {Object.keys(beneficiosOtorgados).length > 0 && (
-      <>
-    
-        {familiares
-          .filter((familiar) =>
-            beneficiosOtorgados.some(
-              (beneficio) =>
-                beneficio.familiar_id === familiar.id &&
-                beneficio.estado === 'Entregado' &&
-                beneficio.tipo === 'Luna de miel'
-            )
-          )
-          .map((familiar) => (
-            <div key={familiar.id} className="flex justify-center items-center">
-              <div className="flex flex-col items-center">
-                <img className="w-auto h-8" src={Avion} alt="Avion" />
-                <p className="font-semibold text-gray-400">Luna de Miel</p>
-                <span  className='font-semibold text-sm capitalize'>{familiar.name}</span>
-                <span className='font-semibold text-sm text-green-500'>Entregado</span>
-              </div>
-            </div>
-          ))}
-      </>
-    )}
-  </div>
-)}
+  
 
   </>
 
@@ -932,18 +822,18 @@ const handleRecibo = async () => {
               </div>
               
 
-              <div  className=''>
-              <h3 className='font-bold  text-2xl mb-5'>Datos del Conyugue:</h3>
+              <div  className='max-xl:mt-3'>
+              <h3 className='font-bold max-xl:text-center  text-2xl mb-5'>Datos del Conyugue:</h3>
                   {affiliateData.familiares && affiliateData.familiares.some(familiar => familiar.categoria === 'Conyugue') ? (
-  <div className='flex h-[90%] flex-col' >
+  <div className=' flex h-[90%] max-xl:w-full max-xl:h-full   flex-col xl:justify-between' >
     
     <ul >
       {affiliateData.familiares
         .filter(familiar => familiar.categoria === 'Conyugue')
         .map((familiar, index) => (
-          <div onClick={() => toggleFamiliar(familiar.id)} key={index} ref={animationParent} >
+          <div className='max-xl:w-full max-xl:flex max-xl:flex-col max-xl:justify-center max-xl:items-center ' onClick={() => toggleFamiliar(familiar.id)} key={index} ref={animationParent} >
             <p
-              className='p-2 items-center capitalize bg-[#d8d8d8] font-semibold text-gray-800 relative w-[16vw] mt-4 pl-6 cursor-pointer flex flex-row justify-between'
+              className='p-2 items-center capitalize bg-[#d8d8d8] font-semibold text-gray-800 relative w-full xl:w-[16vw] mt-4 pl-6 cursor-pointer flex flex-row justify-between'
              
             >
                
@@ -952,7 +842,7 @@ const handleRecibo = async () => {
             </p>
 
             {expandedFamiliars[familiar.id] && (
-              <li key={index} className="w-[16vw] p-4 mb-4">
+              <li key={index} className="w-5/6 xl:w-[16vw] p-4 mb-4">
                 <p><strong>DNI:</strong></p>
                 <p className='p-2 bg-gray-200 relative pl-6'>
                   <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
@@ -982,6 +872,63 @@ const handleRecibo = async () => {
           </div>
         ))}
     </ul>
+
+      {isLoading ? (
+  <Loader />
+) : (
+  <div className="flex max-xl:mt-3 items-end justify-around">
+    {Object.keys(beneficiosOtorgados).length > 0 && (
+      <>
+ 
+        {familiares
+          .filter((familiar) =>
+            beneficiosOtorgados.some(
+              (beneficio) =>
+                beneficio.familiar_id === familiar.id &&
+                  beneficio.fecha_otorgamiento.includes(new Date().getFullYear()) &&
+                (beneficio.estado === 'Entregado') &&
+                beneficio.tipo === 'Kit maternal'
+            )
+          )
+          .map((familiar) => (
+            <div key={familiar.id} className="flex justify-center items-center">
+              <div className="flex flex-col items-center">
+                <img className="w-auto h-8" src={Mono} alt="Mono" />
+                <p className="font-semibold text-gray-400">Kit Nacimiento</p>
+                <span className='font-semibold text-sm capitalize'>{familiar.name}</span>
+                <span className='font-semibold text-sm text-green-500'>Entregado</span>
+              </div>
+            </div>
+          ))}
+      </>
+    )}
+
+    {Object.keys(beneficiosOtorgados).length > 0 && (
+      <>
+    
+        {familiares
+          .filter((familiar) =>
+            beneficiosOtorgados.some(
+              (beneficio) =>
+                beneficio.familiar_id === familiar.id &&
+                beneficio.estado === 'Entregado' &&
+                beneficio.tipo === 'Luna de miel'
+            )
+          )
+          .map((familiar) => (
+            <div key={familiar.id} className="flex justify-center items-center">
+              <div className="flex flex-col items-center">
+                <img className="w-auto h-8" src={Avion} alt="Avion" />
+                <p className="font-semibold text-gray-400">Luna de Miel</p>
+                <span  className='font-semibold text-sm capitalize'>{familiar.name}</span>
+                <span className='font-semibold text-sm text-green-500'>Entregado</span>
+              </div>
+            </div>
+          ))}
+      </>
+    )}
+  </div>
+)}
     
   </div>
 ) : (
@@ -1002,30 +949,30 @@ const handleRecibo = async () => {
 
         <div className='flex'>
               {affiliateData.datos_empleador && (
-                        <div >
-                                <h2 className="font-bold text-2xl mb-5">Datos del Empleador:</h2>
+                        <div className='flex max-xl:w-full max-xl:h-full max-xl:mt-3  flex-col ' >
+                                <h2 className="font-bold text-2xl max-xl:text-center mb-5">Datos del Empleador:</h2>
                                 {affiliateData.datos_empleador && (
                                   <div>
                                     {(() => {
                                       try {
                                         const empleador = JSON.parse(affiliateData.datos_empleador);
                                         return (
-                                          <div>
+                                          <div >
                                             <p><strong>Razon Social:</strong></p>
                                             <p
-                                               className='p-2 capitalize bg-gray-200 font-semibold text-gray-800 relative w-[16vw] mt-2 pl-6'
+                                               className='p-2 capitalize bg-gray-200 font-semibold text-gray-800 relative xl:w-[16vw] mt-2 pl-6'
                                             >                
                                               <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
                                               {empleador.razon_social} 
                                               
                                             </p>
                                             <p><strong>CUIT:</strong></p>
-                                              <p className='p-2 bg-gray-200 w-[16vw] relative pl-6'>
+                                              <p className='p-2 bg-gray-200 xl:w-[16vw] relative pl-6'>
                                                 <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
                                                 {empleador.cuit_empleador}
                                               </p>
                                               <p><strong>Actividad:</strong></p>
-                                              <p className='p-2 capitalize bg-gray-200 w-[16vw] relative pl-6'>
+                                              <p className='p-2 capitalize bg-gray-200 xl:w-[16vw] relative pl-6'>
                                                 <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
                                                 {empleador.actividad}
                                               </p>                                            
@@ -1043,7 +990,7 @@ const handleRecibo = async () => {
 
                 
                                     {affiliateData.recibo_sueldo && affiliateData.recibo_sueldo.length > 0 && (
-                          <div className='flex flex-col cursor-pointer justify-center w-[16vw] items-center rounded-2xl p-2 mt-5  bg-gray-200'>
+                          <div className='flex flex-col cursor-pointer justify-center w-full xl:w-[16vw] items-center rounded-2xl p-2 mt-5  bg-gray-200'>
                             <RiBillLine className='text-3xl'/>
                             {affiliateData.recibo_sueldo.map((recibo, index) => (
                               
@@ -1090,15 +1037,15 @@ const handleRecibo = async () => {
         </div>
       ) :  (
         // Mostrar campo de búsqueda si no hay datos de afiliado
-        <div ref={animationParent} className="flex flex-col h-full mt-48 justify-center items-center">
-          <div ref={animationParent} className='flex flex-col w-[40rem] h-[14rem] items-center justify-center align-middle rounded-lg bg-white'>
-          <label className='flex font-bold w-full mt-[-15px] pl-24 pb-2' htmlFor='dni'>DNI</label>
+        <div ref={animationParent} className="flex flex-col h-full p-8 mt-36 md:mt-48 justify-center items-center">
+          <div ref={animationParent} className='flex flex-col w-full max-md:p-6 md:w-[40rem] h-[14rem] md:items-center justify-center md:align-middle rounded-lg bg-white'>
+          <label className='flex font-bold w-full mt-[-15px] max-md:justify-center md:pl-24 pb-2' htmlFor='dni'>DNI</label>
           <Input
             type="text"
             name='dni'
             value={dni}
             onChange={handleDniChange}
-            className="py-4 px-4 w-[28rem] bg-[#d8d8d8]"
+            className="py-4 px-4 w-full md:w-[28rem] bg-[#d8d8d8]"
             placeholder="123456"
           />
           </div>

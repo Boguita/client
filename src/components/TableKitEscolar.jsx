@@ -20,6 +20,7 @@ const TableKitEscolar = ({ data, rowsPerPage = 8,  showPagination = true, onUpda
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [openStatusModal, setOpenStatusModal] = useState(false);
+    const [openPendingModal, setOpenPendingModal] = useState(false);
   const [openAprovvedModal, setOpenAprovvedModal] = useState(false);
     const [animationParent] = useAutoAnimate();
     const [currentStep, setCurrentStep] = useState(1);
@@ -123,7 +124,7 @@ const handleAprovved = async (id) => {
   setLoading(true);
   const res = await api.put(`/tasks/${id}`,  
        {
-        estado: "Aprobado",        
+        estado: "Enviado",        
       },
     );
   res.status === 200
@@ -136,6 +137,35 @@ const handleAprovved = async (id) => {
   setLoading(false);
   } catch (error) {
     setError("Hubo un error al aprobar el beneficio");
+    setLoading(false)
+  }
+  
+}
+
+const pendingBenefit = (afiliado) => {
+  console.log("llega a la funcion",afiliado)
+  setSelectedUser(afiliado);
+  setOpenPendingModal(true);
+}
+
+const handlePending = async (id) => {
+  try {
+  setLoading(true);
+  const res = await api.put(`/tasks/${id}`,  
+       {
+        estado: "Pendiente",        
+      },
+    );
+  res.status === 200
+  ? (
+      setCurrentStep(2),
+      onUpdateUserData()
+    )
+  : setError("Hubo un error al mover el beneficio");
+
+  setLoading(false);
+  } catch (error) {
+    setError("Hubo un error al mover el beneficio");
     setLoading(false)
   }
   
@@ -213,7 +243,7 @@ const rechazarUsuario = async (afiliado) => {
                   DNI Hijo/a
                 </th>               
                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Fecha Solicitud
+                  Seccional
                 </th>
                  <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Año Escolar
@@ -247,13 +277,13 @@ const rechazarUsuario = async (afiliado) => {
                               <td className="px-6 py-3 whitespace-no-wrap">{row.afiliado_dni}</td>
                   <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.familiar_name}</td>
                   <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.familiar_dni}</td>                  
-                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{new Date(row.fecha_otorgamiento).toLocaleDateString("es-AR")}</td>   
+                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.seccional + "," + row.detalles}</td>   
                   <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.año_escolar}</td> 
                   <td className="px-1 2xl:px-4 py-3 whitespace-no-wrap">{row.utiles === 0 ? "NO" : "SI"}</td>   
                   <td className="px-1 2xl:px-4 py-3 whitespace-no-wrap">{row.guardapolvo_confirm === 0 ? "NO" : "SI"}</td> 
                    <td className="px-1 2xl:px-4 py-3 whitespace-no-wrap">{row.mochila === 0 ? "NO" : "SI"}</td> 
       
-                  <td className="px-2 2xl:px-6  capitalize whitespace-no-wrap"><span className={`bg-opacity-30 ${row.estado === 'Entregado' ? 'bg-green-400 text-green-500 ' : row.estado === 'Rechazado' ? 'bg-red-400 text-red-500' : row.estado === 'Aprobado' ? 'bg-blue-400 text-blue-500' : 'bg-yellow-200 text-yellow-400'}  rounded-lg px-2 p-1`}>{row.estado}</span></td>                
+                  <td className="px-2 2xl:px-6  capitalize whitespace-no-wrap"><span className={`bg-opacity-30 ${row.estado === 'Entregado' ? 'bg-green-400 text-green-500 ' : row.estado === 'Rechazado' ? 'bg-red-400 text-red-500' : row.estado === 'Enviado' ? 'bg-blue-400 text-blue-500' : 'bg-yellow-200 text-yellow-400'}  rounded-lg px-2 p-1`}>{row.estado}</span></td>                
                   <td className="flex items-center px-10 py-2 whitespace-no-wrap">
                     <div  className="relative">
                       <FiMoreHorizontal 
@@ -265,8 +295,19 @@ const rechazarUsuario = async (afiliado) => {
                           {/* Aquí coloca las opciones del menú */}
                           <ul className='p-1'>
                             <li className='hover:border-[#006084] hover:border-b-2  cursor-pointer ' onClick={() => handleOpenModal(row)}>Ver ficha completa</li>
-                            <li onClick={() => AprovvedBenefit(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Aprobar Beneficio</li>   
-                            <li onClick={() => deleteUser(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Rechazar Beneficio</li>                         
+                            {row.estado === 'Pendiente' && 
+                            <>
+                            <li onClick={() => AprovvedBenefit(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Enviar Beneficio</li>   
+                            <li onClick={() => deleteUser(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Rechazar Beneficio</li>       
+                            </>
+                            }    
+                            {(row.estado === 'Rechazado' || row.estado === 'Enviado') && 
+                            <>
+                            <li onClick={() => pendingBenefit(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Mover a pendientes</li>   
+                                  
+                            </>
+                            }   
+                                          
                           </ul>
                         </div>
                       )}
@@ -509,7 +550,7 @@ const rechazarUsuario = async (afiliado) => {
                       <>
                       <div className='flex flex-col items-center justify-center '>
                       <TbUserQuestion className='text-[#006084] mb-4 text-7xl'/>
-                      <p>¿Estas seguro que deseas aprobar este beneficio?</p>
+                      <p>¿Estas seguro que deseas enviar este beneficio?</p>
                       </div>
                           
                          
@@ -539,7 +580,7 @@ const rechazarUsuario = async (afiliado) => {
                       <>
                       <div className='flex flex-col items-center justify-center '>
                       <AiOutlineCheckCircle className='text-green-600 text-7xl'/>
-                      <p className='text-xl font-bold mt-2'>El beneficio se aprobó correctamente.</p>
+                      <p className='text-xl font-bold mt-2'>El beneficio se envió correctamente.</p>
                       </div>
                           
                          
@@ -550,7 +591,7 @@ const rechazarUsuario = async (afiliado) => {
                         <div className="flex mt-4 justify-center items-end">                        
                           <button
                             className="mt-4 bg-gray-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
-                            onClick={() => setOpenDeleteModal(false)}
+                            onClick={() => setOpenAprovvedModal(false)}
                           >
                             Cerrar
                           </button>
@@ -648,6 +689,103 @@ const rechazarUsuario = async (afiliado) => {
                           <button
                             className="mt-4 bg-gray-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
                             onClick={() => setOpenDeleteModal(false)}
+                          >
+                            Cerrar
+                          </button>
+                        </div>
+                        </>
+                        }
+                        </div>
+                        
+                        
+                      </div>
+                    
+                    
+                      
+                  )}
+                  {error && <p className="font-semibold text-red-500">{error}</p>}
+            </div>                          
+
+       
+          </Modal>
+
+            <Modal
+            isOpen={openPendingModal}
+            onRequestClose={() => setOpenPendingModal(false)}
+            contentLabel="Mover Beneficio"
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    zIndex: 1000
+              },
+              content: {
+                border: "none",
+                background: "white",
+                color: "black",
+                top: "50%",
+                left: "55%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+                padding: "2rem",
+                width: "80%",
+                maxWidth: "40rem",
+              },
+            }}
+          >
+            
+            {/* {err && <p className="text-red-500">{err}</p>} */}
+            <div  className="mb-2">
+            {selectedUser && (
+              <div  className='flex justify-center h-full w-full'>
+                    <div ref={animationParent}  className="flex flex-col rounded-2xl w-[70%]">
+                      {currentStep === 1 &&
+                      <>
+                      <div className='flex flex-col items-center justify-center '>
+                      <TbUserQuestion className='text-yellow-300 mb-4 text-7xl'/>
+                      <p>¿Estas seguro que deseas mover este beneficio a pendientes?</p>
+                      </div>
+                          
+                         
+                    
+                  
+                    
+
+                        <div className="flex mt-4 justify-around items-center">
+                          {loading ? <Loader /> :
+                           <button
+                            className="mt-4 bg-yellow-400 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                            onClick={() => handlePending(selectedUser.id)}
+                          >
+                            Confirmar
+                          </button>
+}
+                          <button
+                            className="mt-4 bg-gray-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                            onClick={() => setOpenPendingModal(false)}
+                          >
+                            Cerrar
+                          </button>
+                        </div>
+                        </>
+                        }
+                        {currentStep === 2 &&
+                      <>
+                      <div className='flex flex-col items-center justify-center '>
+                      <AiOutlineCheckCircle className='text-green-600 text-7xl'/>
+                      <p className='text-xl font-bold mt-2'>El beneficio se movio correctamente.</p>
+                      </div>
+                          
+                         
+                    
+                  
+                    
+
+                        <div className="flex mt-4 justify-center items-end">                        
+                          <button
+                            className="mt-4 bg-gray-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                            onClick={() => setOpenPendingModal(false)}
                           >
                             Cerrar
                           </button>

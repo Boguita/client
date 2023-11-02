@@ -41,7 +41,8 @@ const [beneficio, setBeneficio] = useState({
         semanas: "",
         fecha_de_parto: "",
         cantidad: "",
-        detalles: "",
+        detalles: currentUser?.seccional,
+        seccional: currentUser?.provincia + ", " + currentUser?.ciudad,
         estado: "Pendiente",
         
         
@@ -169,10 +170,13 @@ const handleNextStep = async () => {
      
       },
     }));
+ 
     if(beneficiosOtorgados.length === 0) {
       return;
     } else {
+      console.log("entro", categoria)
       if(categoria === 'Madre') {
+        
         setModalMadreIsOpen(true);
       } else {
       setModalIsOpen(true);
@@ -372,6 +376,7 @@ const handleRegisterAfiliate = async (e) => {
     if (familiaresMadre.length === 0) {
       console.log("No se encontraron familiares con categoría 'Madre'.");
     } else {
+      
      familiaresMadre.forEach(async (familiar) => {
     const beneficioResult = await beneficioPendiente(familiar.id, familiar.categoria);
     

@@ -45,7 +45,7 @@ const ForgotPassword = () => {
       // navigate("/homeInfo");
     } catch (err) {
       console.log(err)
-      setError(err);
+      setError(err.response.data);
     }
     
   };
@@ -63,7 +63,7 @@ const ForgotPassword = () => {
       
     <div className="container-login flex">
       
-          <div className="flex flex-col w-[50%] h-full">
+          <div className="flex items-center flex-col w-full  md:w-[50%] xl:w-[50%] 2xl:w-[50%] lg:w-[50%] h-full">
              <div className="absolute justify-start p-8">
   <a href="/login">
     <img className="flex h-20 w-auto cursor-pointer" src={Logo} alt="Logo" />
@@ -71,10 +71,10 @@ const ForgotPassword = () => {
 </div>
 
            
-            <div className="flex flex-col justify-center h-full items-center">
-            <h2 className="text-white font-bold text-2xl">Ingreso al Portal Delegados</h2>      
-            <h2 className="text-white font-bold text-8xl">BIENVENIDO</h2>
-            <p className="w-[50%] py-2 text-white font-semibold text-l"> Lorem ipsum dolor sit amet consectetur, adipisicing elit. Similique odit aliquid saepe quidem aliquam sed repudiandae magni nam doloribus explicabo minima pariatur debitis qui quos, vero blanditiis reiciendis quia asperiores!</p>
+          <div className="flex flex-col justify-center h-full items-center">
+            <h2 className="text-white font-bold text-xl sm:text-lg md:text-xl lg:text-xl xl:text-2xl ">Ingreso al Portal de Administradores</h2>      
+            <h2 className="text-white font-bold text-5xl md:text-5xl lg:text-6xl xl:text-8xl sm:text-7xl">BIENVENIDO</h2>
+            <p className="w-[50%] text-center py-2 text-gray-100 font-semibold text-l">Copyright © 2023 UATRE </p>
             </div>
           </div>
      
@@ -87,7 +87,6 @@ const ForgotPassword = () => {
 
                   <div className="flex flex-col items-center p-8 ">
                      <h3 className="title font-extrabold text-4xl text-[#006084]">Recuperar Contraseña</h3>
-                     <p className="mt-4 max-w-[450px] text-[#787779] font-semibold">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque repudiandae, quibusdam deserunt quidem optio dignissimos excepturi voluptate alias similique provident, totam soluta aut eum recusandae.</p>
                   </div>
                  
                     <form className="form-horizontal">

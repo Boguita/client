@@ -3,8 +3,12 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import Logo from '../assets/img/logo.png'
 import Avatar from "./Avatar";
+import Libro from '../assets/img/libro-abierto.png'   
+import Mono from '../assets/img/mono.png'
+import Plane from '../assets/img/plane.png'
 import NavBG from '../assets/img/navbg-modified.webp';
 import {AiFillHome} from 'react-icons/ai'
+import {ImLocation} from 'react-icons/im'
 import {BsFillFileEarmarkBarGraphFill, BsFillPeopleFill} from 'react-icons/bs'
 
 const Navbar = () => {
@@ -90,10 +94,33 @@ const Navbar = () => {
             
           
             <li>
-               <Link to="/admin/beneficios" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                  <svg aria-hidden="true" className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z"></path><path d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path></svg>
-                   <span className={`ml-3 ${location.pathname === '/admin/beneficios' ? 'text-blue-500' : 'text-white'}`}>Beneficios</span>
+               <Link to="/admin/luna-de-miel" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <img src={Plane}  className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" 
+                  />
+                   <span className={`ml-3 ${location.pathname === '/admin/luna-de-miel' ? 'text-blue-500' : 'text-white'}`}>Luna de Miel</span>
                   {/* <span class="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span> */}
+               </Link>
+            </li>
+                    <li>
+               <Link to="/admin/kit-nacimiento" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                <img src={Mono}  className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" 
+                  />                  
+                   <span className={`ml-3 ${location.pathname === '/admin/kit-nacimiento' ? 'text-blue-500' : 'text-white'}`}>Kit Nacimiento</span>
+                  {/* <span class="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span> */}
+               </Link>
+            </li>
+                <li>
+               <Link to="/admin/kit-escolar" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                   <img src={Libro}  className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" 
+                  />
+                   <span className={`ml-3 ${location.pathname === '/admin/kit-escolar' ? 'text-blue-500' : 'text-white'}`}>Kit Escolar</span>
+                  {/* <span class="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span> */}
+               </Link>
+            </li>
+               <li>
+               <Link to='/admin/seccionales' className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                   <ImLocation className="flex-shrink-0 w-6 h-6 text-white transition duration-75 dark:text-white group-hover:text-gray-900 dark:group-hover:text-white" />
+                   <span className={`ml-3 ${location.pathname === '/admin/seccionales' ? 'text-blue-500' : 'text-white'}`}>Seccionales</span>
                </Link>
             </li>
               <li>
