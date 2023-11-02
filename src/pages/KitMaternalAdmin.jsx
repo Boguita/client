@@ -92,7 +92,20 @@ useEffect(() => {
 
   const approvedUsers = beneficios?.filter(beneficio => beneficio.estado === 'Enviado');
   const rejectedUsers = beneficios?.filter(beneficio => beneficio.estado === 'Rechazado');
-  const pendingUsers = beneficios?.filter(beneficio => beneficio.estado === 'Pendiente');
+const pendingUsers = beneficios?.filter(beneficio => beneficio.estado === 'Pendiente');
+
+const sortedPendingUsers = pendingUsers?.sort((a, b) => {
+  const plazoA = a.beneficio?.plazo === 'Urgente' ? -1 : 1; // Priorizar los beneficios con plazo 'Urgente'
+  const plazoB = b.beneficio?.plazo === 'Urgente' ? -1 : 1;
+
+  return plazoA - plazoB;
+});
+
+// Luego puedes utilizar sortedPendingUsers en tu código para mostrar los beneficios ordenados.
+
+
+// Luego puedes utilizar sortedPendingUsers en tu código para mostrar los beneficios ordenados.
+
   const successUsers = beneficios?.filter(beneficio => beneficio.estado === 'Entregado');
 
 
@@ -115,7 +128,7 @@ useEffect(() => {
                     <GraphicsStockMaternal />
                            <div ref={animationParent}>
                         <h2 className='text-black font-extrabold text-xl'>Pendientes</h2>
-                        <TableKitMaternal data={pendingUsers} onUpdateUserData={handleUpdateUserData} />
+                        <TableKitMaternal data={sortedPendingUsers} onUpdateUserData={handleUpdateUserData} />
                       </div>
                       <div>
                         <h2 className='text-black font-extrabold text-xl'>Rechazados</h2>
