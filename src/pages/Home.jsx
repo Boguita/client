@@ -902,6 +902,31 @@ const handleRecibo = async () => {
           ))}
       </>
     )}
+     {Object.keys(beneficiosOtorgados).length > 0 && (
+      <>
+ 
+        {familiares
+          .filter((familiar) =>
+            beneficiosOtorgados.some(
+              (beneficio) =>
+                beneficio.familiar_id === familiar.id &&
+                  beneficio.fecha_otorgamiento.includes(new Date().getFullYear()) &&
+                (beneficio.estado === 'Pendiente' || beneficio.estado === "Enviado") &&
+                beneficio.tipo === 'Kit maternal'
+            )
+          )
+          .map((familiar) => (
+            <div key={familiar.id} className="flex justify-center items-center">
+              <div className="flex flex-col items-center">
+                <img className="w-auto h-8" src={Mono} alt="Mono" />
+                <p className="font-semibold text-gray-400">Kit Nacimiento</p>
+                <span className='font-semibold text-sm capitalize'>{familiar.name}</span>
+                <span className='font-semibold text-sm text-yellow-500'>Pendiente</span>
+              </div>
+            </div>
+          ))}
+      </>
+    )}
 
     {Object.keys(beneficiosOtorgados).length > 0 && (
       <>
@@ -922,6 +947,30 @@ const handleRecibo = async () => {
                 <p className="font-semibold text-gray-400">Luna de Miel</p>
                 <span  className='font-semibold text-sm capitalize'>{familiar.name}</span>
                 <span className='font-semibold text-sm text-green-500'>Entregado</span>
+              </div>
+            </div>
+          ))}
+      </>
+    )}
+    {Object.keys(beneficiosOtorgados).length > 0 && (
+      <>
+    
+        {familiares
+          .filter((familiar) =>
+            beneficiosOtorgados.some(
+              (beneficio) =>
+                beneficio.familiar_id === familiar.id &&
+                beneficio.estado === 'Pendiente' &&
+                beneficio.tipo === 'Luna de miel'
+            )
+          )
+          .map((familiar) => (
+            <div key={familiar.id} className="flex justify-center items-center">
+              <div className="flex flex-col items-center">
+                <img className="w-auto h-8" src={Avion} alt="Avion" />
+                <p className="font-semibold text-gray-400">Luna de Miel</p>
+                <span  className='font-semibold text-sm capitalize'>{familiar.name}</span>
+                <span className='font-semibold text-sm text-yellow-500'>Pendiente</span>
               </div>
             </div>
           ))}

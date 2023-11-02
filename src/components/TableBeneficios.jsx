@@ -90,71 +90,32 @@ const statusChangue = (afiliado) => {
   setOpenStatusModal(true);
 }
 
-const handleDeleteUser = async (user,email) => {
+const handleRejected = async (id) => {
   try {
   setLoading(true);
-  const res = await api.delete('/users/delete',  {
-      data: {
-        username: user,
-        email: email,
+  const res = await api.put(`/tasks/${id}`,  
+       {
+        estado: "Rechazado",        
       },
-    });
-  res.status === 200 ? 
-  setCurrentStep(2)
-  : setError("Hubo un error al eliminar el afiliado");
+    );
+  res.status === 200
+  ? (
+      setCurrentStep(2),
+      onUpdateUserData()
+    )
+  : setError("Hubo un error al rechazar el beneficio");
+
   setLoading(false);
   } catch (error) {
-    setError("Hubo un error al eliminar el afiliado");
+    setError("Hubo un error al rechazar el beneficio");
     setLoading(false)
   }
   
 }
 
-const aprobarUsuario = async (afiliado) => {
-  try {
-    setLoading(true);
-    const dataToUpdate = {
-      username: afiliado.username,
-      email: afiliado.email
-    };
-    const res = await api.put(`/users/approved`, dataToUpdate);
-    if (res.status === 200) {
-      setCurrentStep(2);
-      setLoading(false);
-      // Llama a la función de callback para actualizar los datos
-      onUpdateUserData();
-    } else {
-      setError("Hubo un error al aprobar el usuario");
-      setLoading(false);
-    }
-  } catch (error) {
-    setError("Hubo un error al aprobar el usuario");
-    setLoading(false);
-  }
-}
 
-const rechazarUsuario = async (afiliado) => {
-  try {
-    setLoading(true);
-    const dataToUpdate = {
-      username: afiliado.username,
-      email: afiliado.email
-    };
-    const res = await api.put(`/users/decline`, dataToUpdate);
-    if (res.status === 200) {
-      setCurrentStep(2);
-      setLoading(false);
-      // Llama a la función de callback para actualizar los datos
-      onUpdateUserData();
-    } else {
-      setError("Hubo un error al rechazar el usuario");
-      setLoading(false);
-    }
-  } catch (error) {
-    setError("Hubo un error al rechazar el usuario");
-    setLoading(false);
-  }
-}
+
+
 
 
 const AprovvedBenefit = (afiliado) => {
@@ -169,7 +130,7 @@ const handleAprovved = async (id) => {
   setLoading(true);
   const res = await api.put(`/tasks/${id}`,  
        {
-        estado: "Enviado",        
+        estado: "Entregado",        
       },
     );
   res.status === 200
@@ -308,10 +269,15 @@ useEffect(() => {
                             <li className='hover:border-[#006084] hover:border-b-2  cursor-pointer ' onClick={() => handleOpenModal(row)}>Ver ficha completa</li>  
                              {row.estado === 'Pendiente' && 
                             <>
-                            <li onClick={() => AprovvedBenefit(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Enviar Beneficio</li>   
+                            <li onClick={() => AprovvedBenefit(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Entregar Beneficio</li>   
                             <li onClick={() => deleteUser(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Rechazar Beneficio</li>       
                             </>
-                            }                             
+                            } 
+                               {row.estado === 'Rechazado' && 
+                            <>
+                            <li onClick={() => AprovvedBenefit(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Entregar Beneficio</li>   
+                            </>
+                            }                              
                           </ul>
                         </div>
                       )}
@@ -516,6 +482,7 @@ useEffect(() => {
             style={{
               overlay: {
                 backgroundColor: "rgba(0, 0, 0, 0.5)",
+                zIndex: 1000,
               },
               content: {
                 border: "none",
@@ -555,7 +522,7 @@ useEffect(() => {
                           {loading ? <Loader /> :
                            <button
                             className="mt-4 bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
-                            onClick={() => handleDeleteUser(selectedUser.username, selectedUser.email)}
+                            onClick={() => handleRejected(selectedUser.id)}
                           >
                             Confirmar
                           </button>
@@ -573,7 +540,7 @@ useEffect(() => {
                       <>
                       <div className='flex flex-col items-center justify-center '>
                       <AiOutlineCheckCircle className='text-green-600 text-7xl'/>
-                      <p className='text-xl font-bold mt-2'>El usuario se eliminó correctamente.</p>
+                      <p className='text-xl font-bold mt-2'>El beneficio se rechazó correctamente.</p>
                       </div>
                           
                          
@@ -612,6 +579,7 @@ useEffect(() => {
             style={{
               overlay: {
                 backgroundColor: "rgba(0, 0, 0, 0.5)",
+                zIndex: 1000,
               },
               content: {
                 border: "none",
@@ -701,109 +669,7 @@ useEffect(() => {
        
           </Modal>
 
-           <Modal
-            isOpen={openStatusModal}
-            onRequestClose={() => setOpenStatusModal(false)}
-            contentLabel="Estado Usuario"
-            style={{
-              overlay: {
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
-              },
-              content: {
-                border: "none",
-                background: "white",
-                color: "black",
-                top: "50%",
-                left: "55%",
-                right: "auto",
-                bottom: "auto",
-                marginRight: "-50%",
-                transform: "translate(-50%, -50%)",
-                padding: "2rem",
-                width: "80%",
-                maxWidth: "40rem",
-              },
-            }}
-          >
-            
-            {/* {err && <p className="text-red-500">{err}</p>} */}
-            <div  className="mb-2">
-            {selectedUser && (
-              <div  className='flex justify-center h-full w-full'>
-                    <div ref={animationParent}  className="flex flex-col rounded-2xl w-[70%]">
-                      {currentStep === 1 &&
-                      <>
-                      <div className='flex  items-center justify-around '>
-                        <button onClick={() => aprobarUsuario(selectedUser)} className='bg-green-500 text-white font-bold rounded-lg p-2 hover:bg-opacity-75'>Aprobar</button>
-                        <button onClick={() => rechazarUsuario(selectedUser)} className='bg-red-500 text-white font-bold rounded-lg p-2 hover:bg-opacity-75'>Rechazar</button>
-                      </div>
-                      </>
-                      }
-                      {currentStep === 2 &&
-                      <>
-                      <div className='flex flex-col items-center justify-center '>
-                      <AiOutlineWarning className='text-red-600 text-7xl'/>
-                      <p>¿Estas seguro que deseas eliminar este usuario?</p>
-                      </div>
-                          
-                         
-                    
-                  
-                    
-
-                        <div className="flex mt-4 justify-around items-center">
-                          {loading ? <Loader /> :
-                           <button
-                            className="mt-4 bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
-                            onClick={handleDeleteUser}
-                          >
-                            Confirmar
-                          </button>
-}
-                          <button
-                            className="mt-4 bg-gray-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
-                            onClick={() => setOpenDeleteModal(false)}
-                          >
-                            Cerrar
-                          </button>
-                        </div>
-                        </>
-                        }
-                        {currentStep === 3 &&
-                      <>
-                      <div className='flex flex-col items-center justify-center '>
-                      <AiOutlineCheckCircle className='text-green-600 text-7xl'/>
-                      <p className='text-xl font-bold mt-2'>El afiliado se eliminó correctamente.</p>
-                      </div>
-                          
-                         
-                    
-                  
-                    
-
-                        <div className="flex mt-4 justify-center items-end">                        
-                          <button
-                            className="mt-4 bg-gray-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
-                            onClick={() => setOpenDeleteModal(false)}
-                          >
-                            Cerrar
-                          </button>
-                        </div>
-                        </>
-                        }
-                        </div>
-                        
-                        
-                      </div>
-                    
-                    
-                      
-                  )}
-                  {error && <p className="font-semibold text-red-500">{error}</p>}
-            </div>                          
-
-       
-          </Modal>
+         
     </div>
 
   );
