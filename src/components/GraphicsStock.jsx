@@ -134,8 +134,13 @@ useEffect(() => {
             setIdSeccional(null);
     // Filtrar las seccionales por la ciudad seleccionada
     const ciudadInput = e.target.value;
-    const filteredSeccionales = seccionales.filter((seccional) => seccional.ciudad === ciudadInput); 
-    setSeccionalesFiltradas(filteredSeccionales); 
+    if (seccionales && seccionales.length > 0) {
+  const filteredSeccionales = seccionales.filter((seccional) => seccional.ciudad === ciudadInput);
+  setSeccionalesFiltradas(filteredSeccionales);
+} else {
+  setSeccionalesFiltradas([]); // Establece un array vacío si no hay seccionales
+}
+ 
     setError(null);
     setIsLoading(false);
   }
@@ -212,6 +217,7 @@ useEffect(() => {
         console.log(error.response.data.message);
         setIsLoading(false);
       }
+      setIsLoading(false);
     }
 
     fetchData();
