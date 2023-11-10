@@ -10,7 +10,6 @@ import Input from './Input';
 import { IoCloseOutline } from 'react-icons/io5';
 import Modal from 'react-modal';
 import Select from 'react-select';
-import NavBar from './NavBar';
 import '../style.css';
 import Logo from '../assets/img/logo.png'
 import { AuthContext } from "../context/authContext";
