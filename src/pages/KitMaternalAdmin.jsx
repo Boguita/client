@@ -95,12 +95,15 @@ useEffect(() => {
 const pendingUsers = beneficios?.filter(beneficio => beneficio.estado === 'Pendiente');
 
 const sortedPendingUsers = pendingUsers?.sort((a, b) => {
-  const plazoA = a.beneficio?.plazo === 'Urgente' ? -1 : 1; // Priorizar los beneficios con plazo 'Urgente'
-  const plazoB = b.beneficio?.plazo === 'Urgente' ? -1 : 1;
+  // Asignar un valor numérico a 'Urgente' y 'Normal' para ordenar correctamente
+  const plazoA = a.plazo === 'Urgente' ? -1 : 1;
+  const plazoB = b.plazo === 'Urgente' ? -1 : 1;
 
+  // Ordenar los usuarios por plazo (Urgente primero, Normal después)
   return plazoA - plazoB;
 });
 
+console.log("ordenados",sortedPendingUsers);
 // Luego puedes utilizar sortedPendingUsers en tu código para mostrar los beneficios ordenados.
 
 
@@ -108,7 +111,10 @@ const sortedPendingUsers = pendingUsers?.sort((a, b) => {
 
   const successUsers = beneficios?.filter(beneficio => beneficio.estado === 'Entregado');
 
-
+  const handleListPendings = () => {
+    // Abre una nueva pestaña o ventana del navegador con la URL especificada
+    window.open('/admin/kit-nacimiento/listado-pendientes', '_blank');
+  };
         return (
             <div className="h-screen pl-80 w-screen ml-5 bg-gray-200">
               <div className='py-36'>
@@ -125,15 +131,17 @@ const sortedPendingUsers = pendingUsers?.sort((a, b) => {
                         </div>
                     {isLoading ? <Loader/> :
                     <>
-                    <GraphicsStockMaternal />
+                    {/* <GraphicsStockMaternal /> */}
                            <div ref={animationParent}>
                         <h2 className='text-black font-extrabold text-xl'>Pendientes</h2>
+                        {/* <button onClick={handleListPendings} className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+                    
+                        >
+                          Ver listado
+                        </button> */}
                         <TableKitMaternal data={sortedPendingUsers} onUpdateUserData={handleUpdateUserData} />
                       </div>
-                      <div>
-                        <h2 className='text-black font-extrabold text-xl'>Rechazados</h2>
-                        <TableKitMaternal data={rejectedUsers} onUpdateUserData={handleUpdateUserData} />
-                      </div>
+                      
                
                       <div className='flex flex-col gap-x-8'>
                         <h2 className='text-black font-extrabold text-xl'>Enviados</h2>
@@ -143,6 +151,10 @@ const sortedPendingUsers = pendingUsers?.sort((a, b) => {
                         <div className='flex flex-col gap-x-8'>
                         <h2 className='text-black font-extrabold text-xl'>Entregados</h2>
                         <TableKitMaternal data={successUsers} onUpdateUserData={handleUpdateUserData} />
+                      </div>
+                      <div>
+                        <h2 className='text-black font-extrabold text-xl'>Rechazados</h2>
+                        <TableKitMaternal data={rejectedUsers} onUpdateUserData={handleUpdateUserData} />
                       </div>
                       </>
                     }   

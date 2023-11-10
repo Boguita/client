@@ -60,6 +60,17 @@ useEffect(() => {
   handleAffiliateDataRequest();
 }, []); // Ejec
 
+const handleUpdateUserData = async () => {
+  try {
+    // Llamar a la función que obtiene los datos actualizados
+    await handleAffiliateDataRequest();
+    // Aquí puedes realizar otras acciones después de actualizar los datos, si es necesario.
+  } catch (error) {
+    // Manejar errores si es necesario
+  }
+};
+ // Ejec
+
 useEffect(() => {
 
     handleSearch(); 
@@ -125,6 +136,7 @@ useEffect(() => {
                   <TableAfiliados
                     data={searchResults} // Usa searchResults en lugar de users
                     rowsPerPage={10}
+                    onUpdateUserData={handleUpdateUserData}
                   />
                   </div> 
                   

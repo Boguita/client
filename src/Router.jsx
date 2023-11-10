@@ -32,6 +32,8 @@ import BenefitsAdmin from "./pages/BenefitsAdmin";
 import KitMaternalAdmin from "./pages/KitMaternalAdmin";
 import KitEscolarAdmin from "./pages/KitEscolarAdmin";
 import Seccionales from "./pages/SeccionalesAdmin";
+import ListBenefits from "./components/ListBenefits";
+import ProfileAfilliate from "./pages/ProfileAfiliatte";
 
 
 const PrivateRoute = ({children, redirectTo="/"}) => {
@@ -61,6 +63,10 @@ const AdminRoute = ({ children, redirectTo = "/admin/login" }) => {
 
 
 
+
+
+
+
 export const AppRouter = () => { 
 
   return (
@@ -72,6 +78,7 @@ export const AppRouter = () => {
     <Route path='/reset-password/:id/:token' element={<ResetPassword/>} />
      <Route path='/forgot-password' element={<ForgotPassword/>} />
     <Route path='/register' element={<Register/>} />   
+
     <Route element={<PrivateRoute/>}>
       <Route path='/' element={<Layout/>}>      
         <Route path='/dashboard' element={<Dashboard/>} />
@@ -90,11 +97,14 @@ export const AppRouter = () => {
     {/* ROUTE ADMIN */ }
      <Route path='/admin/login' element={<LoginAdmin/>} />    
       <Route element={<AdminRoute/>}> 
-        <Route path='/' element={<LayoutAdmin/>}>      
+          <Route path='/admin/kit-escolar/listado-pendientes' element={<ListBenefits  />} />
+        <Route path='/' element={<LayoutAdmin/>}>     
+            <Route path='/admin/:dniparams?' element={<ProfileAfilliate/>} /> 
             <Route path='/admin/dashboard' element={<DashboardAdmin/>} /> 
             <Route path='/admin/beneficios' element={<BenefitsAdmin />} />
             <Route path='/admin/luna-de-miel' element={<LunaDeMielAdmin />} />
             <Route path='/admin/kit-nacimiento' element={<KitMaternalAdmin />} />
+            
             <Route path='/admin/kit-escolar' element={<KitEscolarAdmin />} />
             <Route path='/admin/afiliados' element={<Afiliados />} />    
             <Route path='/admin/administradores' element={<Administradores />} />   
@@ -103,6 +113,7 @@ export const AppRouter = () => {
             <Route path='/admin/soporte' element={<Soporte />} />                
           </Route>      
      </Route> 
+     
     
 
     

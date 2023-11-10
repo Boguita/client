@@ -8,7 +8,7 @@ import {AiOutlineWarning} from 'react-icons/ai';
 import {AiOutlineCheckCircle} from 'react-icons/ai';
 import api from '../common/Axiosconfig';
 import Loader from '../components/Loader';
-const TableAfiliados = ({ data, rowsPerPage = 8,  showPagination = true }) => {
+const TableAfiliados = ({ data, rowsPerPage = 8,  showPagination = true, onUpdateUserData }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [openModal, setOpenModal] = useState(false);
   const [selectedAfiliado, setSelectedAfiliado] = useState(null);
@@ -45,6 +45,8 @@ const handleOpenModal = (afiliado) => {
 
 const deleteAfiliado = (afiliado) => {
   console.log("llega a la funcion",afiliado)
+  setError(null);
+  setCurrentStep(1);
   setSelectedAfiliado(afiliado);
   setOpenDeleteModal(true);
 }
@@ -53,16 +55,21 @@ const handleDeleteAfiliado = async () => {
   try {
   setLoading(true);
   const res = await api.delete(`/users/afiliados/${selectedAfiliado}`);
-  res.status === 200 ? 
+  if(res.status === 200) { 
   setCurrentStep(2)
-  : setError("Hubo un error al eliminar el afiliado");
+  onUpdateUserData()
   setLoading(false);
+  } 
   } catch (error) {
     setError("Hubo un error al eliminar el afiliado");
     setLoading(false)
   }
   
 }
+
+
+
+  
 
 
   return (
@@ -107,7 +114,8 @@ const handleDeleteAfiliado = async () => {
                   <td className="px-6 py-3 whitespace-no-wrap">{row.dni}</td>
             
                   <td className="flex items-center px-6 py-3 whitespace-no-wrap">
-                  <button onClick={() => handleOpenModal(row)} className="text-[#006084] hover:text-blue-900">Ver ficha</button>
+                  <button className='hover:text-[#006084] cursor-pointer '><a href={`/admin/${row.dni ? row.dni : ""}`}  target="_blank"
+        rel="noopener noreferrer">Ver ficha completa</a></button>
                     <AiOutlineDelete onClick={() => deleteAfiliado(row.idafiliados)} className="text-[#006084] cursor-pointer hover:text-red-900 ml-2"/>
                   </td>
                 </tr>
@@ -281,7 +289,7 @@ const handleDeleteAfiliado = async () => {
                       <>
                       <div className='flex flex-col items-center justify-center '>
                       <AiOutlineWarning className='text-red-600 text-7xl'/>
-                      <p>¿Estas seguro que deseas eliminar este afiliado?</p>
+                      <p className='text-center'>¿Estas seguro que deseas eliminar este afiliado?<br></br> Todos los datos, incluso familiares seran eliminados.</p>
                       </div>
                           
                          

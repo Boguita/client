@@ -57,7 +57,7 @@ const Login = () => {
       
           <div className="flex pt-8 flex-col w-full h-full">
              <div className="flex items-center justify-center p-8">
-                <a href="/admin">
+                <a href="/admin/login">
                   <img className="flex max-sm:h-16 h-24 w-auto cursor-pointer" src={Logo} alt="Logo" />
                 </a>
               </div>  

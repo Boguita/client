@@ -14,6 +14,9 @@ import Loader from '../components/Loader';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import TableKitEscolar from '../components/TableKitEscolar';
 import GraphicsStock from '../components/GraphicsStock';
+import { RxExternalLink } from 'react-icons/rx';
+import TableStockEnviado from '../components/TableStockEnviado';
+import ListBenefits from '../components/ListBenefits';
 
 const KitEscolarAdmin = () => {
   const [dni, setDni] = useState('');
@@ -23,7 +26,7 @@ const KitEscolarAdmin = () => {
   const [err, setErr] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-
+  const [stockenviado, setStockEnviado] = useState(null);
 
   const navigate = useNavigate();
   
@@ -33,9 +36,12 @@ const handleAffiliateDataRequest = async () => {
   try {
     setIsLoading(true);
     const res = await api.get(`/tasks/kit-escolar`);
+    const res2= await api.get(`/tasks/stock-enviado`);
+
+    const stockenviado = res2.data;
     // Almacenar los datos recibidos de la API
     const benefits = res.data;
-    
+    setStockEnviado(stockenviado);
     setBeneficios(benefits);
     setErr(null);
     setIsLoading(false);
@@ -85,8 +91,12 @@ useEffect(() => {
 
 //     handleSearch(); 
 // }, [searchKeyword, users]);
+  const handleListPendings = () => {
+    // Abre una nueva pestaña o ventana del navegador con la URL especificada
+    window.open('/admin/kit-escolar/listado-pendientes', '_blank');
+  };
 
-
+  const stock = stockenviado?.sort((a, b) => b.idenviados - a.idenviados);
   const approvedUsers = beneficios?.filter(beneficio => beneficio.estado === 'Enviado');
   const rejectedUsers = beneficios?.filter(beneficio => beneficio.estado === 'Rechazado');
   const pendingUsers = beneficios?.filter(beneficio => beneficio.estado === 'Pendiente');
@@ -110,19 +120,34 @@ useEffect(() => {
                         </div>
                     {isLoading ? <Loader/> :
                     <>
-                     <GraphicsStock />
-                           <div ref={animationParent}>
-                        <h2 className='text-black font-extrabold text-xl'>Pendientes</h2>
+                     {/* <GraphicsStock /> */}
+                     <div>
+                        <h2 className='text-black font-extrabold text-2xl mb-2'>Gestión de Stock</h2>
+                        <button onClick={handleListPendings} className='p-1 px-3 w-40 font-bold text-white rounded-lg bg-[#006084] hover:bg-opacity-60'
+                    
+                        >
+                          <span className='flex items-center'>
+                          Acceder a lista de totales
+                          <RxExternalLink className='text-2xl' />
+                          </span>
+                        </button>
+                       
+                     </div>
+                     
+                       <ListBenefits />
+                     
+                           {/* <div ref={animationParent}>
+                        <h2 className='text-black font-extrabold text-xl mt-2'>Pendientes</h2>
                         <TableKitEscolar data={pendingUsers} onUpdateUserData={handleUpdateUserData} />
-                      </div>
+                      </div> */}
                       {/* <div>
                         <h2 className='text-black font-extrabold text-xl'>Rechazados</h2>
                         <TableKitMaternal data={rejectedUsers} onUpdateUserData={handleUpdateUserData} />
                       </div> */}
                
-                      <div className='flex flex-col gap-x-8'>
+                      <div className='flex flex-col mt-2 gap-x-8'>
                         <h2 className='text-black font-extrabold text-xl'>Enviados</h2>
-                        <TableKitEscolar data={approvedUsers} onUpdateUserData={handleUpdateUserData} />
+                        <TableStockEnviado data={stock} onUpdateUserData={handleUpdateUserData} />
                       </div>
 
                         <div className='flex flex-col gap-x-8'>

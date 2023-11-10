@@ -70,6 +70,8 @@ const handleSelectOption = (index) => {
 
 
 const deleteUser = (afiliado) => {
+  setCurrentStep(1);
+  setError(null);
   console.log("llega a la funcion",afiliado)
   setSelectedUser(afiliado);
   setOpenDeleteModal(true);
@@ -89,9 +91,11 @@ const handleDeleteUser = async (user,email) => {
         email: email,
       },
     });
-  res.status === 200 ? 
+  if(res.status === 200) { 
   setCurrentStep(2)
-  : setError("Hubo un error al eliminar el afiliado");
+  onUpdateUserData()
+  setLoading(false);
+  } 
   setLoading(false);
   } catch (error) {
     setError("Hubo un error al eliminar el afiliado");
@@ -105,7 +109,7 @@ const aprobarUsuario = async (afiliado) => {
     setLoading(true);
     const dataToUpdate = {
       username: afiliado.username,
-      email: afiliado.email
+      email: afiliado.email    
     };
     const res = await api.put(`/users/approved`, dataToUpdate);
     if (res.status === 200) {
@@ -160,20 +164,20 @@ const rechazarUsuario = async (afiliado) => {
                   Nombre
                 </th>
                 <th className="px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Email
+                  Provincia
                 </th>
                 <th className="px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Tel
+                  Delegacion
                 </th>
                 <th className="px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Ciudad
+                  Seccional
+                </th>
+                  <th className="px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  DNI
                 </th>
                 <th className="px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Estado
-                </th>
-                <th className="px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  DNI
-                </th>
+                </th>              
                 <th className="px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Acciones
                 </th>
@@ -184,11 +188,12 @@ const rechazarUsuario = async (afiliado) => {
               {data?.slice(startIndex, endIndex).map((row, index) => (
                 <tr  key={index} className={`text-gray-600 text-sm font-semibold ${index % 2 === 0 ? grayRowClass : whiteRowClass }`}>
                   <td className="px-6 capitalize py-3 whitespace-no-wrap">{row.username}</td>
-                  <td className="px-6 py-3 whitespace-no-wrap">{row.email}</td>
-                  <td className="px-6 py-3 whitespace-no-wrap">{row.tel}</td>
-                  <td className="px-6 py-3 text-[#006084] whitespace-no-wrap">{row.ciudad}</td>
-                  <td className="px-6  capitalize whitespace-no-wrap"><span className={`bg-opacity-30 ${row.status === 'Aprobado' ? 'bg-green-400 text-green-500 ' : row.status === 'Rechazado' ? 'bg-red-400 text-red-500' : 'bg-yellow-200 text-yellow-400'}  rounded-lg px-2 p-1`}>{row.status}</span></td>                
+                  <td className="px-6 py-3 whitespace-no-wrap">{row.provincia}</td>
+                  <td className="px-6 py-3 whitespace-no-wrap">{row.delegacion}</td>
+                  <td className="px-6 py-3 text-[#006084] whitespace-no-wrap">{row.seccional}</td>
                   <td className="px-6 py-3 whitespace-no-wrap">{row.dni}</td>
+                  <td className="px-6  capitalize whitespace-no-wrap"><span className={`bg-opacity-30 ${row.status === 'Aprobado' ? 'bg-green-400 text-green-500 ' : row.status === 'Rechazado' ? 'bg-red-400 text-red-500' : 'bg-yellow-200 text-yellow-400'}  rounded-lg px-2 p-1`}>{row.status}</span></td>                
+                  
                   <td className="flex items-center px-10 py-2 whitespace-no-wrap">
                     <div  className="relative">
                       <FiMoreHorizontal 
@@ -198,11 +203,27 @@ const rechazarUsuario = async (afiliado) => {
                       {isDropdownOpen[row.id] && (
                         <div className="absolute z-10 right-0 left-5 mt-2 w-48 bg-white rounded-lg shadow-lg">
                           {/* Aquí coloca las opciones del menú */}
-                          <ul className='p-1'>
+                          
+                            {row.status === 'Aprobado' &&
+                            <ul className='p-1'>
                             <li className='hover:border-[#006084] hover:border-b-2  cursor-pointer ' onClick={() => handleOpenModal(row)}>Ver ficha completa</li>
                             <li className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Ver beneficios entregados</li>   
-                            <li onClick={() => deleteUser(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Cambiar estado</li>                         
-                          </ul>
+                            <li onClick={() => deleteUser(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Eliminar Usuario</li>                         
+                             </ul>
+                            }
+                              {row.status === 'Pendiente' &&
+                            <ul className='p-1'>
+                            <li className='hover:border-[#006084] hover:border-b-2  cursor-pointer ' onClick={() => handleOpenModal(row)}>Ver ficha completa</li>
+                            <li onClick={() => deleteUser(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Eliminar Usuario</li>                         
+                             </ul>
+                            }
+                              {row.status === 'Rechazado' &&
+                            <ul className='p-1'>
+                            <li className='hover:border-[#006084] hover:border-b-2  cursor-pointer ' onClick={() => handleOpenModal(row)}>Ver ficha completa</li>
+                            <li onClick={() => deleteUser(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Eliminar Usuario</li>                         
+                             </ul>
+                            }
+                           
                         </div>
                       )}
                     </div>
@@ -292,6 +313,8 @@ const rechazarUsuario = async (afiliado) => {
 
                               <div className=' p-5 bg-white rounded-b-2xl grid gap-4'>
                                 <p className='mt-2 capitalize text-gray-800 font-semibold'><strong>{selectedUser.username}</strong></p>
+                                <p className='text-gray-500 italic font-semibold'>Miembro desde:{selectedUser.fecha_aprobacion && new Date(selectedUser.fecha_aprobacion).toLocaleDateString()}</p>
+
                                 <div className='grid grid-cols-2'>
                     <div className='flex flex-col justify-around' >   
 
@@ -306,7 +329,12 @@ const rechazarUsuario = async (afiliado) => {
                       <p className='text-gray-500 font-semibold'>{selectedUser.sexo}</p>
 
                       <p><strong>Provincia</strong></p>
-                      <p className='text-gray-500 font-semibold'>{selectedUser.provincia}, {selectedUser.ciudad}</p>
+                      <p className='text-gray-500 font-semibold'>{selectedUser.provincia}</p>
+
+                       <p><strong>Delegación</strong></p>
+                      <p className='text-gray-500 font-semibold'>{selectedUser.delegacion}</p>
+
+                      
                     </div>
 
                     <div className='flex flex-col justify-around'>
@@ -323,6 +351,9 @@ const rechazarUsuario = async (afiliado) => {
 
                       <p><strong>Domicilio</strong></p>
                       <p className='text-gray-500  font-semibold'>{selectedUser.domicilio}</p>
+
+                      <p><strong>Seccional</strong></p>
+                      <p className='text-gray-500 font-semibold'>{selectedUser.seccional}</p>
 
                     
                     </div>

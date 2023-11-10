@@ -87,7 +87,7 @@ useEffect(() => {
 // }, [searchKeyword, users]);
 
 
-  const approvedUsers = users?.filter(user => user.status === 'Aprobado');
+  const approvedUsers = users?.filter(user => user.status === 'Aprobado').sort((a, b) => a.fecha_aprobacion?.localeCompare(b.fecha_aprobacion));
   const rejectedUsers = users?.filter(user => user.status === 'Rechazado');
   const pendingUsers = users?.filter(user => user.status === 'Pendiente');
 
@@ -109,14 +109,13 @@ useEffect(() => {
                         <h2 className='text-black font-extrabold text-xl'>Pendientes</h2>
                         <TableUsers data={pendingUsers} onUpdateUserData={handleUpdateUserData} />
                       </div>
-                      <div>
-                        <h2 className='text-black font-extrabold text-xl'>Rechazados</h2>
-                        <TableUsers data={rejectedUsers} onUpdateUserData={handleUpdateUserData} />
-                      </div>
-               
                       <div className='flex flex-col gap-x-8'>
                         <h2 className='text-black font-extrabold text-xl'>Aprobados</h2>
                         <TableUsers data={approvedUsers} onUpdateUserData={handleUpdateUserData} />
+                      </div>
+                         <div>
+                        <h2 className='text-black font-extrabold text-xl'>Rechazados</h2>
+                        <TableUsers data={rejectedUsers} onUpdateUserData={handleUpdateUserData} />
                       </div>
                       </>
                     }   

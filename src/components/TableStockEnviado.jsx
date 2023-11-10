@@ -13,7 +13,7 @@ import {RxAvatar} from 'react-icons/rx';
 import {TbUserQuestion} from 'react-icons/tb';
 
 
-const TableKitEscolar = ({ data, rowsPerPage = 8,  showPagination = true, onUpdateUserData }) => {
+const TableStockEnviado = ({ data, rowsPerPage = 8,  showPagination = true, onUpdateUserData }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [openModal, setOpenModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -223,8 +223,8 @@ const rechazarUsuario = async (afiliado) => {
   return (
     <div ref={animationParent} className="h-full w-full bg-gray-200">
       <div  className="flex flex-col">
-        <div ref={animationParent} className="mt-4 w-full bg-white min-h-[25rem] p-8 rounded-xl">
-          <table   className="table-fixed w-full divide-y-4 divide-[#006084]">
+        <div ref={animationParent} className="mt-4 bg-white min-h-[25rem] p-8 rounded-xl">
+          <table   className="table-auto w-full divide-y-4 divide-[#006084]">
             <thead >
               <tr>
                 <th className="px-1 2xl:px-3 py-3   text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
@@ -239,90 +239,64 @@ const rechazarUsuario = async (afiliado) => {
                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Dirección
                 </th>
-                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Afiliado
+                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  Guardapolvo talle
+                </th>               
+                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  6
                 </th>
                  <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  DNI
+                  8
+                </th>     
+                  <th className="px-1 2xl:px-4 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  10
+                </th>         
+                <th className="px-1 2xl:px-4 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  12
+                </th>
+                
+                <th className="px-1 2xl:px-4 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  14
                 </th>
                  <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  HIJO/A
-                </th>
-                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  DNI HIJO/A
+                  16
                 </th>
                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Año Escolar
-                </th>                  
+                  18
+                </th>
+                  <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  Mochilas
+                </th>
                   <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Útiles
                 </th>
-                <th className="px-2 2xl:px-6 py-3  text-left text-[10px] leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Guardapolvo talle
-                </th>  
-                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Mochilas
-                </th>  
-                     <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Estado
-                </th>              
-                
-                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Acciones
-                </th>              
-                
-               
                   
                 
                 
               </tr>
             </thead>
             
-            <tbody ref={animationParent}>
+            <tbody >
               {data?.slice(startIndex, endIndex).map((row, index) => (
                 <tr  key={index} className={`text-gray-600 text-sm font-semibold ${index % 2 === 0 ? grayRowClass : whiteRowClass }`}>
-                  <td className="px-6 py-3 capitalize text-[#006084] whitespace-no-wrap">{row.provincia}</td>
-                  <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.delegacion}</td>
-                  <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.detalles}</td>
-                  <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.direccion + row.numero}</td>
-                  <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.afiliado_name}</td>
-                   <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.afiliado_dni}</td>
-                  <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.familiar_name}</td>
-                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.familiar_dni}</td>                  
-                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.año_escolar}</td> 
-                  <td className="px-1 2xl:px-4 py-3 whitespace-no-wrap">{row.utiles === 0 ? "Pendiente" : "Entregado"}</td>   
-                  <td className="px-1 2xl:px-4 py-3 whitespace-no-wrap">{row.guardapolvo_confirm === 0 ? "Pendiente" : "Entregado"} Talle: {row.guardapolvo} </td> 
-                   <td className="px-1 2xl:px-4 py-3 whitespace-no-wrap">{row.mochila === 0 ? "Pendiente" : "Entregado"}</td> 
-      
-                  <td className="px-2 2xl:px-6  capitalize whitespace-no-wrap"><span className={`bg-opacity-30 ${(row.utiles && row.mochila && row.guardapolvo_confirm) ? 'bg-green-400 text-green-500 ' : 'bg-yellow-200 text-yellow-400'}  rounded-lg px-2 p-1`}>{row.utiles && row.mochila && row.guardapolvo_confirm ? "Completo" : "Incompleto"}</span></td>                
+                 
+                              <td className="px-6 py-3 capitalize text-[#006084] whitespace-no-wrap">{row.provincia}</td>
+                              <td className="px-6 py-3 whitespace-no-wrap">{row.delegacion}</td>
+                  <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.nombre}</td>
+                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.direccion + " N°" + row.numero}</td>                  
+                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{""}</td>   
+                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.talle6}</td> 
+                  <td className="px-1 2xl:px-4 py-3 whitespace-no-wrap">{row.talle8}</td>   
+                  <td className="px-1 2xl:px-4 py-3 whitespace-no-wrap">{row.talle10}</td> 
+                   <td className="px-1 2xl:px-4 py-3 whitespace-no-wrap">{row.talle12}</td> 
+                   <td className="px-1 2xl:px-4 py-3 whitespace-no-wrap">{row.talle14}</td> 
+                   <td className="px-1 2xl:px-4 py-3 whitespace-no-wrap">{row.talle16}</td> 
+                   <td className="px-1 2xl:px-4 py-3 whitespace-no-wrap">{row.talle18}</td>
+                   <td className="px-1 2xl:px-4 text-center py-3 whitespace-no-wrap">{row.mochila}</td> 
+                   <td className="px-1 2xl:px-4 text-center py-3 whitespace-no-wrap">{row.utiles}</td>  
+                                 
                   <td className="flex items-center px-10 py-2 whitespace-no-wrap">
-                    {row.estado === 'Entregado'  &&
-                    <div  className="relative">
-                      <FiMoreHorizontal 
-                        className="text-center text-gray-400 text-4xl cursor-pointer"
-                        onClick={() => handleSelectOption(row.id)}
-                      />
-                      {isDropdownOpen[row.id] && (
-                        <div className="absolute z-10 right-0 left-5 mt-2 w-48 bg-white rounded-lg shadow-lg">
-                          {/* Aquí coloca las opciones del menú */}
-                          <ul className='p-1'>
-                             
-                            {(row.estado === 'Entregado') && 
-                            <>
-                            <li className='hover:border-[#006084] hover:border-b-2  cursor-pointer '><a href={`/admin/${row.afiliado_dni ? row.afiliado_dni : ""}`}  target="_blank"
-        rel="noopener noreferrer">Ver ficha completa</a></li>
-
-                            <li className='hover:border-[#006084] hover:border-b-2  cursor-pointer'><a href={`https://backuatrebeneficios.galgoproductora.com/${row.constancia_img ? row.constancia_img : ""}`}  target="_blank"
-        rel="noopener noreferrer">Ver Remito Firmado</a></li>   
-                                  
-                            </>
-                            }   
-                                          
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                    }
+                  
                   {/* <button onClick={() => handleOpenModal(row)} className="text-[#006084] hover:text-blue-900">Ver ficha</button>
                     <AiOutlineDelete onClick={() => deleteAfiliado(row.idafiliados)} className="text-[#006084] cursor-pointer hover:text-red-900 ml-2"/> */}
                   </td>
@@ -823,4 +797,4 @@ const rechazarUsuario = async (afiliado) => {
   );
 };
 
-export default TableKitEscolar;
+export default TableStockEnviado;

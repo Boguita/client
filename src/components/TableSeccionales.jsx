@@ -190,14 +190,17 @@ useEffect(() => {
                   Nº ID
                 </th>
                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Nombre
-                </th>
-                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Provincia
-                </th>
+                </th>                             
                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Ciudad
+                  Delegacion
                 </th>  
+                  <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  Seccional
+                </th> 
+                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  Dirección
+                </th> 
                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Acciones
                 </th>
@@ -209,10 +212,11 @@ useEffect(() => {
             <tbody ref={animationParent}>
               {data?.slice(startIndex, endIndex).map((row, index) => (
                 <tr  key={index} className={`text-gray-600 text-sm font-semibold ${index % 2 === 0 ? grayRowClass : whiteRowClass }`}>
-                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.idseccionales}</td>
-                  <td className="px-6 py-3 capitalize text-[#006084] whitespace-no-wrap">{row.nombre}</td>
+                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.idseccionales}</td>           
                   <td className="px-6 py-3 whitespace-no-wrap">{row.provincia}</td>
-                  <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.ciudad}</td>
+                  <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.delegacion}</td>
+                         <td className="px-6 py-3 capitalize text-[#006084] whitespace-no-wrap">{row.nombre}</td>
+                         <td className="px-6 py-3 capitalize text-[#006084] whitespace-no-wrap">{row.direccion}{" "}{row.numero}</td>
                 
       
                   <td className="flex items-center px-10 py-2 whitespace-no-wrap">

@@ -26,8 +26,10 @@ const Seccionales = () => {
   const [openModal, setOpenModal] = useState(false);
   const [inputs, setInputs] = useState({  
     nombre: "",
+    delegacion: "",
     provincia: "",
-    ciudad: "",
+    direccion: "",
+    numero: ""
   });
 
 
@@ -96,7 +98,7 @@ useEffect(() => {
 
 const handleSubmit = async (e) => {
   e.preventDefault();
-  if(!inputs.nombre || !inputs.provincia || !inputs.ciudad) {    
+  if(!inputs.nombre || !inputs.provincia || !inputs.delegacion || !inputs.direccion || !inputs.numero) {    
     setError("Por favor complete todos los campos"),
     setSuccess(null);
     return;
@@ -109,9 +111,11 @@ const handleSubmit = async (e) => {
       setSuccess("La seccional ha sido creada con éxito");
       handleAffiliateDataRequest();
       setInputs({
-        nombre: "",
-          provincia: "",
-          ciudad: "",
+         provincia: "",
+         delegacion: "",
+         nombre: "",
+         direccion: "",
+         numero: ""      
         })
       setError(null);
       setIsLoading(false);
@@ -280,7 +284,7 @@ const handleUpdateUserData = async () => {
         <form onSubmit={handleSubmit}>     
           <div className="mb-3">          
             <Input
-              className="form-control py-3 w-full"
+              className="form-control capitalize py-3 w-full"
               id="nombre"
               type="text"
               required
@@ -288,6 +292,42 @@ const handleUpdateUserData = async () => {
               value={inputs.nombre}
               onChange={handleInputChange}
               placeholder="Nombre de Seccional"
+            />
+          </div>
+           <div className="mb-3">          
+            <Input
+              className="form-control capitalize py-3 w-full"
+              id="delegacion"
+              type="text"
+              required
+              name="delegacion"
+              value={inputs.delegacion}
+              onChange={handleInputChange}
+              placeholder="Delegación"
+            />
+          </div>
+            <div className="mb-3">          
+            <Input
+              className="form-control capitalize py-3 w-full"
+              id="direccion"
+              type="text"
+              required
+              name="direccion"
+              value={inputs.direccion}
+              onChange={handleInputChange}
+              placeholder="Dirección"
+            />
+          </div>
+          <div className="mb-3">
+             <Input
+              className="form-control py-3 w-full"
+              id="numero"
+              type="text"
+              required
+              name="numero"
+              value={inputs.numero}
+              onChange={handleInputChange}
+              placeholder="Numeración"
             />
           </div>
 
@@ -312,7 +352,7 @@ const handleUpdateUserData = async () => {
                   </select>
                 </div>
                 
-                <div className="py-3 mb-3 !border-l-4 !border-[#006084] bg-gray-200">
+                {/* <div className="py-3 mb-3 !border-l-4 !border-[#006084] bg-gray-200">
                     <select
                       id="ciudad"
                       name="ciudad"
@@ -331,7 +371,7 @@ const handleUpdateUserData = async () => {
                         </option>
                       ))}
                     </select>
-                  </div>   
+                  </div>    */}
                   {isLoading ? <Loader/> :
           <div className="flex flex-col items-center justify-center">
         {success && <p className="text-green-500  font-semibold">{success}</p>}

@@ -6,6 +6,7 @@ import Input from "../components/Input";
 import BgRegister from '../assets/img/bg-register.jpg'
 import api from "../common/Axiosconfig";
 import {BsCheck2Circle} from 'react-icons/bs'
+import Select from "react-select";
 
 const Register = () => {
   const [inputs, setInputs] = useState({
@@ -15,7 +16,7 @@ const Register = () => {
     dni: "",
     cuit: "",
     provincia: "",
-    ciudad: "",
+    delegacion: "",
     domicilio: "",
     seccional:"",    
     tel: "",
@@ -30,6 +31,9 @@ const Register = () => {
   const [ciudades, setCiudades] = useState([]);
   const [paises, setPaises] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
+    const [selectedSeccionales, setSelectedSeccionales] = useState([]);
+      const [delegaciones, setDelegaciones] = useState([]);
+      const [seccionalesFiltradas, setSeccionalesFiltradas] = useState([]);
 
   const navigate = useNavigate();
 
@@ -38,30 +42,21 @@ const Register = () => {
     console.log(inputs)
 
     if (e.target.name === "provincia") {
-    try {
-      const res = await axios.get(
-        `https://apis.datos.gob.ar/georef/api/localidades?provincia=${e.target.value}&campos=id,nombre&max=1000`
-      );
-      setCiudades(res.data.localidades);
-    } catch (error) {
-      console.error("Error fetching cities:", error);
-    }
+    
+      const delegacion = seccionales.filter((seccional) => seccional.provincia === e.target.value);
+      setDelegaciones(delegacion);
   }
-  if(e.target.name === 'ciudad') {
-    try {    api.get("/tasks/seccionales") 
-    .then((res) => {
-const response = res.data.filter((seccional) => seccional.ciudad.toLowerCase() === e.target.value.toLowerCase());
-
-      
-      setSeccionales(response);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-    }
-    catch (error) {
-      console.error("Error fetching cities:", error);
-    }
+  if(e.target.name === "delegacion") {
+   // Filtrar las seccionales por la ciudad seleccionada
+    const ciudadInput = e.target.value;
+    if (seccionales && seccionales.length > 0) {
+  const filteredSeccionales = seccionales.filter((seccional) => seccional.ciudad === ciudadInput);
+  setSeccionalesFiltradas(filteredSeccionales);
+} else {
+  setSeccionalesFiltradas([]); // Establece un array vacío si no hay seccionales
+}
+  setError(null);
+ 
 
   }
 }
@@ -79,16 +74,16 @@ const response = res.data.filter((seccional) => seccional.ciudad.toLowerCase() =
     );
   }, []);
 
-  // useEffect(() => {
-  //   api.get("/tasks/seccionales") 
-  //   .then((res) => {
-  //     console.log(res.data)
-  //     setSeccionales(res.data);
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
-  // }, []);
+  useEffect(() => {
+    api.get("/tasks/seccionales") 
+    .then((res) => {
+      console.log(res.data)
+      setSeccionales(res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -209,46 +204,70 @@ const response = res.data.filter((seccional) => seccional.ciudad.toLowerCase() =
                 
                                
                 <div className="py-3 mb-6 !border-l-4 !border-[#006084] bg-[#F0F0F0]">
-                  <select
+                  <select                                    
                     id="provincia"
                     name="provincia"
                     required
                     value={inputs.provincia}
                     onChange={handleChange}
-                    className=" bg-[#F0F0F0] pl-3 text-sm font-semibold focus:text-[#808080] focus:outline-none w-full"
+                          className=" bg-[#F0F0F0] pl-3 text-sm font-semibold   focus:outline-none w-full"
                   >
-                    <option value="" disabled selected>Provincia</option>
-                  {provincias
+                    <option value="" disabled selected>Provincias</option>
+                  {provincias && provincias
                       .sort((a, b) => a.nombre.localeCompare(b.nombre))
                       .map((provincia) => (
                         <option key={provincia.id} value={provincia.nombre}>
-                          {provincia.nombre}
+                         {provincia.nombre}
                         </option>
                       ))}
 
                   </select>
-                </div>
-                
-                <div className="py-3 mb-6 !border-l-4 !border-[#006084] bg-[#F0F0F0]">
-                    <select
-                      id="ciudad"
-                      name="ciudad"
-                      value={inputs.ciudad}
-                      onChange={handleChange}
-                      className=" bg-[#F0F0F0] pl-3 text-sm font-semibold focus:text-[#808080] focus:outline-none w-full"
-                    >
-                      <option value="" disabled selected>
-                        Ciudad
-                      </option>
-                      {ciudades
+                  </div>
+                    <div className="py-3 mb-6 !border-l-4 !border-[#006084] bg-[#F0F0F0]">
+                   <select                                    
+                    id="delegacion"
+                    name="delegacion"
+                    value={inputs.delegacion}
+                    onChange={handleChange}
+                            className=" bg-[#F0F0F0] pl-3 text-sm font-semibold   focus:outline-none w-full"
+                  >
+                    <option value="" disabled selected>Delegaciones</option>
+                  {delegaciones
                       .sort((a, b) => a.nombre.localeCompare(b.nombre))
-                      .map((ciudad) => (
-                        <option key={ciudad.id} value={ciudad.nombre}>
-                          {ciudad.nombre}
+                      .map((provincia) => (
+                        <option key={provincia.id} value={provincia.delegacion}>
+                         {provincia.delegacion}
                         </option>
                       ))}
-                    </select>
+
+                  </select>
                   </div>
+                  <div className="py-3 mb-6 !border-l-4 !border-[#006084] bg-[#F0F0F0]">
+                <select
+                  required
+                  className="bg-[#F0F0F0] pl-3 text-sm font-semibold focus:outline-none w-full"
+                  value={inputs.seccional}
+                  name="seccional"
+                  onChange={handleChange}
+                >
+                  {seccionales
+                    .filter(
+                      (seccional) =>
+                        seccional.delegacion === inputs.delegacion
+                    )
+                    .sort((a, b) => a.nombre.localeCompare(b.nombre))
+                    .map((seccional) => (
+                      <option
+                        key={seccional.idseccionales}
+                        value={seccional.idseccionales}
+                      >
+                        {`${seccional.provincia}, ${seccional.delegacion}, ${seccional.nombre}`}
+                      </option>
+                    ))}
+                </select>
+
+                  </div>    
+                 
                      <div className="">
                   <Input
                     required
@@ -259,26 +278,7 @@ const response = res.data.filter((seccional) => seccional.ciudad.toLowerCase() =
                     className="form-control"
                   />
                 </div>
-                           <div className="py-3 mb-6 !border-l-4 !border-[#006084] bg-[#F0F0F0]">
-                    <select
-                      id="seccional"
-                      name="seccional"
-                      value={inputs.seccional}
-                      onChange={handleChange}
-                      className=" bg-[#F0F0F0] pl-3 text-sm font-semibold focus:text-[#808080] focus:outline-none w-full"
-                    >
-                      <option value="" disabled selected>
-                        Seccional
-                      </option>
-                      {seccionales
-                      .sort((a, b) => a.nombre.localeCompare(b.nombre))
-                      .map((seccional) => (
-                        <option key={seccional.idseccionales} value={seccional.idseccionales}>
-                          {seccional.nombre}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                        
 
                 <div className="">
                   <Input

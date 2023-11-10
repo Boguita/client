@@ -244,12 +244,10 @@ const handleCheckbox = (afiliado) => {
     <div ref={animationParent} className="h-full w-full bg-gray-200">
       <div  className="flex flex-col">
         <div ref={animationParent} className="mt-4 bg-white min-h-[25rem] p-8 rounded-xl">
-          <table   className="w-auto table-auto divide-y-4 divide-[#006084]">
+          <table   className=" table-fixed divide-y-4 divide-[#006084]">
             <thead >
               <tr>
-                <th className="px-2 2xl:px-6 py-3   text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Nº ID
-                </th>
+           
                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Afiliado
                 </th>
@@ -263,12 +261,24 @@ const handleCheckbox = (afiliado) => {
                   DNI Madre
                 </th>
                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  TEL
+                  Provincia
+                </th>
+                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  Delegación
                 </th>
                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Seccional
                 </th>
+                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                 Dirección Seccional
+                </th>
                    <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  Fecha Parto
+                </th>
+                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  Días para el parto
+                </th>
+                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Plazo
                 </th>
                      <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
@@ -283,8 +293,13 @@ const handleCheckbox = (afiliado) => {
             </thead>
             
             <tbody ref={animationParent}>
-              {data?.slice(startIndex, endIndex).map((row, index) => (
-                <tr  key={index} className={`text-gray-600 text-sm font-semibold ${index % 2 === 0 ? grayRowClass : whiteRowClass }`}>
+              {data?.slice(startIndex, endIndex).map((row, index) => {
+                 const fechaParto = new Date(row.fecha_de_parto);
+                  const fechaActual = new Date();
+                  const diferenciaEnMilisegundos = fechaParto - fechaActual;
+                  const diasFaltantes = Math.floor(diferenciaEnMilisegundos / (1000 * 60 * 60 * 24));
+
+                return ( <tr  key={index} className={`text-gray-600 text-sm font-semibold ${index % 2 === 0 ? grayRowClass : whiteRowClass }`}>
                     <div className="flex items-center pr-4  ">
                           {/* Checkbox for selecting familiar */}
                           <input
@@ -306,18 +321,22 @@ const handleCheckbox = (afiliado) => {
                               <polyline points="1 9 7 14 15 4"></polyline>
                             </svg>
                           </label>
-                          <td className="px-2 capitalize py-3 whitespace-no-wrap">{row.id}</td>
+                          <td className="px-6 py-3 capitalize text-[#006084] whitespace-no-wrap">{row.afiliado_name}</td>
 
                           {/* Estilizar el checkbox nativo */}
                           {/* <Checkbox selected={selectedFamiliares.includes(familiar.id)} /> */}
                         </div>
                  
-                              <td className="px-6 py-3 capitalize text-[#006084] whitespace-no-wrap">{row.afiliado_name}</td>
+                             
                               <td className="px-6 py-3 whitespace-no-wrap">{row.afiliado_dni}</td>
                   <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.familiar_name}</td>
                   <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.familiar_dni}</td>
-                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.familiar_tel}</td>
-                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.seccional + "," + row.detalles}</td>     
+                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.provincia}</td> 
+                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.delegacion}</td> 
+                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.seccional}</td> 
+                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.direccion}</td>
+                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{new Date(row.fecha_de_parto).toLocaleDateString("es-AR")}</td>
+                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{diasFaltantes}</td> 
                   <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap"><span className={`bg-opacity-30 ${row.plazo === 'Urgente' && 'bg-red-400 text-red-500'} rounded-lg px-2 p-1`}>{row.plazo}</span></td>
       
                   <td className="px-2 2xl:px-6  capitalize whitespace-no-wrap"><span className={`bg-opacity-30 ${row.estado === 'Entregado' ? 'bg-green-400 text-green-500 ' : row.estado === 'Rechazado' ? 'bg-red-400 text-red-500' : row.estado === 'Enviado' ? 'bg-blue-400 text-blue-500' : 'bg-yellow-200 text-yellow-400'}  rounded-lg px-2 p-1`}>{row.estado}</span></td>                
@@ -331,7 +350,8 @@ const handleCheckbox = (afiliado) => {
                         <div className="absolute z-10 right-0 left-5 mt-2 w-48 bg-white rounded-lg shadow-lg">
                           {/* Aquí coloca las opciones del menú */}
                           <ul className='p-1'>
-                            <li className='hover:border-[#006084] hover:border-b-2  cursor-pointer ' onClick={() => handleOpenModal(row)}>Ver ficha completa</li>
+                            <button className='hover:text-[#006084] cursor-pointer '><a href={`/admin/${row.afiliado_dni ? row.afiliado_dni : ""}`}  target="_blank"
+        rel="noopener noreferrer">Ver ficha completa</a></button>
                             {row.estado === 'Pendiente' && 
                             <>
                             <li onClick={() => AprovvedBenefit(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Enviar Beneficio</li>   
@@ -353,7 +373,9 @@ const handleCheckbox = (afiliado) => {
                     <AiOutlineDelete onClick={() => deleteAfiliado(row.idafiliados)} className="text-[#006084] cursor-pointer hover:text-red-900 ml-2"/> */}
                   </td>
                 </tr>
-              ))}
+              )}
+              )}
+                  
             </tbody>
             
           </table>
@@ -484,7 +506,7 @@ const handleCheckbox = (afiliado) => {
                   <td className="px-6 py-3 flex flex-col whitespace-no-wrap">   {selectedUser.certificado && (
     typeof selectedUser.certificado === 'string' ? (
       <a
-        href={`http://backuatrebeneficios.galgoproductora.com/${selectedUser.certificado}`}
+        href={`https://backuatrebeneficios.galgoproductora.com/${selectedUser.certificado}`}
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -494,7 +516,7 @@ const handleCheckbox = (afiliado) => {
       JSON.parse(selectedUser.certificado).map((ruta, index) => (
         <a
           key={index}
-          href={`http://backuatrebeneficios.galgoproductora.com/${ruta}`}
+          href={`https://backuatrebeneficios.galgoproductora.com/${ruta}`}
           target="_blank"
           rel="noopener noreferrer"
         >

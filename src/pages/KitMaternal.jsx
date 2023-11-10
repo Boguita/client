@@ -29,6 +29,7 @@ const KitMaternal = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [disabled, setDisabled] = useState(false);
+  const [cantidad, setCantidad] = useState(0);
   const [beneficiosOtorgados, setBeneficiosOtorgados] = useState([]);
 const [beneficio, setBeneficio] = useState({
 
@@ -42,7 +43,7 @@ const [beneficio, setBeneficio] = useState({
         fecha_de_parto: "",
         cantidad: "",
         detalles: currentUser?.seccional,
-        seccional: currentUser?.provincia + ", " + currentUser?.ciudad,
+        seccional: currentUser?.provincia,
         estado: "Pendiente",
         
         
@@ -131,11 +132,20 @@ const handleNextStep = async () => {
 
     const benefit = res.data;
 
+    // const beneficioCantidad = benefit.filter(
+    //   (beneficio) =>
+    //     beneficio.tipo === 'Kit maternal' &&
+    //     (beneficio.estado === 'Pendiente' || beneficio.estado === 'Enviado') &&
+    //     beneficio.fecha_otorgamiento.includes(new Date().getFullYear()) 
+    // );
+
+    // setCantidad(beneficioCantidad.cantidad);
+
     // Filtra beneficios por tipo "Kit maternal" y estado "Aprobado" o "Entregado"
     const beneficioMaternal = benefit.filter(
       (beneficio) =>
         beneficio.tipo === 'Kit maternal' &&
-        (beneficio.estado === 'Aprobado' || beneficio.estado === 'Entregado' || beneficio.estado === 'Pendiente') &&
+        (beneficio.estado === 'Aprobado' || beneficio.estado === 'Entregado' || beneficio.estado === 'Enviado' || beneficio.estado === 'Pendiente') &&
         beneficio.fecha_otorgamiento.includes(new Date().getFullYear())
     );
 
@@ -160,18 +170,25 @@ const handleNextStep = async () => {
      // Convertir a cadena separada por comas
     const res = await api.get(`/tasks/verified-kit-maternal/${familiarId}`);
     const beneficiosOtorgados = res.data;
+    const beneficioFiltrado = beneficiosOtorgados.filter(
+      (beneficio) =>
+        beneficio.tipo === 'Kit maternal' &&
+        (beneficio.estado === 'Enviado' || beneficio.estado === 'Pendiente') &&
+        beneficio.fecha_otorgamiento.includes(new Date().getFullYear())
+    );
     res.status === 200 &&
+     
     
      setBeneficiosOtorgados(prevBeneficiosOtorgados => ({
       ...prevBeneficiosOtorgados,
       [familiarId]: {       
  
-          ...beneficiosOtorgados, // Nuevos beneficios
+          ...beneficioFiltrado, // Nuevos beneficios
      
       },
     }));
  
-    if(beneficiosOtorgados.length === 0) {
+    if(beneficioFiltrado.length === 0) {
       return;
     } else {
       console.log("entro", categoria)
@@ -196,6 +213,7 @@ const handleNextStep = async () => {
     const res = await api.put(`/tasks/${ids ? ids : beneficiosOtorgados[0].id}`, {estado: "Entregado"});
     res.status === 200 &&
     console.log(res.data);
+    // await descontarStock(currentUser?.seccional_id);
     setIsLoading(false);
     setModalIsOpen(false);
     setModalMadreIsOpen(false);
@@ -210,6 +228,34 @@ const handleNextStep = async () => {
   setIsLoading(false);
   
 };
+
+// const descontarStock = async (seccional) => {
+//   try {
+//     const copyBenefit = {
+      
+//       cantidad: 0, // Aquí puedes incluir la lógica para obtener los talles correctos
+//       funcion: 'restar',
+//     };
+
+//     // Itera sobre los índices (IDs de familiares) del objeto beneficio
+//     Object.keys(beneficiosOtorgados).forEach((familiarId) => {
+//       const { cantidad } = beneficio[familiarId];            
+//       copyBenefit.cantidad = cantidad;
+      
+//     });
+
+//     console.log("esto se envia a descontar", copyBenefit);
+//     // Realiza la solicitud a la API con el objeto copyBenefit
+//     const res = await api.put(`/tasks/stock-maternal/${seccional}`, copyBenefit);
+//     const stocks = res.data;
+//     console.log(stocks);
+//     return stocks;
+    
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
+
    
   
 
@@ -521,6 +567,7 @@ const validateFields = () => {
     console.log(updatedBeneficio);
 
     setBeneficio(updatedBeneficio);
+    
     // // handleNextStep();
 
     // console.log(beneficio);

@@ -46,7 +46,7 @@ const Navbar = () => {
           {currentUser && (
             <div className="flex items-center">
               <span className="mr-2">{currentUser.name}</span>
-              <Avatar />
+              <Avatar path={true} />
             </div>
           )}
         </div>

@@ -113,14 +113,13 @@ useEffect(() => {
                         <h2 className='text-black font-extrabold text-xl'>Pendientes</h2>
                         <TableBeneficios data={pendingUsers} onUpdateUserData={handleUpdateUserData} />
                       </div>
-                      <div>
-                        <h2 className='text-black font-extrabold text-xl'>Rechazados</h2>
-                        <TableBeneficios data={rejectedUsers} onUpdateUserData={handleUpdateUserData} />
-                      </div>
-               
                       <div className='flex flex-col gap-x-8'>
                         <h2 className='text-black font-extrabold text-xl'>Entregados</h2>
                         <TableBeneficios data={approvedUsers} onUpdateUserData={handleUpdateUserData} />
+                      </div>
+                       <div>
+                        <h2 className='text-black font-extrabold text-xl'>Rechazados</h2>
+                        <TableBeneficios data={rejectedUsers} onUpdateUserData={handleUpdateUserData} />
                       </div>
                       </>
                     }   
