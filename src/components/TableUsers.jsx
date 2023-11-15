@@ -98,7 +98,7 @@ const handleDeleteUser = async (user,email) => {
   } 
   setLoading(false);
   } catch (error) {
-    setError("Hubo un error al eliminar el afiliado");
+    setError("Hubo un error al eliminar el administrador");
     setLoading(false)
   }
   

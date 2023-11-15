@@ -17,7 +17,7 @@ import { TbJacket, TbTools } from 'react-icons/tb';
 import { PiBackpackDuotone } from 'react-icons/pi';
 import Mono from '../assets/img/mono.png';
 import Avion from '../assets/img/plane.png';
-
+import Manito from '../assets/img/manito.png';
 
 const Home = () => {
   const [dni, setDni] = useState('');
@@ -1168,13 +1168,15 @@ const handleRecibo = async () => {
                           
                           </div>
                         )}
-                            <div className='flex justify-center items-end h-1/3'>
-                            <button
-                              className='mt-5 bg-[#0E6F4B]   font-bold text-white rounded-2xl p-3 hover:bg-opacity-75'
-                              onClick={handleGrantBenefit}>
-                              OTORGAR BENEFICIO
-                            </button> 
-                            </div>
+             <div className='flex flex-col items-center w-full h-1/3'>
+  <button
+    className='mt-5 bg-[#0E6F4B] h-2/3 w-full relative overflow-hidden rounded-2xl p-3 hover:bg-opacity-75'>
+    <span className="flex items-center text-white font-bold justify-center">
+      ENTREGAR BENEFICIO
+      <img className='w-10 ml-2' src={Manito} alt='Icono de Mano' />
+    </span>
+  </button>
+</div>
 
                           </div>
                         )}
