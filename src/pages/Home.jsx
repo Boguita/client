@@ -1170,7 +1170,9 @@ const handleRecibo = async () => {
                         )}
              <div className='flex flex-col items-center w-full h-1/3'>
   <button
-    className='mt-5 bg-[#0E6F4B] h-2/3 w-full relative overflow-hidden rounded-2xl p-3 hover:bg-opacity-75'>
+    className='mt-5 bg-[#0E6F4B] h-2/3 w-full relative overflow-hidden rounded-2xl p-3 hover:bg-opacity-75'
+    onClick={handleGrantBenefit}
+    >
     <span className="flex items-center text-white font-bold justify-center">
       ENTREGAR BENEFICIO
       <img className='w-10 ml-2' src={Manito} alt='Icono de Mano' />
