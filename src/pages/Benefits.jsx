@@ -146,10 +146,28 @@ const handleAffiliateDataRequest = async () => {
              </p>
              <div className='flex items-end h-full'>
                {isLoading ? <Loader/> : beneficio?.some((beneficio) => beneficio.tipo === 'Kit maternal' && beneficio.estado === "Entregado" && beneficio.fecha_otorgamiento.includes(new Date().getFullYear()) )
- ?
+              ?
               <p className='text-red-500 font-semibold'>El beneficio ya ha sido otorgado con anterioridad.</p>             
               :
-             
+              beneficio?.some((beneficio) => beneficio.tipo === 'Kit maternal' && beneficio.estado === "Pendiente" && beneficio.fecha_otorgamiento.includes(new Date().getFullYear()) ) ? 
+              <p className='text-red-500 font-semibold'>El beneficio aún no llega a la seccional.</p>     
+              :   
+              beneficio?.some((beneficio) => beneficio.tipo === 'Kit maternal' && beneficio.estado === "Enviado" && beneficio.fecha_otorgamiento.includes(new Date().getFullYear()) ) ?  
+              <button 
+              onClick={() => {
+                // Redirigir a la ruta correspondiente si el usuario está autenticado
+                
+                  navigate('/kit-maternal', {
+                    state: { dni }, // Pasamos el DNI como parámetro en el state
+                  }); // Agregamos /beneficios/ al inicio de la ruta
+                
+                  // Si no está autenticado, redirigir al inicio de sesión
+                 
+              }}
+             className='mt-4 bg-[#006084] text-sm w-36 font-bold text-white rounded-lg p-1 hover:bg-opacity-75'>
+               ENTREGAR PENDIENTE
+             </button>   
+             :
              <button 
               onClick={() => {
                 // Redirigir a la ruta correspondiente si el usuario está autenticado

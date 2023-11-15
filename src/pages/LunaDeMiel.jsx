@@ -443,10 +443,12 @@ return (
         <h2 className=" text-black text-3xl font-extrabold">
           Solicitar Beneficio: Luna de Miel
         </h2>
+        { currentStep === 1 &&
         <p className="p-2 font-bold text-[#757678]">
           Carga los datos y los archivos correspondientes <br /> para realizar
           la solicitud.
         </p>
+        }
       </div>
     </div>
 
@@ -718,7 +720,7 @@ return (
                       className="btn w-1/3"
                       onClick={() => navigate("/home")}
                     >
-                      <span>VOLVER</span>
+                      <span>FINALIZAR</span>
                     </button>
                   </div>
                   
@@ -740,7 +742,7 @@ return (
                       className="btn bg-[#0E6F4B] border-[#0E6F4B] w-1/3"
                       onClick={() => navigate("/home")}
                     >
-                      <span>VOLVER</span>
+                      <span>FINALIZAR</span>
                     </button>
                   </div>
                 </>

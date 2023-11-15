@@ -981,14 +981,122 @@ const handleRecibo = async () => {
     
   </div>
 ) : (
-  <>  <p className='text-gray-500'>No hay datos de familiares.</p>
+  <div className="flex h-[90%] max-xl:w-full max-xl:h-full flex-col xl:justify-between">  
+  <p className='text-gray-500'>No hay datos de familiares.</p>
+      {isLoading ? (
+  <Loader />
+) : (
+  <div className="flex max-xl:mt-3 items-end justify-around">
+    {Object.keys(beneficiosOtorgados).length > 0 && (
+      <>
+ 
+        {familiares
+          .filter((familiar) =>
+            beneficiosOtorgados.some(
+              (beneficio) =>
+                beneficio.familiar_id === familiar.id &&
+                  beneficio.fecha_otorgamiento.includes(new Date().getFullYear()) &&
+                (beneficio.estado === 'Entregado') &&
+                beneficio.tipo === 'Kit maternal'
+            )
+          )
+          .map((familiar) => (
+            <div key={familiar.id} className="flex justify-center items-center">
+              <div className="flex flex-col items-center">
+                <img className="w-auto h-8" src={Mono} alt="Mono" />
+                <p className="font-semibold text-gray-400">Kit Nacimiento</p>
+                <span className='font-semibold text-sm capitalize'>{familiar.name}</span>                
+                <span className='font-semibold text-sm text-gray-500'>Categoria: <span className='font-bold'>Madre</span></span>
+                <span className='font-semibold text-sm text-green-500'>Entregado</span>
+              </div>
+            </div>
+          ))}
+      </>
+    )}
+     {Object.keys(beneficiosOtorgados).length > 0 && (
+      <>
+ 
+        {familiares
+          .filter((familiar) =>
+            beneficiosOtorgados.some(
+              (beneficio) =>
+                beneficio.familiar_id === familiar.id &&
+                  beneficio.fecha_otorgamiento.includes(new Date().getFullYear()) &&
+                (beneficio.estado === 'Pendiente' || beneficio.estado === "Enviado") &&
+                beneficio.tipo === 'Kit maternal'
+            )
+          )
+          .map((familiar) => (
+            <div key={familiar.id} className="flex justify-center items-center">
+              <div className="flex flex-col items-center">
+                <img className="w-auto h-8" src={Mono} alt="Mono" />
+                <p className="font-semibold text-gray-400">Kit Nacimiento</p>
+                <span className='font-semibold text-sm capitalize'>{familiar.name}</span>
+                <span className='font-semibold text-sm text-gray-500'>Categoria: <span className='font-bold'>Madre</span></span>
+                <span className='font-semibold text-sm text-yellow-500'>Pendiente</span>
+              </div>
+            </div>
+          ))}
+      </>
+    )}
+
+    {Object.keys(beneficiosOtorgados).length > 0 && (
+      <>
+    
+        {familiares
+          .filter((familiar) =>
+            beneficiosOtorgados.some(
+              (beneficio) =>
+                beneficio.familiar_id === familiar.id &&
+                beneficio.estado === 'Entregado' &&
+                beneficio.tipo === 'Luna de miel'
+            )
+          )
+          .map((familiar) => (
+            <div key={familiar.id} className="flex justify-center items-center">
+              <div className="flex flex-col items-center">
+                <img className="w-auto h-8" src={Avion} alt="Avion" />
+                <p className="font-semibold text-gray-400">Luna de Miel</p>
+                <span  className='font-semibold text-sm capitalize'>{familiar.name}</span>
+                <span className='font-semibold text-sm text-green-500'>Entregado</span>
+              </div>
+            </div>
+          ))}
+      </>
+    )}
+    {Object.keys(beneficiosOtorgados).length > 0 && (
+      <>
+    
+        {familiares
+          .filter((familiar) =>
+            beneficiosOtorgados.some(
+              (beneficio) =>
+                beneficio.familiar_id === familiar.id &&
+                beneficio.estado === 'Pendiente' &&
+                beneficio.tipo === 'Luna de miel'
+            )
+          )
+          .map((familiar) => (
+            <div key={familiar.id} className="flex justify-center items-center">
+              <div className="flex flex-col items-center">
+                <img className="w-auto h-8" src={Avion} alt="Avion" />
+                <p className="font-semibold text-gray-400">Luna de Miel</p>
+                <span  className='font-semibold text-sm capitalize'>{familiar.name}</span>
+                <span className='font-semibold text-sm text-yellow-500'>Pendiente</span>
+              </div>
+            </div>
+          ))}
+      </>
+    )}
+  </div>
+)}
    {/* <button 
               className='mt-4 bg-[#0E6F4B] font-bold text-white rounded-lg p-2 hover:bg-opacity-75'
               onClick={() => 
               setModalConyugueIsOpen(true)}>
                 + CARGAR CONYUGUE
               </button> */}
-  </>
+  </div>
 
 )
 

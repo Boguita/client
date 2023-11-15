@@ -20,6 +20,7 @@ const KitMaternal = () => {
   const [animationParent] = useAutoAnimate();
   const [dni, setDni] = useState("");
    const [useConyugue, useSetConyugue] = useState(false);
+   const [mensajeEntrega, setMensajeEntrega] = useState(false);
  const [showButton, setShowButton] = useState(true);
  const [modalMadreIsOpen, setModalMadreIsOpen] = useState(false);
  const [madres, setMadres] = useState({});
@@ -193,9 +194,10 @@ const handleNextStep = async () => {
     } else {
       console.log("entro", categoria)
       if(categoria === 'Madre') {
-        
+        setMensajeEntrega(true);
         setModalMadreIsOpen(true);
       } else {
+      setMensajeEntrega(true);
       setModalIsOpen(true);
       }
     }
@@ -646,10 +648,12 @@ return (
         <h2 className=" text-black text-3xl font-extrabold">
           Solicitar Beneficio: Kit Nacimiento
         </h2>
+        { currentStep === 1 &&
         <p className="p-2 font-bold text-[#757678]">
           Carga los datos y los archivos correspondientes <br /> para realizar
           la solicitud.
         </p>
+        }
       </div>
     </div>
 
@@ -967,13 +971,35 @@ return (
                       className="btn w-1/3"
                       onClick={() => navigate("/home")}
                     >
-                      <span>VOLVER</span>
+                      <span>FINALIZAR</span>
                     </button>
                   </div>
                   
                
                 </>
-              ) : (
+              ) : mensajeEntrega ?  (
+                <>
+                  <div className="flex flex-col h-full w-full justify-end items-center space-y-4">
+                    <img className="w-[4rem] text-[#006084]" src={Mono} />
+                    <p className="font-extrabold text-3xl text-[#006084]">
+                      El beneficio ha sido registrado con éxito.
+                    </p>
+                    <p className="font-bold text-xl text-center text-gray-500">
+                      Por favor, entregue al afiliado el Kit de Nacimiento.
+                    </p>
+                  </div>
+                  <div className="h-full w-full items-end pb-10 justify-center flex">
+                    <button
+                      className="btn w-1/3"
+                      onClick={() => navigate("/home")}
+                    >
+                      <span>FINALIZAR</span>
+                    </button>
+                  </div>
+                </>
+              )
+            :
+            (
                 <>
                   <div className="flex flex-col h-full w-full justify-end items-center space-y-4">
                     <img className="w-[4rem] text-[#006084]" src={Mono} />
@@ -989,11 +1015,12 @@ return (
                       className="btn w-1/3"
                       onClick={() => navigate("/home")}
                     >
-                      <span>VOLVER</span>
+                      <span>FINALIZAR</span>
                     </button>
                   </div>
                 </>
-              )}
+              )
+            }
             </>
           )}
       </div>
@@ -1001,7 +1028,8 @@ return (
     </div>
      <Modal
             isOpen={modalIsOpen}
-            onRequestClose={() => setModalIsOpen(false)}
+            // onRequestClose={() => setModalIsOpen(false)}
+              shouldCloseOnOverlayClick={false} 
             contentLabel="Entregar Beneficio"
             style={{
               overlay: {
@@ -1089,9 +1117,9 @@ return (
                             />
                           <button
                             className="mt-4 bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
-                            onClick={() => setModalIsOpen(false)}
+                            onClick={() => navigate('/homeInfo')}
                           >
-                            Cerrar
+                            Salir al inicio
                           </button>
                           </div>
 
@@ -1111,7 +1139,8 @@ return (
 
           <Modal
             isOpen={modalMadreIsOpen}
-            onRequestClose={() => setModalMadreIsOpen(false)}
+            // onRequestClose={() => setModalMadreIsOpen(false)}
+                  shouldCloseOnOverlayClick={false} 
             contentLabel="Entregar Beneficio"
             style={{
               overlay: {
@@ -1201,9 +1230,9 @@ return (
                             />
                           <button
                             className="mt-4 bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
-                            onClick={() => setModalMadreIsOpen(false)}
+                            onClick={() => navigate('/homeInfo')}
                           >
-                            Cerrar
+                            Salir al Inicio
                           </button>
                           </div>
 

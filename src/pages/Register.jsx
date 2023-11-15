@@ -37,13 +37,32 @@ const Register = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    console.log('delegacion', delegaciones)
+    console.log('seccionales', seccionales)
+    console.log('seccionalesFiltradas', seccionalesFiltradas)
+  }, [delegaciones, seccionales, seccionalesFiltradas])
+
+
   const handleChange = async (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     console.log(inputs)
 
     if (e.target.name === "provincia") {
     
-      const delegacion = seccionales.filter((seccional) => seccional.provincia === e.target.value);
+      const delegacion = seccionales
+      .filter((seccional) => seccional.provincia === e.target.value)
+      .reduce((uniqueDelegations, seccional) => {
+        const existingDelegation = uniqueDelegations.find(
+          (unique) => unique.delegacion.toLowerCase() === seccional.delegacion.toLowerCase()
+        );
+
+        if (!existingDelegation) {
+          uniqueDelegations.push(seccional);
+        }
+
+        return uniqueDelegations;
+      }, []);
       setDelegaciones(delegacion);
   }
   if(e.target.name === "delegacion") {
@@ -245,7 +264,7 @@ const Register = () => {
                   <div className="py-3 mb-6 !border-l-4 !border-[#006084] bg-[#F0F0F0]">
                 <select
                   required
-                  className="bg-[#F0F0F0] pl-3 text-sm font-semibold focus:outline-none w-full"
+                  className="bg-[#F0F0F0] uppercase pl-3 text-sm font-semibold focus:outline-none w-full"
                   value={inputs.seccional}
                   name="seccional"
                   onChange={handleChange}
@@ -253,7 +272,7 @@ const Register = () => {
                   {seccionales
                     .filter(
                       (seccional) =>
-                        seccional.delegacion === inputs.delegacion
+                        seccional.delegacion.toLowerCase() === inputs.delegacion.toLowerCase()
                     )
                     .sort((a, b) => a.nombre.localeCompare(b.nombre))
                     .map((seccional) => (

@@ -132,6 +132,7 @@ const descontarStock = async (seccional) => {
      
         if(familiarEnBeneficios && (familiarEnBeneficios.año_escolar && familiarEnBeneficios.guardapolvo)) {
           console.log("CONTENIDO DE AÑO Y TALLE", familiarEnBeneficios.año_escolar, familiarEnBeneficios.guardapolvo);
+          updateAñoyTalle();
         return familiar.mochila || familiar.utiles || familiar.guardapolvo_confirm;
         } else {
         return true;
@@ -428,7 +429,7 @@ const descontarStock = async (seccional) => {
           seccional_id:currentUser?.seccional_id,
           id: "",
           tipo: "Kit escolar",
-          estado: "Pendiente",
+          estado: "Entregado",
           afiliado_id: res.data.idafiliados,
           familiar_id: familiar.id,
           detalles: currentUser?.seccional,
@@ -447,6 +448,19 @@ const descontarStock = async (seccional) => {
       console.log(err);
     }
   };
+
+const updateAñoyTalle = () => {
+  const updatedBeneficio = { ...beneficio };
+
+  selectedFamiliares.forEach((familiarId) => {
+    const familiar = updatedBeneficio[familiarId];
+    familiar.año_escolar = isBeneficioOtorgado(familiarId, "año_escolar");
+    familiar.guardapolvo = isBeneficioOtorgado(familiarId, "guardapolvo_talle");
+
+  }
+  );
+  setBeneficio(updatedBeneficio);
+}
 
   const handleBeneficioOtorgado = async () => {
     try {
@@ -532,6 +546,7 @@ const descontarStock = async (seccional) => {
       if (beneficiosDelFamiliar.length > 0) {
         // Obtiene el último elemento del arreglo y accede a su propiedad guardapolvo
         valorGuardapolvo = beneficiosDelFamiliar[0].guardapolvo;
+        console.log('Valor de guardapolvo para familiar', valorGuardapolvo);
 
         return valorGuardapolvo;
       } else {
@@ -641,10 +656,12 @@ const comprobarStockTalle = (talle) => {
           <h2 className=" text-black text-3xl font-extrabold">
             Solicitar Beneficio: Kit Escolar
           </h2>
+          { currentStep < 4 &&
           <p className="p-2 font-bold text-[#757678]">
             Elige los hijos a los que quieras otorgarle un beneficio <br /> o
             añade uno si es necesario{" "}
           </p>
+          }
         </div>
       </div>
 
@@ -885,9 +902,9 @@ const comprobarStockTalle = (talle) => {
                         </div>
                         
                       </div>
-                      <p className="text-md text-center text-gray-400">
+                      {/* <p className="text-md text-center text-gray-400">
                         Stock disponible: <span className={`${stock.mochila > 0 ? 'text-green-500' : "text-red-500"}`}>{stock.mochila}</span>
-                      </p>
+                      </p> */}
 
                       <div
                         className={`flex items-center justify-between border-l-4 ${
@@ -937,10 +954,11 @@ const comprobarStockTalle = (talle) => {
                           </label>
                         </div>
                       </div>
-                       <p className="text-md text-center text-gray-400">
+                       {/* <p className="text-md text-center text-gray-400">
                         Stock disponible: <span className={`${stock.utiles > 0 ? 'text-green-500' : "text-red-500"}`}>{stock.utiles}</span>
-                      </p>
-                      <div
+                      </p> */}
+
+                       <div
                         className={`flex items-center justify-between border-l-4 ${
                           isBeneficioOtorgado(familiar.id, "guardapolvo")
                             ? "border-red-700"
@@ -961,29 +979,7 @@ const comprobarStockTalle = (talle) => {
                           </span>
                           Guardapolvo
                         </label>
-                        <div className="flex gap-x-4">
-                            <select
-                          name="guardapolvo"
-                          className={`bg-gray-100 `}
-                          disabled={isBeneficioOtorgado(
-                            familiar.id,
-                            "guardapolvo_talle"
-                          )}
-                          value= {isBeneficioOtorgado(familiar.id, "guardapolvo_talle") !== "" ? isBeneficioOtorgado(familiar.id, "guardapolvo_talle") : beneficio.guardapolvo}
-                          onChange={(e) => handleInputChange(e, familiarId)}
-                          required
-                        >
-                          <option disabled selected value={""}>
-                           { isBeneficioOtorgado(familiar.id, "guardapolvo_talle") !== "" ? isBeneficioOtorgado(familiar.id, "guardapolvo_talle") : "Ninguno"}
-                          </option>
-                          <option value="6">6</option>
-                          <option value="8">8</option>
-                          <option value="10">10</option>
-                          <option value="12">12</option>
-                          <option value="14">14</option>
-                          <option value="16">16</option>
-                           <option value="18">18</option>
-                        </select>
+                        <div className="flex gap-x-4">                          
                           <input
                             id={`checkbox_guardapolvo${familiar.id}`}
                             name="guardapolvo_confirm"
@@ -1012,9 +1008,58 @@ const comprobarStockTalle = (talle) => {
                         </div>
                       
                       </div>
-                        <p className="text-md text-center text-gray-400">
+                      
+                      <div
+                        className={`flex items-center justify-between border-l-4 ${
+                          isBeneficioOtorgado(familiar.id, "guardapolvo")
+                            ? "border-red-700"
+                            : "border-[#006084]"
+                        }  bg-gray-100 mt-2 px-8 h-10`}
+                      >
+                        
+                        
+                        <label
+                          className={`mr-2 flex items-center font-semibold ${
+                            isBeneficioOtorgado(familiar.id, "guardapolvo")
+                              ? "text-gray-300"
+                              : "text-gray-600"
+                          } `}
+                        >
+                          <span className="mr-2">
+                            <TbJacket />
+                          </span>
+                          Talle de Guardapolvo
+                        </label>
+                        <div className="flex gap-x-4">
+                            <select
+                          name="guardapolvo"
+                          className={`bg-gray-100 `}
+                          disabled={isBeneficioOtorgado(
+                            familiar.id,
+                            "guardapolvo_talle"
+                          )}
+                          value= {isBeneficioOtorgado(familiar.id, "guardapolvo_talle") !== "" ? isBeneficioOtorgado(familiar.id, "guardapolvo_talle") : beneficio.guardapolvo}
+                          onChange={(e) => handleInputChange(e, familiarId)}
+                          required
+                        >
+                          <option disabled selected value={""}>
+                           { isBeneficioOtorgado(familiar.id, "guardapolvo_talle") !== "" ? isBeneficioOtorgado(familiar.id, "guardapolvo_talle") : "Ninguno"}
+                          </option>
+                          <option value="6">6</option>
+                          <option value="8">8</option>
+                          <option value="10">10</option>
+                          <option value="12">12</option>
+                          <option value="14">14</option>
+                          <option value="16">16</option>
+                           <option value="18">18</option>
+                        </select>
+                        
+                        </div>
+                      
+                      </div>
+                        {/* <p className="text-md text-center text-gray-400">
                         Stock disponible: <span className={`${stockTalle > 0 ? 'text-green-500' : "text-red-500"}`}>{stockTalle}</span>
-                      </p>
+                      </p> */}
                       
                     </div>
                   </div>
@@ -1127,7 +1172,7 @@ const comprobarStockTalle = (talle) => {
                       className="btn w-1/3"
                       onClick={() => navigate("/home")}
                     >
-                      <span>VOLVER</span>
+                      <span>FINALIZAR</span>
                     </button>
                   </div>
                 </>
@@ -1196,7 +1241,7 @@ const comprobarStockTalle = (talle) => {
                         className="btn w-1/3"
                         onClick={() => navigate("/home")}
                       >
-                        <span>VOLVER</span>
+                        <span>FINALIZAR</span>
                       </button>
                     </div>
                   </div>
