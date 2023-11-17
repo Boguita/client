@@ -269,6 +269,7 @@ const Register = () => {
                   name="seccional"
                   onChange={handleChange}
                 >
+                  <option value="" disabled selected>Seccional</option>
                   {seccionales
                     .filter(
                       (seccional) =>
