@@ -1031,8 +1031,7 @@ const handleRecibo = async () => {
               <div className="flex flex-col items-center">
                 <img className="w-auto h-8" src={Mono} alt="Mono" />
                 <p className="font-semibold text-gray-400">Kit Nacimiento</p>
-                <span className='font-semibold text-sm capitalize'>{familiar.name}</span>
-                <span className='font-semibold text-sm text-gray-500'>Categoria: <span className='font-bold'>Madre</span></span>
+                <span className='font-semibold text-sm capitalize'>Madre: {familiar.name}</span>      
                 <span className='font-semibold text-sm text-yellow-500'>Pendiente</span>
               </div>
             </div>
