@@ -453,13 +453,15 @@ const descontarStock = async (seccional) => {
           estado: "Entregado",
           afiliado_id: res.data.idafiliados,
           familiar_id: familiar.id,
-          detalles: currentUser?.seccional,
           mochila: false,
           guardapolvo: "",
           guardapolvo_confirm: false,
           utiles: false,
           año_escolar: "",
-          seccional: currentUser?.provincia + ", " + currentUser?.ciudad,
+          seccional: currentUser?.seccional,
+          delegacion: currentUser?.delegacion,
+          direccion: currentUser?.direccion,
+          provincia: currentUser?.provincia
         };
         return acc;
       }, {});
@@ -1208,8 +1210,9 @@ const comprobarStockTalle = (talle) => {
                     <p className="font-extrabold text-3xl text-[#006084]">
                       El beneficio ha sido registrado con éxito.
                     </p>
-                    <p className="font-bold text-xl w-3/4 text-gray-500">
-                      Por favor, haga entrega de los items seleccionados e informe al afiliado que un representante se pondra en contacto para retirar el resto de los items si correspondiere.
+                    
+                    <p className="font-bold text-lg text-center text-gray-500">
+                      Por favor, haga entrega de los items que seleccionó e informe al afiliado que un representante se pondra en contacto para retirar el resto si correspondiere. Recuerde que si no seleccionó ningun item quedaran pendientes de retiro.
                     </p>
 
                     <div>

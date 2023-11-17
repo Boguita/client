@@ -221,9 +221,10 @@ const rechazarUsuario = async (afiliado) => {
 
 
   return (
-    <div ref={animationParent} className="h-full w-full bg-gray-200">
+    <div ref={animationParent} className="h-full w-screen bg-gray-200">
+      { !data ? <Loader /> :
       <div  className="flex flex-col">
-        <div ref={animationParent} className="mt-4 w-full bg-white min-h-[25rem] p-8 rounded-xl">
+        <div ref={animationParent} className="mt-4 w-[80%] bg-white min-h-[25rem] p-8 rounded-xl">
           <table   className="table-fixed w-full divide-y-4 divide-[#006084]">
             <thead >
               <tr>
@@ -283,8 +284,8 @@ const rechazarUsuario = async (afiliado) => {
                 <tr  key={index} className={`text-gray-600 text-sm font-semibold ${index % 2 === 0 ? grayRowClass : whiteRowClass }`}>
                   <td className="px-6 py-3 capitalize text-[#006084] whitespace-no-wrap">{row.provincia}</td>
                   <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.delegacion}</td>
-                  <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.detalles}</td>
-                  <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.direccion + row.numero}</td>
+                  <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.seccional}</td>
+                  <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.direccion}</td>
                   <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.afiliado_name}</td>
                    <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.afiliado_dni}</td>
                   <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.familiar_name}</td>
@@ -369,6 +370,9 @@ const rechazarUsuario = async (afiliado) => {
   </div>
 )}
       </div>
+
+        }
+
        <Modal
             isOpen={openModal}
             onRequestClose={() => setOpenModal(false)}
@@ -817,7 +821,7 @@ const rechazarUsuario = async (afiliado) => {
        
           </Modal>
 
-          
+                      
     </div>
 
   );
