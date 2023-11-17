@@ -31,30 +31,76 @@ const KitEscolarAdmin = () => {
   const navigate = useNavigate();
   
   // Función para manejar las peticiones a la API para los datos de afiliados
-const handleAffiliateDataRequest = async () => {  
-  
+// Función para agrupar beneficios por afiliado y familiar
+const agruparBeneficios = (beneficios) => {
+  return beneficios.reduce((acumulador, beneficio) => {
+    const clave = generarClaveAgrupacion(beneficio);
+    acumulador[clave] = beneficio;
+    return acumulador;
+  }, {});
+};
+
+// Función para generar una clave de agrupación única para cada afiliado y familiar
+const generarClaveAgrupacion = (beneficio) => {
+  return `${beneficio.afiliado_id}_${beneficio.familiar_id}`;
+};
+
+
+  const handleAffiliateDataRequest = async () => {
   try {
     setIsLoading(true);
-    const res = await api.get(`/tasks/kit-escolar`);
-    const res2= await api.get(`/tasks/stock-enviado`);
 
-    const stockenviado = res2.data;
-    // Almacenar los datos recibidos de la API
+    const res = await api.get(`/tasks/kit-escolar`);
+    const res2 = await api.get(`/tasks/stock-enviado`);
+
+    const stockEnviado = res2.data;
     const benefits = res.data;
-    setStockEnviado(stockenviado);
-    setBeneficios(benefits);
+
+    // Obtener beneficios agrupados por afiliado y familiar
+    const beneficiosAgrupados = agruparBeneficios(benefits);
+
+    benefits.forEach((beneficio) => {
+      const key = generarClaveAgrupacion(beneficio);
+      const beneficioExistente = beneficiosAgrupados[key];
+
+      if (beneficioExistente) {
+        // Comparar las fechas de otorgamiento y actualizar solo si es más reciente
+        const fechaExistente = new Date(beneficioExistente.fecha_otorgamiento);
+        const fechaNueva = new Date(beneficio.fecha_otorgamiento);
+
+        if (fechaNueva <= fechaExistente) {
+          // Actualizar solo si la fecha nueva es igual o más reciente
+          beneficiosAgrupados[key] = {
+            ...beneficioExistente,
+            utiles: beneficioExistente.utiles || beneficio.utiles,
+            mochila: beneficioExistente.mochila || beneficio.mochila,
+            guardapolvo_confirm: beneficioExistente.guardapolvo_confirm || beneficio.guardapolvo_confirm,
+            // Agrega aquí otros campos booleanos que necesites manejar
+          };
+        }
+        // Si no deseas actualizar en caso de fechas iguales, usa: if (fechaNueva > fechaExistente) { ... }
+      } else {
+        // Agregar nuevo beneficio si no existe
+        beneficiosAgrupados[key] = beneficio;
+      }
+    });
+
+    // Convertir de nuevo a un array de beneficios
+    const beneficiosActualizados = Object.values(beneficiosAgrupados);
+
+    setStockEnviado(stockEnviado);
+    setBeneficios(beneficiosActualizados);
     setErr(null);
-    setIsLoading(false);
-     // Restablecer el estado del error si la solicitud tiene éxito
   } catch (error) {
-    
     setBeneficios(null);
-    console.log(error.response.data.message)
+    console.log(error.response.data.message);
     setErr(error.response.data.message);
+  } finally {
     setIsLoading(false);
   }
-   setIsLoading(false);
 };
+
+
 
 // const handleSearch = () => {
 //   if (searchKeyword.trim() === '') {

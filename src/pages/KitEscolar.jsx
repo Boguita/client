@@ -210,6 +210,7 @@ const descontarStock = async (seccional) => {
   const handleBackStep = async () => {
     setCurrentStep(currentStep - 1);
     const resetBeneficio = { ...beneficio };
+    if(currentStep === 3) {    
     selectedFamiliares.forEach((familiarId) => {
       resetBeneficio[familiarId].mochila = false;
       resetBeneficio[familiarId].utiles = false;
@@ -217,8 +218,11 @@ const descontarStock = async (seccional) => {
       resetBeneficio[familiarId].guardapolvo_confirm = false;
       resetBeneficio[familiarId].año_escolar = "";
     });
+  
     setBeneficio(resetBeneficio);
-  };
+  }
+};
+
 
   useEffect(() => {
     // Obtener el dni de location.state y almacenarlo en el estado local al cargar el componente
@@ -311,9 +315,10 @@ const descontarStock = async (seccional) => {
   };
 
   const handleRegister = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+  e.preventDefault();
+  setIsLoading(true);
 
+  try {
     const errors = validateFields();
     if (Object.keys(errors).length > 0) {
       console.log(errors);
@@ -323,6 +328,7 @@ const descontarStock = async (seccional) => {
     }
 
     const res = await api.post("users/registro-familiar", formData);
+
     if (res.status === 200) {
       await handleImageUpload();
       await setModalIsOpen(false);
@@ -338,9 +344,24 @@ const descontarStock = async (seccional) => {
         fecha_de_nacimiento: "",
         dni_img_dorso: null,
         dni_img_frente: null,
-      })
+      });
     }
-  };
+  } catch (error) {
+    // Manejar errores aquí
+    console.error("Error al registrar el familiar:", error.res);
+
+     if (error.response && error.response.status === 400) {
+      // Manejar el caso específico del mensaje de error del servidor
+      setError(error.response.data.error);
+    } else {
+      // Puedes establecer un mensaje de error genérico para otros casos
+      setError("Error al registrar el familiar. Por favor, intenta de nuevo.");
+    }
+
+    setIsLoading(false);
+  }
+};
+
 
   const handleImageUpload = async () => {
     const imgFormaData = new FormData();
@@ -656,7 +677,7 @@ const comprobarStockTalle = (talle) => {
           <h2 className=" text-black text-3xl font-extrabold">
             Solicitar Beneficio: Kit Escolar
           </h2>
-          { currentStep < 4 &&
+          { currentStep < 3 &&
           <p className="p-2 font-bold text-[#757678]">
             Elige los hijos a los que quieras otorgarle un beneficio <br /> o
             añade uno si es necesario{" "}
@@ -827,6 +848,7 @@ const comprobarStockTalle = (talle) => {
                     <h4 className="text-black text-lg capitalize w-max pb-1 font-semibold">
                       {familiar.name}:
                     </h4>
+                    <h4 className="text-sm text-[#006084] ">SELECCIONÁ TALLE Y AÑO ESCOLAR DEL HIJO/A</h4>
                     <div className="flex flex-col justify-between">
                       <div className="flex justify-between items-center border-l-4 border-[#006084] bg-gray-100 mt-2 px-8 h-10">
                         <label className="font-semibold text-gray-600">
@@ -853,6 +875,56 @@ const comprobarStockTalle = (talle) => {
                         </select>
                       </div>
 
+                          <div
+                        className={`flex items-center justify-between border-l-4 ${
+                          isBeneficioOtorgado(familiar.id, "guardapolvo")
+                            ? "border-red-700"
+                            : "border-[#006084]"
+                        }  bg-gray-100 mt-2 px-8 h-10`}
+                      >
+                        
+                        
+                        <label
+                          className={`mr-2 flex items-center font-semibold ${
+                            isBeneficioOtorgado(familiar.id, "guardapolvo")
+                              ? "text-gray-300"
+                              : "text-gray-600"
+                          } `}
+                        >
+                          <span className="mr-2">
+                            <TbJacket />
+                          </span>
+                          Talle de Guardapolvo
+                        </label>
+                        <div className="flex gap-x-4">
+                            <select
+                          name="guardapolvo"
+                          className={`bg-gray-100 `}
+                          disabled={isBeneficioOtorgado(
+                            familiar.id,
+                            "guardapolvo_talle"
+                          )}
+                          value= {isBeneficioOtorgado(familiar.id, "guardapolvo_talle") !== "" ? isBeneficioOtorgado(familiar.id, "guardapolvo_talle") : beneficio.guardapolvo}
+                          onChange={(e) => handleInputChange(e, familiarId)}
+                          required
+                        >
+                          <option disabled selected value={""}>
+                           { isBeneficioOtorgado(familiar.id, "guardapolvo_talle") !== "" ? isBeneficioOtorgado(familiar.id, "guardapolvo_talle") : "Ninguno"}
+                          </option>
+                          <option value="6">6</option>
+                          <option value="8">8</option>
+                          <option value="10">10</option>
+                          <option value="12">12</option>
+                          <option value="14">14</option>
+                          <option value="16">16</option>
+                           <option value="18">18</option>
+                        </select>
+                        
+                        </div>
+                      
+                      </div>
+
+                                <h4 className="text-sm text-[#006084] mt-2 ">SELECCIONA ELEMENTOS A ENTREGAR</h4>
                       <div
                         className={`flex items-center justify-between border-l-4 ${
                           isBeneficioOtorgado(familiar.id, "mochila")
@@ -1009,54 +1081,7 @@ const comprobarStockTalle = (talle) => {
                       
                       </div>
                       
-                      <div
-                        className={`flex items-center justify-between border-l-4 ${
-                          isBeneficioOtorgado(familiar.id, "guardapolvo")
-                            ? "border-red-700"
-                            : "border-[#006084]"
-                        }  bg-gray-100 mt-2 px-8 h-10`}
-                      >
-                        
-                        
-                        <label
-                          className={`mr-2 flex items-center font-semibold ${
-                            isBeneficioOtorgado(familiar.id, "guardapolvo")
-                              ? "text-gray-300"
-                              : "text-gray-600"
-                          } `}
-                        >
-                          <span className="mr-2">
-                            <TbJacket />
-                          </span>
-                          Talle de Guardapolvo
-                        </label>
-                        <div className="flex gap-x-4">
-                            <select
-                          name="guardapolvo"
-                          className={`bg-gray-100 `}
-                          disabled={isBeneficioOtorgado(
-                            familiar.id,
-                            "guardapolvo_talle"
-                          )}
-                          value= {isBeneficioOtorgado(familiar.id, "guardapolvo_talle") !== "" ? isBeneficioOtorgado(familiar.id, "guardapolvo_talle") : beneficio.guardapolvo}
-                          onChange={(e) => handleInputChange(e, familiarId)}
-                          required
-                        >
-                          <option disabled selected value={""}>
-                           { isBeneficioOtorgado(familiar.id, "guardapolvo_talle") !== "" ? isBeneficioOtorgado(familiar.id, "guardapolvo_talle") : "Ninguno"}
-                          </option>
-                          <option value="6">6</option>
-                          <option value="8">8</option>
-                          <option value="10">10</option>
-                          <option value="12">12</option>
-                          <option value="14">14</option>
-                          <option value="16">16</option>
-                           <option value="18">18</option>
-                        </select>
-                        
-                        </div>
-                      
-                      </div>
+                  
                         {/* <p className="text-md text-center text-gray-400">
                         Stock disponible: <span className={`${stockTalle > 0 ? 'text-green-500' : "text-red-500"}`}>{stockTalle}</span>
                       </p> */}
@@ -1109,25 +1134,25 @@ const comprobarStockTalle = (talle) => {
                     { (
                       <p className="text-gray-600 text-lg mt-2">
                         - Mochila:{" "}
-                        <span className={`${beneficioIndividual.mochila == true ? 'text-green-500' : 'text-yellow-500'}  font-bold`}>
-                          {beneficioIndividual.mochila == true ? 'Entregar' : 'Pendiente'}
+                        <span className={`${beneficioIndividual.mochila == true ? 'text-green-500' : isBeneficioOtorgado(familiar.id, "mochila") ? 'text-gray-500' : 'text-yellow-500'}  font-bold`}>
+                          {beneficioIndividual.mochila == true ? 'Entregar' : isBeneficioOtorgado(familiar.id, "mochila")  ? 'Entregado con anterioridad.' : 'Pendiente'}
                         </span>
                       </p>
                     )}
                     { (
                       <p className="text-gray-600 text-lg mt-2">
                         - Guardapolvo:{" "}
-                        <span className={`font-bold ${beneficioIndividual.guardapolvo_confirm ? 'text-green-500' : 'text-yellow-500'} `}>
+                        <span className={`font-bold ${beneficioIndividual.guardapolvo_confirm ? 'text-green-500' : isBeneficioOtorgado(familiar.id, "guardapolvo") ? 'text-gray-500': 'text-yellow-500'} `}>
                           
-                          {beneficioIndividual.guardapolvo_confirm ? 'Entregar Talle' : 'Pendiente Talle'}{beneficioIndividual.guardapolvo ? beneficioIndividual.guardapolvo : isBeneficioOtorgado(familiar.id, "guardapolvo_talle")}
+                          {beneficioIndividual.guardapolvo_confirm ? 'Entregar Talle ' : isBeneficioOtorgado(familiar.id, "guardapolvo") ? 'Entregado con anterioridad Talle ' : 'Pendiente Talle '}{beneficioIndividual.guardapolvo ? beneficioIndividual.guardapolvo : isBeneficioOtorgado(familiar.id, "guardapolvo_talle")}
                         </span>
                       </p>
                     )}
                        { (
                       <p className="text-gray-600 text-lg mt-2">
                         - Útiles:{" "}
-                        <span className={`${beneficioIndividual.utiles == true ? 'text-green-500' : 'text-yellow-500'}  font-bold`}>
-                          {beneficioIndividual.utiles == true ? 'Entregar' : 'Pendiente'}
+                        <span className={`${beneficioIndividual.utiles == true ? 'text-green-500' : isBeneficioOtorgado(familiar.id, "utiles") ? 'text-gray-500' : 'text-yellow-500'}  font-bold`}>
+                          {beneficioIndividual.utiles == true ? 'Entregar' : isBeneficioOtorgado(familiar.id, "utiles") ? 'Entregado con anterioridad.' : 'Pendiente'}
                         </span>
                       </p>
                     )}
@@ -1262,11 +1287,17 @@ const comprobarStockTalle = (talle) => {
             Paso 4: Estado de Carga del Beneficio.
           </h3>
           <p className="font-semibold mt-8 text-lg text-[#006084]">
-            {beneficioIndividual.mochila === false &&
-            beneficioIndividual.utiles === false &&
-            beneficioIndividual.guardapolvo_confirm === false
-              ? "Debes informar al trabajador que los items quedarán pendientes de entrega y que será informado vía correo electrónico cuando el beneficio esté disponible para retirar."
-              : "Debes solicitar al trabajador que firme el remito por los items que se entregan en el momento, los que no seleccionaste quedarán pendientes para retirar."}
+     {
+  (
+    (beneficioIndividual.mochila || isBeneficioOtorgado(familiar.id, "mochila")) &&
+    (beneficioIndividual.utiles || isBeneficioOtorgado(familiar.id, "utiles")) &&
+    (beneficioIndividual.guardapolvo_confirm || isBeneficioOtorgado(familiar.id, "guardapolvo"))
+  )
+    ? "Debes solicitar al trabajador que firme el recibo por los ítems que se entregan en el momento."
+    : "Debes solicitar al trabajador que firme el recibo por los ítems que se entregan en el momento, los que no seleccionaste quedarán pendientes para retirar."
+}
+
+
           </p>
           <div className="flex flex-col w-full mt-4 justify-center items-center px-4">
             {beneficioIndividual.mochila === false &&
@@ -1281,7 +1312,7 @@ const comprobarStockTalle = (talle) => {
             ) : (
               <>
                 <Files
-                  label="Subir foto de REMITO DE ENTREGA"
+                  label="Subir foto de RECIBO DE ENTREGA"
                   instructions="Recuerde que debe estar firmada por el trabajador."
                   onUpload={handleBeneficioOtorgado}
                 />
@@ -1303,7 +1334,10 @@ const comprobarStockTalle = (talle) => {
 
           <Modal
             isOpen={modalIsOpen}
-            onRequestClose={() => setModalIsOpen(false)}
+            onRequestClose={() => {
+              setModalIsOpen(false)
+            setError(null)
+            }}
             contentLabel="Editar Familiares"
             style={{
               overlay: {
@@ -1326,7 +1360,7 @@ const comprobarStockTalle = (talle) => {
             }}
           >
             <h2 className="text-2xl font-bold mb-4">Añadir Hijos</h2>
-            {error && <p className="text-red-500">{error}</p>}
+            {error && <p className="font-bold text-red-500">{error}</p>}
             <div className="mb-2">
               <label className="block font-bold mb-1">
                 Nombre y Apellido{" "}
@@ -1456,7 +1490,11 @@ const comprobarStockTalle = (talle) => {
             <div className="flex justify-between">
               <button
                 className="mt-4 bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
-                onClick={() => setModalIsOpen(false)}
+                onClick={() => {
+                  setModalIsOpen(false)
+                  setError(null)
+                
+                }}
               >
                 Cerrar
               </button>

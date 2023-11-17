@@ -95,13 +95,20 @@ useEffect(() => {
 const pendingUsers = beneficios?.filter(beneficio => beneficio.estado === 'Pendiente');
 
 const sortedPendingUsers = pendingUsers?.sort((a, b) => {
-  // Asignar un valor numérico a 'Urgente' y 'Normal' para ordenar correctamente
-  const plazoA = a.plazo === 'Urgente' ? -1 : 1;
-  const plazoB = b.plazo === 'Urgente' ? -1 : 1;
+  const fechaPartoA = new Date(a.fecha_de_parto);
+  const fechaPartoB = new Date(b.fecha_de_parto);
+  const fechaActual = new Date();
 
-  // Ordenar los usuarios por plazo (Urgente primero, Normal después)
-  return plazoA - plazoB;
+  const diferenciaEnMilisegundosA = fechaPartoA - fechaActual;
+  const diasFaltantesA = Math.floor(diferenciaEnMilisegundosA / (1000 * 60 * 60 * 24));
+
+  const diferenciaEnMilisegundosB = fechaPartoB - fechaActual;
+  const diasFaltantesB = Math.floor(diferenciaEnMilisegundosB / (1000 * 60 * 60 * 24));
+
+  // Ordenar por orden ascendente de días restantes
+  return diasFaltantesA - diasFaltantesB;
 });
+
 
 console.log("ordenados",sortedPendingUsers);
 // Luego puedes utilizar sortedPendingUsers en tu código para mostrar los beneficios ordenados.

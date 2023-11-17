@@ -242,6 +242,7 @@ const handleCheckbox = (afiliado) => {
 
   return (
     <div ref={animationParent} className="h-full w-full bg-gray-200">
+      {loading ? <Loader/> : (
       <div  className="flex flex-col">
         <div ref={animationParent} className="mt-4 bg-white min-h-[25rem] p-8 rounded-xl">
           <table   className=" table-fixed divide-y-4 divide-[#006084]">
@@ -294,10 +295,16 @@ const handleCheckbox = (afiliado) => {
             
             <tbody ref={animationParent}>
               {data?.slice(startIndex, endIndex).map((row, index) => {
-                 const fechaParto = new Date(row.fecha_de_parto);
-                  const fechaActual = new Date();
-                  const diferenciaEnMilisegundos = fechaParto - fechaActual;
-                  const diasFaltantes = Math.floor(diferenciaEnMilisegundos / (1000 * 60 * 60 * 24));
+                const fechaParto = new Date(row.fecha_de_parto);
+                fechaParto.setHours(0, 0, 0, 0);  // Establecer horas, minutos, segundos y milisegundos a 0
+
+                const fechaActual = new Date();
+                fechaActual.setHours(0, 0, 0, 0);  // Establecer horas, minutos, segundos y milisegundos a 0
+
+                const diferenciaEnMilisegundos = fechaParto - fechaActual;
+                const diasFaltantes = Math.floor(diferenciaEnMilisegundos / (1000 * 60 * 60 * 24));
+                const fechaPartoFormateada = fechaParto.toLocaleDateString("es-AR", { timeZone: "America/Buenos_Aires" });
+
 
                 return ( <tr  key={index} className={`text-gray-600 text-sm font-semibold ${index % 2 === 0 ? grayRowClass : whiteRowClass }`}>
                     <div className="flex items-center pr-4  ">
@@ -335,9 +342,9 @@ const handleCheckbox = (afiliado) => {
                   <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.delegacion}</td> 
                   <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.seccional}</td> 
                   <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.direccion}</td>
-                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{new Date(row.fecha_de_parto).toLocaleDateString("es-AR")}</td>
+                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{fechaPartoFormateada}</td>
                   <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{diasFaltantes}</td> 
-                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap"><span className={`bg-opacity-30 ${row.plazo === 'Urgente' && 'bg-red-400 text-red-500'} rounded-lg px-2 p-1`}>{row.plazo}</span></td>
+                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap"><span className={`bg-opacity-30 ${diasFaltantes < 60 && 'bg-red-400 text-red-500'} rounded-lg px-2 p-1`}>{diasFaltantes < 60 ? 'Urgente' : 'Normal'}</span></td>
       
                   <td className="px-2 2xl:px-6  capitalize whitespace-no-wrap"><span className={`bg-opacity-30 ${row.estado === 'Entregado' ? 'bg-green-400 text-green-500 ' : row.estado === 'Rechazado' ? 'bg-red-400 text-red-500' : row.estado === 'Enviado' ? 'bg-blue-400 text-blue-500' : 'bg-yellow-200 text-yellow-400'}  rounded-lg px-2 p-1`}>{row.estado}</span></td>                
                   <td className="flex items-center px-10 py-2 whitespace-no-wrap">
@@ -417,6 +424,7 @@ const handleCheckbox = (afiliado) => {
   </div>
 )}
       </div>
+      )}
        <Modal
             isOpen={openModal}
             onRequestClose={() => setOpenModal(false)}
@@ -577,7 +585,8 @@ const handleCheckbox = (afiliado) => {
                       </div>
                     </div>
                   )}
-            </div>                          
+            </div>  
+                              
 
        
           </Modal>
@@ -873,6 +882,10 @@ const handleCheckbox = (afiliado) => {
 
        
           </Modal>
+  
+                      
+                      
+      
 
           
     </div>

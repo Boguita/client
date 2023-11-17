@@ -52,8 +52,11 @@ const RegisterAfiliate = () => {
       // formData.ddjj !== null;
     } else if (currentStep === 3) {
       const requiredFields = ['datos_empleador.razon_social', 'datos_empleador.cuit_empleador', 'datos_empleador.actividad'];
-      return requiredFields.every(field => formData[field] !== '') && formData.recibo_sueldo !== null;
-    }
+      return requiredFields.every(field => {
+      const nestedFields = field.split('.');
+      return formData[nestedFields[0]][nestedFields[1]] !== '';
+    }) && formData.recibo_sueldo !== null;
+  }
   };
 
  
@@ -116,7 +119,7 @@ useEffect(() => {
   if (e.target.name === "provincia") {
     try {
       const res = await axios.get(
-        `https://apis.datos.gob.ar/georef/api/localidades?provincia=${e.target.value}&campos=id,nombre&max=100`
+        `https://apis.datos.gob.ar/georef/api/localidades?provincia=${e.target.value}&campos=id,nombre&max=1000`
       );
       setCiudades(res.data.localidades);
     } catch (error) {
@@ -487,7 +490,7 @@ const handleImageUpload = async () => {
                     onChange={handleChange}
                     className=" bg-gray-200 w-full pl-2 font-semibold focus:text-[#808080] focus:outline-none"
                   >
-                    <option value="" disabled selected>Provincia</option>
+                    <option value="" disabled selected>Provincia de Residencia</option>
                    {provincias.sort((a, b) => a.nombre.localeCompare(b.nombre)).map((provincia) => (
   <option key={provincia.id} value={provincia.nombre}>
     {provincia.nombre}

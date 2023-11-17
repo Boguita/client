@@ -1111,7 +1111,7 @@ return (
                          
                           <div className="flex flex-col mt-4 items-center">
                           <Files 
-                          label="Subir foto de REMITO DE ENTREGA" 
+                          label="Subir foto de RECIBO DE ENTREGA" 
                           onUpload={() => handleUpdateBeneficio(beneficiosOtorgados[familiar.id][0].id)}
                           instructions="Recuerde que debe estar firmada por el trabajador." 
                             />
@@ -1224,7 +1224,7 @@ return (
                          
                           <div className="flex flex-col mt-4 items-center">
                           <Files 
-                          label="Subir foto de REMITO DE ENTREGA" 
+                          label="Subir foto de RECIBO DE ENTREGA" 
                           onUpload={() => handleUpdateBeneficio(beneficiosOtorgados[madre.id][0].id)}
                           instructions="Recuerde que debe estar firmada por el trabajador." 
                             />
