@@ -28,8 +28,7 @@ const Seccionales = () => {
     nombre: "",
     delegacion: "",
     provincia: "",
-    direccion: "",
-    numero: ""
+    direccion: ""
   });
 
 
@@ -98,7 +97,7 @@ useEffect(() => {
 
 const handleSubmit = async (e) => {
   e.preventDefault();
-  if(!inputs.nombre || !inputs.provincia || !inputs.delegacion || !inputs.direccion || !inputs.numero) {    
+  if(!inputs.nombre || !inputs.provincia || !inputs.delegacion || !inputs.direccion) {    
     setError("Por favor complete todos los campos"),
     setSuccess(null);
     return;
@@ -115,7 +114,7 @@ const handleSubmit = async (e) => {
          delegacion: "",
          nombre: "",
          direccion: "",
-         numero: ""      
+     
         })
       setError(null);
       setIsLoading(false);
@@ -133,17 +132,23 @@ const handleSubmit = async (e) => {
   }
 };
 
+const removeAccents = (str) => {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+};
+
 const handleSearch = () => {
-  if (searchKeyword.trim() === '') {
+  const keywordWithoutAccents = removeAccents(searchKeyword.trim().toLowerCase());
+
+  if (keywordWithoutAccents === '') {
     // Si la palabra clave de búsqueda está vacía, mostrar todos los afiliados.
     setSearchResults(seccionales);
   } else {
-    // Filtrar los afiliados que coincidan con la palabra clave en nombre o DNI.
+    // Filtrar los afiliados que coincidan con la palabra clave en nombre o provincia (sin tildes).
     const filteredResults = seccionales.filter((seccional) =>
-      seccional.nombre.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      seccional.provincia.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      seccional.ciudad.toLowerCase().includes(searchKeyword.toLowerCase())
+      removeAccents(seccional.nombre.toLowerCase()).includes(keywordWithoutAccents) ||
+      removeAccents(seccional.provincia.toLowerCase()).includes(keywordWithoutAccents)
     );
+
     setSearchResults(filteredResults);
   }
 };
@@ -315,21 +320,10 @@ const handleUpdateUserData = async () => {
               name="direccion"
               value={inputs.direccion}
               onChange={handleInputChange}
-              placeholder="Dirección"
+              placeholder="Calle y Numeración"
             />
           </div>
-          <div className="mb-3">
-             <Input
-              className="form-control py-3 w-full"
-              id="numero"
-              type="text"
-              required
-              name="numero"
-              value={inputs.numero}
-              onChange={handleInputChange}
-              placeholder="Numeración"
-            />
-          </div>
+       
 
         <div className="py-3 mb-3 !border-l-4 !border-[#006084] bg-gray-200">
                   <select
