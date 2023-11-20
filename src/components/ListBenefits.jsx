@@ -743,12 +743,14 @@ useEffect(() => {
                   >
                     <option value="" disabled selected>Delegaciones</option>
                   {delegaciones
-                      .sort((a, b) => a.nombre.localeCompare(b.nombre))
-                      .map((provincia) => (
-                        <option key={provincia.id} value={provincia.delegacion}>
-                         {provincia.delegacion}
-                        </option>
-                      ))}
+                    ? delegaciones
+                        .sort((a, b) => a.nombre.localeCompare(b.nombre))
+                        .map((provincia) => (
+                          <option key={provincia.id} value={provincia.delegacion}>
+                            {provincia.delegacion}
+                          </option>
+                        ))
+                    : null}
 
                   </select>
                   
@@ -758,18 +760,19 @@ useEffect(() => {
     isMulti
     onChange={handleSeccionalChange}
     options={seccionales
+  ? seccionales
       .filter(
         (seccional) =>
-           seccional.delegacion === inputs.delegacion 
-           || seccional.provincia === inputs.provincia
-          
+          seccional.delegacion === inputs.delegacion ||
+          seccional.provincia === inputs.provincia
       )
       .sort((a, b) => a.nombre.localeCompare(b.nombre))
-      .map((seccional) => ({
-        value: seccional.idseccionales,
-        label: `${seccional.provincia}, ${seccional.delegacion}, ${seccional.nombre}`,
-      }))
-    }
+      .map((seccional) => (
+        <option key={seccional.idseccionales} value={seccional.idseccionales}>
+          {`${seccional.provincia}, ${seccional.delegacion}, ${seccional.nombre}`}
+        </option>
+      ))
+  : null}
   />      
           </div> 
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="funcion">
