@@ -330,11 +330,15 @@ const descontarStock = async (seccional) => {
     const res = await api.post("users/registro-familiar", formData);
 
     if (res.status === 200) {
-      await handleImageUpload();
+      // Esperar a que se complete la solicitud principal antes de cargar imágenes
       await setModalIsOpen(false);
       await handleAfiliadoSearch(dni);
       await setIsLoading(false);
       await setError(null);
+
+      // Ahora puedes cargar imágenes después de que la solicitud principal esté completa
+      await handleImageUpload();
+
       await setFormData({
         id_afiliado: "",
         name: "",
@@ -350,7 +354,7 @@ const descontarStock = async (seccional) => {
     // Manejar errores aquí
     console.error("Error al registrar el familiar:", error.res);
 
-     if (error.response && error.response.status === 400) {
+    if (error.response && error.response.status === 400) {
       // Manejar el caso específico del mensaje de error del servidor
       setError(error.response.data.error);
     } else {
