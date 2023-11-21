@@ -246,35 +246,56 @@ const descontarStock = async (seccional) => {
     comprobarStockTalle(value);
   };
 
-  const handleDniImgDorso = (e) => {
-    const filesArray = Array.from(e.target.files);
-    const maxFiles = 1;
-     if (filesArray.length > maxFiles) {
-      alert(`Por favor, selecciona un máximo de ${maxFiles} archivos.`);
-      e.target.value = null;
-      return
-    } 
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      dni_img_dorso: filesArray,
-    }));
-    
-  };
+  const MAX_FILE_SIZE_BYTES = 1 * 1024 * 1024; // Por ejemplo, 5 MB (ajusta según tus necesidades)
 
-   const handleDniImgFrente = (e) => {
-    const filesArray = Array.from(e.target.files);
-    const maxFiles = 1;
-     if (filesArray.length > maxFiles) {
-      alert(`Por favor, selecciona un máximo de ${maxFiles} archivos.`);
-      e.target.value = null;
-      return
-    } 
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      dni_img_frente: filesArray,
-    }));
-    
-  };
+const handleDniImgDorso = (e) => {
+  const filesArray = Array.from(e.target.files);
+  const maxFiles = 1;
+
+  if (filesArray.length > maxFiles) {
+    alert(`Por favor, selecciona un máximo de ${maxFiles} archivo(s).`);
+    e.target.value = null;
+    return;
+  }
+
+  const fileSizeExceedsLimit = filesArray.some(file => file.size > MAX_FILE_SIZE_BYTES);
+
+  if (fileSizeExceedsLimit) {
+    alert(`El tamaño del archivo no debe exceder ${MAX_FILE_SIZE_BYTES / (1024 * 1024)} MB.`);
+    e.target.value = null;
+    return;
+  }
+
+  setFormData((prevFormData) => ({
+    ...prevFormData,
+    dni_img_dorso: filesArray,
+  }));
+};
+
+const handleDniImgFrente = (e) => {
+  const filesArray = Array.from(e.target.files);
+  const maxFiles = 1;
+
+  if (filesArray.length > maxFiles) {
+    alert(`Por favor, selecciona un máximo de ${maxFiles} archivo(s).`);
+    e.target.value = null;
+    return;
+  }
+
+  const fileSizeExceedsLimit = filesArray.some(file => file.size > MAX_FILE_SIZE_BYTES);
+
+  if (fileSizeExceedsLimit) {
+    alert(`El tamaño del archivo no debe exceder ${MAX_FILE_SIZE_BYTES / (1024 * 1024)} MB.`);
+    e.target.value = null;
+    return;
+  }
+
+  setFormData((prevFormData) => ({
+    ...prevFormData,
+    dni_img_frente: filesArray,
+  }));
+};
+
 
   const handleChangeHijo = (e) => {
     const { name, value } = e.target;
