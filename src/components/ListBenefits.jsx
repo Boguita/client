@@ -163,8 +163,6 @@ useEffect(() => {
       setSeccionalesFiltradas(null); 
       setIdSeccional(null);
    
-      const delegacion = seccionales.filter((seccional) => seccional.provincia === e.target.value);
-      setDelegaciones(delegacion);
     
   }
            if (e.target.name === "delegacion") {
@@ -346,25 +344,40 @@ useEffect(() => {
   };
 
 
-      
+  function quitarAcentos(texto) {
+  // Convertir a minúsculas y luego quitar acentos
+  return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
 
- const filasFiltradasYOrdenadas = list
-  .filter((row) => (provinciaSeleccionada ? row.provincia === provinciaSeleccionada : true))
+
+const filasFiltradasYOrdenadas = list
+  .filter((row) => {
+    const provinciaSinAcentos = quitarAcentos((row.provincia || '').toLowerCase());
+    const provinciaSeleccionadaSinAcentos = quitarAcentos((provinciaSeleccionada || '').toLowerCase());
+    return provinciaSeleccionadaSinAcentos ? provinciaSinAcentos === provinciaSeleccionadaSinAcentos : true;
+  })
   .filter((row) => (filtroStock ? row.mochila < 150 || row.utiles < 150 || row.talle6 < 150 || row.talle8 < 150 || row.talle10 < 150 || row.talle12 < 150 || row.talle14 < 150 || row.talle16 < 150 || row.talle18 < 150 : true))
   .filter((row) =>
     Object.values(row).some((value) =>
       (value ?? '').toString().toLowerCase().includes(busquedaPalabra.toLowerCase())
     )
   )
-  .sort((a, b) => {
-    if(filtroStock) {
-    const sumaA = a.mochila + a.utiles + a.talle6 + a.talle8 + a.talle10 + a.talle12 + a.talle14 + a.talle16 + a.talle18;
-    const sumaB = b.mochila + b.utiles + b.talle6 + b.talle8 + b.talle10 + b.talle12 + b.talle14 + b.talle16 + b.talle18;
-    return sumaA - sumaB; // Ordenar de menor a mayor
-  }
+   .sort((a, b) => {
+    const seccionalA = quitarAcentos((a.seccional || '').toLowerCase());
+    const seccionalB = quitarAcentos((b.seccional || '').toLowerCase());
+
+    const seccionalComparison = seccionalA.localeCompare(seccionalB);
+
+    if (seccionalComparison === 0 && filtroStock) {
+      const sumaA = a.mochila + a.utiles + a.talle6 + a.talle8 + a.talle10 + a.talle12 + a.talle14 + a.talle16 + a.talle18;
+      const sumaB = b.mochila + b.utiles + b.talle6 + b.talle8 + b.talle10 + b.talle12 + b.talle14 + b.talle16 + b.talle18;
+      return sumaA - sumaB;
+    }
+
+    return seccionalComparison;
   });
 
-  const rowsPerPage = 8
+  const rowsPerPage = 10
   const  showPagination = true
 
   const totalPages = Math.ceil(filasFiltradasYOrdenadas?.length / rowsPerPage);
@@ -628,7 +641,7 @@ useEffect(() => {
           </table>
        
         </div>
-           {showPagination && (
+            {showPagination && (
   <div className="mt-4 flex justify-center items-center">
     <IoIosArrowBack
       className={`cursor-pointer ${currentPage === 0 ? 'text-gray-400' : ''}`}
@@ -638,21 +651,30 @@ useEffect(() => {
       Anterior
     </IoIosArrowBack>
     <span className="mx-2 flex flex-wrap justify-center items-center">
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-        <span
-          key={page}
-          className={`cursor-pointer mx-1 inline-flex justify-center items-center ${
-            currentPage === page - 1 ? 'bg-[#006084] text-white rounded-full' : ''
-          }`}
-          onClick={() => setCurrentPage(page - 1)}
-          style={{
-            width: '30px', // Ancho y alto del círculo
-            height: '30px',
-          }}
-        >
-          {page}
-        </span>
-      ))}
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+        // Mostrar al menos 15 números
+        if (totalPages <= 15 || (page >= currentPage - 7 && page <= currentPage + 7) || page === 1 || page === totalPages) {
+          return (
+            <span
+              key={page}
+              className={`cursor-pointer mx-1 inline-flex justify-center items-center ${
+                currentPage === page - 1 ? 'bg-[#006084] text-white rounded-full' : ''
+              }`}
+              onClick={() => setCurrentPage(page - 1)}
+              style={{
+                width: '30px', // Ancho y alto del círculo
+                height: '30px',
+              }}
+            >
+              {page}
+            </span>
+          );
+        } else if (page === currentPage - 8 || page === currentPage + 8) {
+          // Mostrar puntos suspensivos
+          return <span key={page}>...</span>;
+        }
+        return null; // Ocultar otras páginas
+      })}
     </span>
     <IoIosArrowForward
       className={`cursor-pointer ${currentPage === totalPages - 1 ? 'text-gray-400' : ''}`}
@@ -715,7 +737,7 @@ useEffect(() => {
         <h1 className="text-2xl font-semibold mb-4">Editar Stock</h1>
         <h2 className="text-md text-gray-500 font-semibold mb-4">Selecciona varias seccionales y carga un stock en común</h2>
         <form onSubmit={(e) => handleSeccionalSubmit(e)}> 
-        <div className='mb-3'>
+      <div className='mb-3'>
           <select                                    
                     id="provincia"
                     name="provincia"
@@ -734,7 +756,7 @@ useEffect(() => {
                       ))}
 
                   </select>
-                   <select                                    
+                   {/* <select                                    
                     id="delegacion"
                     name="delegacion"
                     value={inputs.delegacion}
@@ -744,7 +766,7 @@ useEffect(() => {
                     <option value="" disabled selected>Delegaciones</option>
                   {delegaciones
                     ? delegaciones
-                        .sort((a, b) => a.nombre.localeCompare(b.nombre))
+                        .sort((a, b) => a.nombre.toLowerCase().localeCompare(b.nombre.toLowerCase()))
                         .map((provincia) => (
                           <option key={provincia.id} value={provincia.delegacion}>
                             {provincia.delegacion}
@@ -752,7 +774,7 @@ useEffect(() => {
                         ))
                     : null}
 
-                  </select>
+                  </select> */}
                   
            <Select
     required
@@ -761,20 +783,19 @@ useEffect(() => {
     onChange={handleSeccionalChange}
     options={seccionales
   ? seccionales
-      .filter(
-        (seccional) =>
-          seccional.delegacion === inputs.delegacion ||
-          seccional.provincia === inputs.provincia
-      )
-      .sort((a, b) => a.nombre.localeCompare(b.nombre))
-      .map((seccional) => (
-        <option key={seccional.idseccionales} value={seccional.idseccionales}>
-          {`${seccional.provincia}, ${seccional.delegacion}, ${seccional.nombre}`}
-        </option>
-      ))
+  .filter((seccional) =>
+            quitarAcentos(seccional.provincia) === quitarAcentos(inputs.provincia)
+          )
+      .sort((a, b) => quitarAcentos(a.nombre).localeCompare(quitarAcentos(b.nombre)))
+      .map((seccional) => ({
+            value: seccional.idseccionales,
+            label: `${seccional.nombre}, ${seccional.delegacion}`,
+          }))
   : null}
   />      
           </div> 
+
+
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="funcion">
              Elige una función
             </label> 
@@ -987,6 +1008,265 @@ useEffect(() => {
         </form>
 
               
+      </div>
+
+                              </Modal>
+
+                              <Modal isOpen={openModal}
+            onRequestClose={() => setOpenModal(false)}
+            contentLabel="Editar Stock"
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+              },
+              content: {
+                border: "none",
+                background: "white",
+                color: "black",
+                top: "50%",
+                left: "50%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+                padding: "2rem",
+                width: "80%",
+                maxWidth: "40rem",
+              },
+            }}
+          >
+    <div className="max-w-xl max-xl:max-w-xl max-lg:max-w-lg p-3 rounded-2xl w-full">
+      <div onClick={() => setOpenModal(false)} className="flex items-end justify-end">
+      <IoCloseOutline className="cursor-pointer text-2xl"  />
+      </div>
+        <h1 className="text-2xl font-semibold mb-4">Editar Stock</h1>                
+        <form onSubmit={(e) => handleSubmit(e, idSeccional)}> 
+        <div className='mb-3'>         
+
+           <Select
+    required
+    isDisabled
+    value={seccionales && seccionales
+      .filter(
+        (seccional) =>
+           seccional.idseccionales === idSeccional                 
+      )
+
+      .map((seccional) => ({
+        value: seccional.idseccionales,
+        label: `${seccional.provincia}, ${seccional.delegacion}, ${seccional.nombre}, ${seccional.direccion}`,
+      }))
+    }
+
+
+  />      
+          </div> 
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="funcion">
+             Elige una función
+            </label> 
+        <div className="py-3 mb-3 !border-l-4 !border-[#006084] bg-gray-200">
+
+                  <select
+                    id="funcion"
+                    name="funcion"
+                    required
+                    value={formData.funcion}
+                    onChange={handleChangeStock}
+                    className=" bg-gray-200 pl-3 text-sm font-semibold focus:text-[#808080] focus:outline-none w-full"
+                  >
+                    <option value="" disabled selected>Operación</option>
+
+                        <option  value={"sumar"}>
+                          Sumar
+                        </option>
+                          <option  value={"restar"}>
+                          Restar
+                        </option>
+
+
+                  </select>
+                </div>   
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="guardapolvo">
+             Guardapolvo Talles
+            </label> 
+          <div className="flex gap-x-4 mb-3">            
+           <div className='flex-col '>
+           <label className="block text-center text-gray-700 text-sm font-bold mb-2" htmlFor="guardapolvo">
+             6
+            </label> 
+            <Input 
+              className="form-control py-3 w-16"
+              id="talle6"
+              type="number"
+              required
+              name="talle6"
+              value={formData.talle6}
+              onChange={handleChangeStock}
+
+            />
+            </div>
+
+             <div className='flex-col '>
+           <label className="block text-center text-gray-700 text-sm font-bold mb-2" htmlFor="guardapolvo">
+             8
+            </label> 
+            <Input 
+              className="form-control py-3 w-16"
+              id="talle8"
+              type="number"
+              required
+              name="talle8"
+              value={formData.talle8}
+              onChange={handleChangeStock}
+
+            />
+            </div>
+
+             <div className='flex-col '>
+           <label className="block text-center text-gray-700 text-sm font-bold mb-2" htmlFor="guardapolvo">
+             10
+            </label> 
+            <Input 
+              className="form-control py-3 w-16"
+              id="talle10"
+              type="number"
+              required
+              name="talle10"
+              value={formData.talle10}
+              onChange={handleChangeStock}
+
+            />
+            </div>
+
+             <div className='flex-col '>
+           <label className="block text-center text-gray-700 text-sm font-bold mb-2" htmlFor="guardapolvo">
+             12
+            </label> 
+            <Input 
+              className="form-control py-3 w-16"
+              id="talle12"
+              type="number"
+              required
+              name="talle12"
+              value={formData.talle12}
+              onChange={handleChangeStock}
+
+            />
+            </div>
+
+             <div className='flex-col '>
+           <label className="block text-center text-gray-700 text-sm font-bold mb-2" htmlFor="guardapolvo">
+             14
+            </label> 
+            <Input 
+              className="form-control py-3 w-16"
+              id="talle14"
+              type="number"
+              required
+              name="talle14"
+              value={formData.talle14}
+              onChange={handleChangeStock}
+
+            />
+            </div>
+
+             <div className='flex-col '>
+           <label className="block text-center text-gray-700 text-sm font-bold mb-2" htmlFor="guardapolvo">
+             16
+            </label> 
+            <Input 
+              className="form-control py-3 w-16"
+              id="talle16"
+              type="number"
+              required
+              name="talle16"
+              value={formData.talle16}
+              onChange={handleChangeStock}
+
+            />
+            </div>
+
+             <div className='flex-col '>
+           <label className="block text-center text-gray-700 text-sm font-bold mb-2" htmlFor="guardapolvo">
+             18
+            </label> 
+            <Input 
+              className="form-control py-3 w-16"
+              id="talle18"
+              type="number"
+              required
+              name="talle18"
+              value={formData.talle18}
+              onChange={handleChangeStock}
+
+            />
+            </div>        
+
+
+            </div>
+
+
+            {/* <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="talles">
+             Talles
+@@ -1194,64 +1003,6 @@ useEffect(() => {
+/> */}
+
+
+             <div className="mb-3">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mochila">
+              Mochila
+            </label>          
+            <Input
+              className="form-control py-3 w-full"
+              id="mochila"
+              type="number"
+              required
+              name="mochila"
+              value={formData.mochila}
+             onChange={handleChangeStock}
+              placeholder="Mochila"
+            />
+          </div>
+
+ <div className="mb-3">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="utiles">
+              Útiles
+            </label>          
+            <Input
+              className="form-control py-3 w-full"
+              id="utiles"
+              type="text"
+              required
+              name="utiles"
+              value={formData.utiles}
+             onChange={handleChangeStock}
+              placeholder="Útiles"
+            />
+          </div>
+
+
+
+
+
+                  {isLoading ? <Loader/> :
+          <div className="flex flex-col items-center justify-center">
+        {/* {success && <p className="text-green-500  font-semibold">{success}</p>} */}
+        {error && <p className="text-red-500 font-semibold">{error}</p>}
+        {success && <p className="text-green-500 font-semibold">{success}</p>}
+
+          <button
+                className="p-1 w-32 font-bold text-white rounded-lg bg-[#006084]"
+            type="submit"
+          >
+            Confirmar
+          </button>
+
+          </div>
+                  }
+
+        </form>
+
+
       </div>
 
                               </Modal>

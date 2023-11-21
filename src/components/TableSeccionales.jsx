@@ -13,7 +13,7 @@ import {RxAvatar} from 'react-icons/rx';
 import Input from './Input';
 
 
-const TableSeccionales = ({ data, rowsPerPage = 8,  showPagination = true, onUpdateUserData }) => {
+const TableSeccionales = ({ data, rowsPerPage = 15,  showPagination = true, onUpdateUserData }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [openModal, setOpenModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
