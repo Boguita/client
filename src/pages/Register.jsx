@@ -51,7 +51,7 @@ const Register = () => {
     if (e.target.name === "provincia") {
     
       const delegacion = seccionales
-      .filter((seccional) => seccional.provincia === e.target.value)
+      .filter((seccional) => quitarAcentos(seccional.provincia) === quitarAcentos(e.target.value))
       .reduce((uniqueDelegations, seccional) => {
         const existingDelegation = uniqueDelegations.find(
           (unique) => unique.delegacion.toLowerCase() === seccional.delegacion.toLowerCase()
@@ -69,7 +69,7 @@ const Register = () => {
    // Filtrar las seccionales por la ciudad seleccionada
     const ciudadInput = e.target.value;
     if (seccionales && seccionales.length > 0) {
-  const filteredSeccionales = seccionales.filter((seccional) => seccional.ciudad === ciudadInput);
+  const filteredSeccionales = seccionales.filter((seccional) => quitarAcentos(seccional.ciudad) === quitarAcentos(ciudadInput));
   setSeccionalesFiltradas(filteredSeccionales);
 } else {
   setSeccionalesFiltradas([]); // Establece un array vacío si no hay seccionales
@@ -104,18 +104,63 @@ const Register = () => {
     });
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await api.post("/auth/register", inputs);
-      if(res.status === 200)
-      setCurrentStep(currentStep +1);
-    setError(null)
-      // navigate("/login");
-    } catch (err) {
-      setError(err.response.data);
+  const handleValidateFields = () => {
+  return new Promise((resolve) => {
+    if (
+      !inputs.nombre ||
+      !inputs.dni ||
+      !inputs.cuit ||
+      !inputs.nacionalidad ||
+      !inputs.sexo ||
+      !inputs.provincia ||
+      inputs.delegacion !== "" ||
+      !inputs.domicilio ||
+      !inputs.seccional !== "" ||
+      !inputs.tel ||
+      !inputs.email ||
+      !inputs.password ||
+      !inputs.repeat_password
+    ) {
+      setError("Complete todos los campos");
+      resolve(false); // Resuelve la promesa con false si hay error
+    } else {
+      setError(null); // Resuelve la promesa con true si no hay error
+      resolve(true);
     }
-  };
+  });
+};
+
+
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+      const validationSuccess = await handleValidateFields();
+
+    // Verificar si hay errores de validación antes de continuar
+    if (!validationSuccess) {
+      return;
+    }
+    
+    const res = await api.post("/auth/register", inputs);
+    if (res.status === 200) {
+      setCurrentStep(currentStep + 1);
+      setError(null);
+    }
+    // navigate("/login");
+  } catch (err) {
+    setError(err.response.data);
+  }
+};
+
+
+
+  
+  function quitarAcentos(texto) {
+  // Convertir a minúsculas y luego quitar acentos
+  return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
 
   return (
     <div className="flex flex-col  min-h-screen w-screen" style={{ backgroundImage:`url(${BgRegister})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
@@ -250,7 +295,7 @@ const Register = () => {
                     onChange={handleChange}
                             className=" bg-[#F0F0F0] pl-3 text-sm font-semibold   focus:outline-none w-full"
                   >
-                    <option value="" disabled selected>Delegaciones</option>
+                    <option value="" selected>Delegaciones</option>
                   {delegaciones
                       .sort((a, b) => a.nombre.localeCompare(b.nombre))
                       .map((provincia) => (
@@ -269,7 +314,7 @@ const Register = () => {
                   name="seccional"
                   onChange={handleChange}
                 >
-                  <option value="" disabled selected>Seccional</option>
+                  <option value="" disabled >Seccional</option>
                   {seccionales
                     .filter(
                       (seccional) =>
