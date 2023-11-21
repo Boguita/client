@@ -353,23 +353,24 @@ const handleDniImgFrente = (e) => {
     if (res.status === 200) {
       // Esperar a que se complete la solicitud principal antes de cargar imágenes
       await setModalIsOpen(false);
-      await handleAfiliadoSearch(dni);
       await setIsLoading(false);
       await setError(null);
 
       // Ahora puedes cargar imágenes después de que la solicitud principal esté completa
       await handleImageUpload();
+      await handleAfiliadoSearch(dni);
+      
+      // setFormData((prevFormData) => ({
+      //   id_afiliado: prevFormData.id_afiliado,
+      //   name: "",
+      //   categoria: "Hijo/a",
+      //   dni: "",
+      //   tel: "1234",
+      //   fecha_de_nacimiento: "",
+      //   dni_img_dorso: null,
+      //   dni_img_frente: null,
+      // }));  
 
-      await setFormData({
-        id_afiliado: "",
-        name: "",
-        categoria: "Hijo/a",
-        dni: "",
-        tel: "1234",
-        fecha_de_nacimiento: "",
-        dni_img_dorso: null,
-        dni_img_frente: null,
-      });
     }
   } catch (error) {
     // Manejar errores aquí
@@ -386,6 +387,10 @@ const handleDniImgFrente = (e) => {
     setIsLoading(false);
   }
 };
+
+useEffect(function () {
+  console.log("FAMILIARES CARGA", formData);
+}, [formData]);
 
 
   const handleImageUpload = async () => {
@@ -840,7 +845,19 @@ const comprobarStockTalle = (talle) => {
                   {showButton ? (
                     <button
                       className="mt-4 bg-[#006084] w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
-                      onClick={() => setModalIsOpen(true)}
+                      onClick={() => {
+                        setModalIsOpen(true)
+                        setFormData((prevFormData) => ({
+                          id_afiliado: prevFormData.id_afiliado,
+                          name: "",
+                          categoria: "Hijo/a",
+                          dni: "",
+                          tel: "1234",
+                          fecha_de_nacimiento: "",
+                          dni_img_dorso: null,
+                          dni_img_frente: null,
+                        }));
+                      }}  
                     >
                       + Cargar Hijo/a
                     </button>
@@ -1365,7 +1382,18 @@ const comprobarStockTalle = (talle) => {
             onRequestClose={() => {
               setModalIsOpen(false)
             setError(null)
-            }}
+               setFormData((prevFormData) => ({
+                    id_afiliado: prevFormData.id_afiliado,
+                    name: "",
+                    categoria: "Hijo/a",
+                    dni: "",
+                    tel: "1234",
+                    fecha_de_nacimiento: "",
+                    dni_img_dorso: null,
+                    dni_img_frente: null,
+                  }));
+                }}
+           
             contentLabel="Editar Familiares"
             style={{
               overlay: {
@@ -1521,8 +1549,19 @@ const comprobarStockTalle = (talle) => {
                 onClick={() => {
                   setModalIsOpen(false)
                   setError(null)
-                
+                  setFormData((prevFormData) => ({
+                    id_afiliado: prevFormData.id_afiliado,
+                    name: "",
+                    categoria: "Hijo/a",
+                    dni: "",
+                    tel: "1234",
+                    fecha_de_nacimiento: "",
+                    dni_img_dorso: null,
+                    dni_img_frente: null,
+                  }));
                 }}
+                
+                
               >
                 Cerrar
               </button>
