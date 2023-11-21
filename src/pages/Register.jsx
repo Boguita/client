@@ -49,7 +49,9 @@ const Register = () => {
     console.log(inputs)
 
     if (e.target.name === "provincia") {
-    
+setInputs((prev) => ({ ...prev, delegacion: "" }));
+
+      
       const delegacion = seccionales
       .filter((seccional) => quitarAcentos(seccional.provincia) === quitarAcentos(e.target.value))
       .reduce((uniqueDelegations, seccional) => {
@@ -113,9 +115,9 @@ const Register = () => {
       !inputs.nacionalidad ||
       !inputs.sexo ||
       !inputs.provincia ||
-      inputs.delegacion !== "" ||
+      inputs.delegacion === "" ||
       !inputs.domicilio ||
-      !inputs.seccional !== "" ||
+      inputs.seccional === "" ||
       !inputs.tel ||
       !inputs.email ||
       !inputs.password ||
@@ -133,6 +135,7 @@ const Register = () => {
 
  const handleSubmit = async (e) => {
   e.preventDefault();
+  setError(null);
 
   try {
       const validationSuccess = await handleValidateFields();
