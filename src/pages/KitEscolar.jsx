@@ -246,7 +246,7 @@ const descontarStock = async (seccional) => {
     comprobarStockTalle(value);
   };
 
-  const MAX_FILE_SIZE_BYTES = 1 * 1024 * 1024; // Por ejemplo, 5 MB (ajusta según tus necesidades)
+  const MAX_FILE_SIZE_BYTES = 6 * 1024 * 1024; // Por ejemplo, 5 MB (ajusta según tus necesidades)
 
 const handleDniImgDorso = (e) => {
   const filesArray = Array.from(e.target.files);

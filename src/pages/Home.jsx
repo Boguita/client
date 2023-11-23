@@ -1023,8 +1023,7 @@ const handleRecibo = async () => {
               <div className="flex flex-col items-center">
                 <img className="w-auto h-8" src={Mono} alt="Mono" />
                 <p className="font-semibold text-gray-400">Kit Nacimiento</p>
-                <span className='font-semibold text-sm capitalize'>{familiar.name}</span>                
-                <span className='font-semibold text-sm text-gray-500'>Categoria: <span className='font-bold'>Madre</span></span>
+                <span className='font-semibold text-sm capitalize'>Madre: {familiar.name}</span>                
                 <span className='font-semibold text-sm text-green-500'>Entregado</span>
               </div>
             </div>
@@ -1149,7 +1148,12 @@ const handleRecibo = async () => {
                                               <p className='p-2 capitalize bg-gray-200 xl:w-[16vw] relative pl-6'>
                                                 <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
                                                 {empleador.actividad}
-                                              </p>                                            
+                                              </p> 
+                                                <p><strong>Teléfono:</strong></p>
+                                              <p className='p-2 capitalize bg-gray-200 xl:w-[16vw] relative pl-6'>
+                                                <span className='absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-full bg-[#006084]'></span>
+                                                {empleador.tel_empleador}
+                                              </p>                                             
                                           </div>
                                         );
                                       } catch (error) {

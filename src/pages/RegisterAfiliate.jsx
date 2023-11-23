@@ -35,6 +35,7 @@ const RegisterAfiliate = () => {
         razon_social: '',
         cuit_empleador: '',
         actividad: '',
+        tel_empleador: ''
     },
     dni_img_frente: null,
     dni_img_dorso: null,
@@ -164,7 +165,7 @@ useEffect(() => {
 
   if (type === 'file') {
     setFormData({ ...formData, [name]: files[0] });
-  } else if (name === 'razon_social' || name === 'cuit_empleador' || name === 'actividad') {
+  } else if (name === 'razon_social' || name === 'cuit_empleador' || name === 'actividad' || name === 'tel_empleador') {
     // Handle changes in empleador data
     setFormData({
       ...formData,
@@ -237,6 +238,7 @@ useEffect(() => {
     razon_social: formData.datos_empleador.razon_social,
     cuit_empleador: formData.datos_empleador.cuit_empleador,
     actividad: formData.datos_empleador.actividad,
+    tel_empleador: formData.datos_empleador.tel_empleador,
   };
 
   formDataToSend.append('datos_empleador', JSON.stringify(datosEmpleador));
@@ -765,10 +767,10 @@ const handleImageUpload = async () => {
           
           <Input
             type="text"
-            name="tel"
-            placeholder={"Teléfono"}
+            name="tel_empleador"
+            placeholder={"Teléfono Empleador"}
             required
-            value={formData.datos_empleador.tel}
+            value={formData.datos_empleador.tel_empleador}
             onChange={handleChange}
             className="w-full  py-2 px-3 focus:outline-none focus:ring focus:border-blue-300"
           />
