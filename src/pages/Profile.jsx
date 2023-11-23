@@ -105,24 +105,24 @@ const handleEdit = () => {
       
       <div className="flex flex-col">
         <div className="flex justify-between pr-20">
-        <h2 className="pl-20 text-3xl font-bold text-gray-800">Mi Perfil</h2>
+        <h2 className="sm:pl-20 max-sm:pl-6 text-3xl font-bold text-gray-800">Mi Perfil</h2>
         {isEditing ? (
-            <div className="flex mt-4 space-x-3 md:mt-6">
+            <div className="flex sm:mt-4 space-x-3 md:mt-6">
               <button
-                className="p-1 w-36 font-bold text-white rounded-lg bg-[#0E6F4B]"
+                className="p-1 sm:w-36 font-bold text-white rounded-lg bg-[#0E6F4B]"
                 onClick={handleSave}
               >
                 Guardar
               </button>
                <button
-                className="p-1 w-36 font-bold text-white rounded-lg bg-red-500"
+                className="p-1 sm:w-36 font-bold text-white rounded-lg bg-red-500"
                 onClick={() => setIsEditing(false)}
               >
                 Cancelar
               </button>
             </div>
           ) : (
-            <div className="flex mt-4 space-x-3 md:mt-6">
+            <div className="flex sm:mt-4 space-x-3 md:mt-6">
               <button
                 className="p-1 w-36 font-bold text-white rounded-lg bg-[#006084]"
                 onClick={handleEdit}
@@ -133,10 +133,10 @@ const handleEdit = () => {
           )}
         </div>
 
-       <div className="flex justify-evenly">
+       <div className="flex max-sm:p-3 max-sm:flex-col justify-evenly">
           
           
-            <div className="flex flex-col mt-4 rounded-2xl w-[25%]">
+            <div className="flex flex-col mt-4 rounded-2xl sm:w-[25%]">
          
         
          <img className='mb-[-5px]' src={Avatar}>
@@ -149,7 +149,7 @@ const handleEdit = () => {
             <p className='mt-2 font-medium text-gray-800'>{currentUser?.provincia}, {currentUser?.ciudad}</p> 
       </div>
 
-        <div className='flex h-28'>
+        <div className='flex sm:h-28'>
                
           {/* <div onClick={""}  className='flex flex-col cursor-pointer justify-center items-center w-full rounded-2xl mt-5 h-[80%] bg-white'>
                 
@@ -162,8 +162,8 @@ const handleEdit = () => {
         </div>
     </div>
 
-   <div className="flex-col bg-white p-8 rounded-2xl w-3/5 h-max mt-4 grid grid-cols-2">
-    <div className="flex flex-col w-full space-y-2 p-8 border-r-2">
+   <div className="flex-col bg-white p-8 rounded-2xl  sm:w-3/5 h-max mt-4 grid sm:grid-cols-2">
+    <div className="flex flex-col w-full space-y-2 p-8 max-sm:border-b-2 sm:border-r-2">
     
     <label className="font-semibold">CUIT:</label>
     <Input 

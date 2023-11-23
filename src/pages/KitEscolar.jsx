@@ -702,15 +702,15 @@ const comprobarStockTalle = (talle) => {
 
 
   return (
-    <div className="bg-gray-200 h-screen w-screen sm:pl-80 ml-5">
+    <div className="bg-gray-200 h-screen w-screen sm:pl-80 max-sm:p-2 sm:ml-5">
       <div className="flex mb-10 mt-32 h-20">
         <img className=" w-12 h-12" src={Libro}></img>
         <div className="flex flex-col pl-4">
-          <h2 className=" text-black text-3xl font-extrabold">
+          <h2 className=" text-black text-2xl sm:text-3xl font-extrabold">
             Solicitar Beneficio: Kit Escolar
           </h2>
           { currentStep < 3 &&
-          <p className="p-2 font-bold text-[#757678]">
+          <p className="max-sm:text-xs py-1 font-bold text-[#757678]">
             Elige los hijos a los que quieras otorgarle un beneficio <br /> o
             añade uno si es necesario{" "}
           </p>
@@ -718,7 +718,7 @@ const comprobarStockTalle = (talle) => {
         </div>
       </div>
 
-      <div className="flex justify-center bg-gray-200">
+      <div className="flex  justify-center bg-gray-200">
         <div
           ref={animationParent}
            className=" sm:w-2/4 min-h-[35em] bg-white flex p-4 rounded-lg"
@@ -881,7 +881,7 @@ const comprobarStockTalle = (talle) => {
            {currentStep === 2 && (
             // Step 2: Detalles de productos
             <div className="rounded w-full">
-              <h3 className="text-black text-3xl font-bold">
+              <h3 className="text-black text-xl sm:text-3xl font-bold">
                 Paso 2: Items a Entregar
               </h3>
               {/* Display product details for selected familiares */}
@@ -889,13 +889,13 @@ const comprobarStockTalle = (talle) => {
                 const familiar = familiares.find((f) => f.id === familiarId);
                 return (
                   <div className="pt-10 px-10  " key={familiar.id}>
-                    <h4 className="text-black text-lg capitalize w-max pb-1 font-semibold">
+                    <h4 className="text-black sm:text-lg capitalize w-max pb-1 font-semibold">
                       {familiar.name}:
                     </h4>
-                    <h4 className="text-sm text-[#006084] ">SELECCIONÁ TALLE Y AÑO ESCOLAR DEL HIJO/A</h4>
+                    <h4 className="text-xs text-[#006084] ">SELECCIONÁ TALLE Y AÑO ESCOLAR DEL HIJO/A</h4>
                     <div className="flex flex-col justify-between">
-                      <div className="flex justify-between items-center border-l-4 border-[#006084] bg-gray-100 mt-2 px-8 h-10">
-                        <label className="font-semibold text-gray-600">
+                      <div className="flex justify-between max-sm:text-sm items-center border-l-4 border-[#006084] bg-gray-100 mt-2 px-8 h-10">
+                        <label className="font-semibold  text-gray-600">
                           Año Escolar
                         </label>
                         <select
@@ -920,7 +920,7 @@ const comprobarStockTalle = (talle) => {
                       </div>
 
                           <div
-                        className={`flex items-center justify-between border-l-4 ${
+                        className={`flex items-center justify-between max-sm:text-sm border-l-4 ${
                           isBeneficioOtorgado(familiar.id, "guardapolvo")
                             ? "border-red-700"
                             : "border-[#006084]"
@@ -935,12 +935,10 @@ const comprobarStockTalle = (talle) => {
                               : "text-gray-600"
                           } `}
                         >
-                          <span className="mr-2">
-                            <TbJacket />
-                          </span>
+                  
                           Talle de Guardapolvo
                         </label>
-                        <div className="flex gap-x-4">
+                        <div className="flex  gap-x-4">
                             <select
                           name="guardapolvo"
                           className={`bg-gray-100 `}
@@ -968,9 +966,9 @@ const comprobarStockTalle = (talle) => {
                       
                       </div>
 
-                                <h4 className="text-sm text-[#006084] mt-2 ">SELECCIONA ELEMENTOS A ENTREGAR</h4>
+                                <h4 className="max-sm:text-xs sm:text-sm text-[#006084] mt-2 ">SELECCIONA ELEMENTOS A ENTREGAR</h4>
                       <div
-                        className={`flex items-center justify-between border-l-4 ${
+                        className={`flex max-sm:text-sm items-center justify-between border-l-4 ${
                           isBeneficioOtorgado(familiar.id, "mochila")
                             ? "border-red-700"
                             : "border-[#006084]"
@@ -1023,7 +1021,7 @@ const comprobarStockTalle = (talle) => {
                       </p> */}
 
                       <div
-                        className={`flex items-center justify-between border-l-4 ${
+                        className={`flex items-center max-sm:text-sm justify-between border-l-4 ${
                           isBeneficioOtorgado(familiar.id, "utiles")
                             ? "border-red-700"
                             : "border-[#006084]"
@@ -1075,7 +1073,7 @@ const comprobarStockTalle = (talle) => {
                       </p> */}
 
                        <div
-                        className={`flex items-center justify-between border-l-4 ${
+                        className={`flex items-center max-sm:text-sm justify-between border-l-4 ${
                           isBeneficioOtorgado(familiar.id, "guardapolvo")
                             ? "border-red-700"
                             : "border-[#006084]"

@@ -7,6 +7,8 @@ import Loader from "../components/Loader";
 import {BsCheck2Circle} from 'react-icons/bs'
 import { FiDownload } from 'react-icons/fi';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { useLocation } from 'react-router-dom';
+
 const RegisterAfiliate = () => {
   const [err, setError] = useState(null);
   const [currentStep, setCurrentStep] = useState(1);
@@ -16,6 +18,7 @@ const RegisterAfiliate = () => {
       const [animationParent] = useAutoAnimate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
+    funcion: '',
     name: '',
     dni: '',
     fecha_de_nacimiento: '',
@@ -38,6 +41,37 @@ const RegisterAfiliate = () => {
     recibo_sueldo: null,
     ddjj: null,
   });
+
+    const location = useLocation();
+  const datosAfiliado = location.state?.datosAfiliado || null;
+
+  useEffect(() => {
+    // Verificar si hay datosAfiliado y actualizar formData
+    if (datosAfiliado) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        name: datosAfiliado.name || '',
+        funcion: datosAfiliado.dni ? true : false,
+        dni: datosAfiliado.dni || '',
+        fecha_de_nacimiento: datosAfiliado.fecha_de_nacimiento || '',
+        tel: datosAfiliado.tel || '',
+        nacionalidad: datosAfiliado.nacionalidad || '',
+        sexo: datosAfiliado.sexo || '',
+        estado_civil: datosAfiliado.estado_civil || '',
+        provincia: datosAfiliado.provincia || '',
+        ciudad: datosAfiliado.ciudad || '',
+        cuit: datosAfiliado.cuit || '',
+        domicilio: datosAfiliado.domicilio || '',
+        correo: datosAfiliado.correo || '',
+        datos_empleador: {
+          razon_social: datosAfiliado.datos_empleador?.razon_social || '',
+          cuit_empleador: datosAfiliado.datos_empleador?.cuit_empleador || '',
+          actividad: datosAfiliado.datos_empleador?.actividad || '',
+        },
+      }));
+    }
+  }, [datosAfiliado]);
+
   
   const navigate = useNavigate();
 
@@ -84,6 +118,7 @@ const handleBackStep = () => {
 
 
 const comprobarAfiliado = async () => {
+  if(datosAfiliado) return setCurrentStep(currentStep + 1);
   const res = await api.get(`/users/comprobar-afiliado/${formData.dni}`);
   if (res.status === 200) {
     setError('Ya existe un afiliado con ese DNI');
@@ -182,6 +217,7 @@ useEffect(() => {
     }
 
     const formDataToSend = new FormData();
+     formDataToSend.append('funcion', formData.funcion);
     formDataToSend.append('name', formData.name);
     formDataToSend.append('dni', formData.dni);
     formDataToSend.append('fecha_de_nacimiento', formData.fecha_de_nacimiento);
@@ -349,18 +385,21 @@ const handleImageUpload = async () => {
   };
 
    return (
-    <div className="bg-gray-200 flex justify-center mt-36 h-screen w-screen sm:pl-80 ml-5">
+    <div className="bg-gray-200 flex justify-center mt-36 h-screen w-screen sm:pl-80 sm:ml-5">
       
-   <div className="flex flex-col pt-10 rounded-3xl items-center w-2/3 h-2/3 bg-white">
+   <div className="flex flex-col pt-10 rounded-3xl items-center h-[110%] w-[95%] sm:w-2/3 sm:h-2/3 bg-white">
     <div ref={animationParent} className="flex flex-col justify-center items-center h-20">
-        <h2 className="text-[#006084] text-4xl font-bold">Registro del Trabajador</h2>
-        {currentStep === 1 &&
-        <p className="text-red-500 font-semibold mt-1">No existe afiliado registrado con ese DNI, para continuar carga los datos correspondientes.</p>
-        }
+        <h2 className="text-[#006084] text-2xl sm:text-4xl font-bold">Registro del Trabajador</h2>
+        {!datosAfiliado && currentStep === 1 ?
+        <p className="text-red-500 text-xs w-4/5 sm:w-full font-semibold mt-1">No existe afiliado registrado con ese DNI, para continuar carga los datos correspondientes.</p>
+        :
+        datosAfiliado && currentStep === 1 &&
+        <p className="text-red-500 text-xs w-4/5 sm:w-full font-semibold mt-1">Por favor, complete los datos del trabajador antes de continuar.</p>
+      }
         </div>
       
       <form
-        className="form-horizontal grid grid-cols-2 gap-x-8 gap-y-2 sm:w-[45vw] p-4"
+        className="xl:form-horizontal grid sm:grid-cols-2 gap-x-8 gap-y-2 sm:w-[45vw] p-4"
         onSubmit={handleSubmit}
       >
         
@@ -572,7 +611,7 @@ const handleImageUpload = async () => {
              
             </div>
 
-             <div className="flex justify-end pt-10">
+             <div className="flex justify-end sm:pt-10">
            
           
               <button

@@ -18,7 +18,7 @@ const LunaDeMiel = () => {
   const location = useLocation();
   const [dni, setDni] = useState("");
   const [useConyugue, useSetConyugue] = useState(false);
- 
+
   const [currentStep, setCurrentStep] = useState(1);
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -138,7 +138,7 @@ const handleRegisterAfiliate = async (e) => {
       console.log("entro")
       if (res.status !== 200) {
         // Manejar el error o mostrar un mensaje al usuario
-        setError("Error al registrar el familiar");
+        setError("Error al registrar el familiar", res.data.error);
         return;
       }
       
@@ -238,7 +238,7 @@ const handleRegisterAfiliate = async (e) => {
     
 
     if (familiaresDisponibles === null) {
-      setError("No se encontraron datos de familiares.");
+      
       setFamiliares(prevFamiliares => ({
       ...prevFamiliares,
       
@@ -262,7 +262,7 @@ const handleRegisterAfiliate = async (e) => {
     );
 
     if (familiaresConyugue.length === 0) {
-      setError("No se encontraron familiares con categoría 'Conyugue'.");
+      
        setFamiliares(prevFamiliares => ({
       ...prevFamiliares,
       
@@ -344,7 +344,7 @@ const validateFields = () => {
   console.log(selectedFiles)
         if (selectedFiles.length === 0) {
       
-      errors.certificado = "Campo requerido";
+      errors.libreta = "Campo requerido";
 }
 
   return errors;
@@ -436,15 +436,15 @@ useEffect(() => {
   
 
 return (
-  <div className="bg-gray-200 h-screen w-screen sm:pl-80 ml-5">
+  <div className="bg-gray-200 p-2 h-screen w-screen sm:pl-80 sm:ml-5">
     <div className="flex mb-10 mt-40 h-20">
-      <img className=" w-12 h-12" src={Avion}></img>
+      <img className=" w-8 h-8 sm:w-12 sm:h-12" src={Avion}></img>
       <div className="flex flex-col pl-4">
-        <h2 className=" text-black text-3xl font-extrabold">
+        <h2 className=" text-black text-xl sm:text-3xl font-extrabold">
           Solicitar Beneficio: Luna de Miel
         </h2>
         { currentStep === 1 &&
-        <p className="p-2 font-bold text-[#757678]">
+        <p className="text-xs sm:text-md p-1 sm:p-2 font-bold text-[#757678]">
           Carga los datos y los archivos correspondientes <br /> para realizar
           la solicitud.
         </p>
@@ -454,14 +454,14 @@ return (
 
     <div className="flex justify-center bg-gray-200">
       <div className="sm:w-[95%]">
-        <div ref={animationParent} className="grid grid-cols-2 space-x-8">
+        <div ref={animationParent} className="grid sm:grid-cols-2 sm:space-x-8">
           {isLoading ? (
             <Loader />
           ) : (
             currentStep === 1 && (
               <>
-                <div ref={animationParent} className="rounded-lg  p-8  bg-white ">
-                  <h3 className="text-black text-2xl font-bold">
+                <div ref={animationParent} className="rounded-lg mb-2 p-8  bg-white ">
+                  <h3 className="text-black text-xl font-bold">
                     Datos del Conyugue
                   </h3>
 
@@ -613,8 +613,8 @@ return (
                       className={"w-[95%] p-3"}
                       placeholder={"12345"}
                     />
-                    {validationErrors.semanas && (
-                      <p className="text-red-500">{validationErrors.semanas}</p>
+                    {validationErrors.numero_libreta && (
+                      <p className="text-red-500">{validationErrors.numero_libreta}</p>
                     )}
                     
                   </div>
@@ -658,8 +658,11 @@ return (
                      {selectedFiles.map((file, index) => (
                       <li key={index}>{file.name}</li>
                     ))}
+                      {validationErrors.libreta && (
+                      <p className="text-red-500">{validationErrors.libreta}</p>
+                    )}
                   </div>
-           
+                      {error && <p className="text-xs font-semibold text-red-500">{error}</p>}
                   {/* } */}
                   <div className="flex justify-end items-end mt-20 flex-col">
                   <button
@@ -730,14 +733,14 @@ return (
                 <>
                   <div className="flex flex-col h-full w-full justify-end items-center space-y-4">
                     <img className="w-[4rem] text-[#006084]" src={Avion} />
-                    <p className="font-extrabold text-3xl text-[#0E6F4B]">
+                    <p className="font-extrabold text-2xl sm:text-3xl text-[#0E6F4B]">
                       El beneficio ha sido registrado con éxito.
                     </p>
-                    <p className="font-bold text-xl text-gray-500">
+                    <p className="font-bold text-lg sm:text-xl text-gray-500">
                       Por favor, informe al afiliado que un representante se pondra en contacto para continuar con la gestion.
                     </p>
                   </div>
-                  <div className="h-full w-full items-end pb-10 justify-center flex">
+                  <div className="sm:h-full sm:w-full max-sm:mt-4 items-end sm:pb-10 justify-center flex">
                     <button
                       className="btn bg-[#0E6F4B] border-[#0E6F4B] w-1/3"
                       onClick={() => navigate("/home")}

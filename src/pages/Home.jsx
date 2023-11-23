@@ -19,6 +19,7 @@ import Mono from '../assets/img/mono.png';
 import Avion from '../assets/img/plane.png';
 import Manito from '../assets/img/manito.png';
 
+
 const Home = () => {
   const [dni, setDni] = useState('');
   const [affiliateData, setAffiliateData] = useState(null);
@@ -34,6 +35,8 @@ const Home = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [modalConyugueIsOpen, setModalConyugueIsOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+
+
 
 
   const location = useLocation();
@@ -78,8 +81,23 @@ const handleAffiliateDataRequest = async (dniparams) => {
 
   try {
     const res = await api.get(`users/afiliados/${dni ? dni : dniparams}`);
+    
     // Almacenar los datos recibidos de la API
-    console.log(res.data)
+    console.log("data que recibo",res.data)
+    const datosAfiliado = res.data
+     if (datosAfiliado) {
+      // Validar campos antes de la navegación
+      const camposVacios = Object.entries(datosAfiliado).some(
+        ([clave, valor]) =>
+          clave !== "familiares" && valor === null
+      );
+
+      if (camposVacios) {
+        // Al menos un campo está vacío, realiza la navegación
+       navigate("/registro-afiliado", { state: { datosAfiliado } });
+        return; // Asegúrate de salir de la función para evitar acceder a datosAfiliado en el siguiente bloque de código
+      }
+    }
     const familiaresDisponibles = res.data.familiares;
      const familiaresConyugue = familiaresDisponibles.filter(
       (familiar) => familiar.categoria === 'Conyugue' 
@@ -134,7 +152,7 @@ const handleAffiliateDataRequest = async (dniparams) => {
   } catch (error) {
     
     setAffiliateData(null);
-    console.log(error.response.data.message)
+    console.log(error)
     
     navigate('/registro-afiliado')
   }

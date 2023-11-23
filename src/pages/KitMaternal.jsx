@@ -641,15 +641,15 @@ useEffect(() => {
   
 
 return (
-  <div className="bg-gray-200 h-screen w-screen sm:pl-80 ml-5">
+  <div className="bg-gray-200 h-screen w-screen sm:pl-80 max-sm:p-3 sm:ml-5">
     <div className="flex mb-10 mt-32 h-20">
       <img className=" w-12 h-12" src={Mono}></img>
       <div className="flex flex-col pl-4">
-        <h2 className=" text-black text-3xl font-extrabold">
+        <h2 className=" text-black text-2xl sm:text-3xl font-extrabold">
           Solicitar Beneficio: Kit Nacimiento
         </h2>
         { currentStep === 1 &&
-        <p className="p-2 font-bold text-[#757678]">
+        <p className="p-2 text-xs sm:text-md font-bold text-[#757678]">
           Carga los datos y los archivos correspondientes <br /> para realizar
           la solicitud.
         </p>
@@ -659,14 +659,14 @@ return (
 
     <div className="flex justify-center bg-gray-200">
       <div className="sm:w-[95%]">
-        <div ref={animationParent} className="grid grid-cols-2 space-x-8">
+        <div ref={animationParent} className="grid sm:grid-cols-2 sm:space-x-8">
           {isLoading ? (
             <Loader />
           ) : (
             currentStep === 1 && (
               <>
                 <div ref={animationParent} className="rounded-lg  p-8  bg-white ">
-                  <h3 className="text-black text-2xl font-bold">
+                  <h3 className="text-black text-xl sm:text-2xl font-bold">
                     Datos de la Madre
                   </h3>
 
@@ -742,10 +742,10 @@ return (
                      <div  ref={animationParent} className="flex flex-col gap-2 px-4 w-full">
                   {conyugue.length > 0 && showButton &&
                        <>
-                      <p className="text-red-500 text-center font-semibold mt-3">Existe una conyugue registrada, ¿Deseas utilizar estos datos?</p>
+                      <p className="text-red-500 max-sm:text-xs text-center font-semibold mt-3">Existe una conyugue registrada, ¿Deseas utilizar estos datos?</p>
                       <div className="flex justify-around">
-                          <button onClick={() => handleUseConyugue()} className="bg-[#006084] w-1/3 font-bold text-white rounded-lg p-2 hover:bg-opacity-75">Usar datos existentes</button>
-                          <button onClick={() => setShowButton(false)} className="bg-red-500 w-1/3 font-bold text-white rounded-lg p-2 hover:bg-opacity-75">No</button>
+                          <button onClick={() => handleUseConyugue()} className="bg-[#006084] sm:w-1/3 font-bold text-white rounded-lg p-2 hover:bg-opacity-75">Usar datos existentes</button>
+                          <button onClick={() => setShowButton(false)} className="bg-red-500 sm:w-1/3 font-bold text-white rounded-lg p-2 hover:bg-opacity-75">No</button>
                       </div>
                       </>
                       }   
@@ -806,7 +806,7 @@ return (
                   {/* )} */}
                 </div>
 
-                <div ref={animationParent} className="rounded-lg  p-8   bg-white ">
+                <div ref={animationParent} className="rounded-lg max-sm:mt-3  p-8   bg-white ">
                   <h3 className="text-black text-2xl font-bold mb-4">
                     Certificado Médico
                   </h3>
@@ -915,12 +915,12 @@ return (
                           )}
                 </div>
 
-             <div className="flex justify-end pt-6">
+             <div className="flex justify-end max-sm:pb-2 pt-6">
   {disabled ? (
     <p className="font-bold text-red-500">Ya se otorgó un beneficio durante el año actual.</p>
   ) : (  
     <button
-      className="mt-4 bg-[#006084] w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+      className="sm:mt-4 bg-[#006084] w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
       onClick={handleRegisterAfiliate}
     >
       Siguiente
