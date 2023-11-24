@@ -398,6 +398,9 @@ const handleImageUpload = async () => {
         datosAfiliado && currentStep === 1 &&
         <p className="text-red-500 text-xs w-4/5 sm:w-full font-semibold mt-1">Por favor, complete los datos del trabajador antes de continuar.</p>
       }
+      {currentStep === 3 && 
+      <h4 className="text-[#006084] text-xl font-bold">Datos del Empleador</h4>
+      }
         </div>
       
       <form
@@ -747,9 +750,11 @@ const handleImageUpload = async () => {
        
         </>
       )}
+      
   
   {currentStep === 3 && (
 <>
+  
   <div className="mb-4">
     
     <Input

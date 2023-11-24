@@ -52,7 +52,9 @@ const ListBenefits = () => {
     id: idSeccional,
     funcion: "",
     mochila: 0,
-    utiles: 0,   
+    utiles_Jardín: 0,
+    utiles_Primario: 0,
+    utiles_Secundario: 0,   
     talle6:0,
     talle8: 0,
     talle10: 0,
@@ -109,7 +111,7 @@ useEffect(() => {
     setSuccess(false);
     console.log("items", formData);
     if(!selectedSeccionales) return setError('Selecciona una seccional')
-    const fieldsToCheck = ['mochila', 'utiles', 'talle6', 'talle8', 'talle10', 'talle12', 'talle14', 'talle16', 'talle18'];
+    const fieldsToCheck = ['mochila', 'utiles_Jardín', 'utiles_Primario', 'utiles_Secundario', 'talle6', 'talle8', 'talle10', 'talle12', 'talle14', 'talle16', 'talle18'];
 
     if (fieldsToCheck.every(field => formData[field] === 0 || formData[field] === null || formData[field] === undefined || formData[field] === "")) {
       setError('Debes cargar la cantidad de al menos un item para editar el stock');
@@ -517,46 +519,52 @@ const filasFiltradasYOrdenadas = list
              <thead >
                <tr>
               
-                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                 <th className="px-1 2xl:px-3 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                    Provincia
                  </th>
-                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                 <th className="px-1 2xl:px-3 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                    Seccional
                  </th>
-                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                 <th className="px-1 2xl:px-3 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                    Delegación
                  </th>
-                  <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  <th className="px-1 2xl:px-3 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                    Dirección
                  </th>
-                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                 <th className=" py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                    Mochilas
                  </th>   
-                  <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                    Útiles
+                  <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                    Úti.Jardin
+                 </th> 
+                 <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                    Úti.Primario
                  </th>  
-                  <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                 <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                    Úti.Secundario
+                 </th>   
+                  <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                    Talle 6
                  </th>  
-                  <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                    Talle 8
                  </th> 
-                  <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                    Talle 10
                  </th> 
-                  <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                    Talle 12
                  </th> 
-                  <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                    Talle 14
                  </th> 
-                  <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                    Talle 16
                  </th> 
-                  <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                    Talle 18
                  </th>   
-                    <th className="px-2 2xl:px-6 py-3   text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                    <th className="px-1 2xl:px-6 py-3   text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                    Cargar Stock
                  </th>       
 
@@ -578,7 +586,10 @@ const filasFiltradasYOrdenadas = list
                                <td className="px-6 py-3 whitespace-no-wrap">{row.delegacion}</td>
                                 <td className="px-6 py-3 whitespace-no-wrap">{row.direccion}</td>
                                <td className={`px-2 2xl:px-6 py-3 whitespace-no-wrap`}><span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.mochila < 150 ? 'bg-red-400 text-red-500' : ''}`}>{row.mochila}</span></td>
-                                <td className={`px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap`}><span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.utiles < 150 ? 'bg-red-400 text-red-500' : ''}`}>{row.utiles}</span></td>
+                                                               <td className={`px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap`}><span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.utiles_Jardín < 150 ? 'bg-red-400 text-red-500' : ''}`}>{row.utiles_Jardín}</span></td>
+
+                                <td className={`px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap`}><span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.utiles_Primario < 150 ? 'bg-red-400 text-red-500' : ''}`}>{row.utiles_Primario}</span></td>
+                                 <td className={`px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap`}><span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.utiles_Secundario < 150 ? 'bg-red-400 text-red-500' : ''}`}>{row.utiles_Secundario}</span></td>
                   <td className={`px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap`}>
                       <span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.talle6 < 150 ? 'bg-red-400 text-red-500' : ''}`}>
                         {row.talle6}
@@ -970,16 +981,42 @@ const filasFiltradasYOrdenadas = list
           </div>
 
  <div className="mb-3">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="utiles">
-              Útiles
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="utiles_Jardín">
+              Útiles Jardín
             </label>          
             <Input
               className="form-control py-3 w-full"
-              id="utiles"
+              id="utiles_Jardín"
               type="text"
               required
-              name="utiles"
-              value={formData.utiles}
+              name="utiles_Jardín"
+              value={formData.utiles_Jardín}
+             onChange={handleChangeStock}
+              placeholder="Útiles"
+            />
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="utiles_Primario">
+              Útiles Primario
+            </label> 
+                <Input
+              className="form-control py-3 w-full"
+              id="utiles_Primario"
+              type="text"
+              required
+              name="utiles_Primario"
+              value={formData.utiles_Primario}
+             onChange={handleChangeStock}
+              placeholder="Útiles"
+            />
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="utiles_Secundario">
+              Útiles Secundario
+            </label> 
+                <Input
+              className="form-control py-3 w-full"
+              id="utiles_Secundario"
+              type="text"
+              required
+              name="utiles_Secundario"
+              value={formData.utiles_Secundario}
              onChange={handleChangeStock}
               placeholder="Útiles"
             />
@@ -1229,16 +1266,42 @@ const filasFiltradasYOrdenadas = list
           </div>
 
  <div className="mb-3">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="utiles">
-              Útiles
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="utiles_Jardín">
+              Útiles Jardín
             </label>          
             <Input
               className="form-control py-3 w-full"
-              id="utiles"
+              id="utiles_Jardín"
               type="text"
               required
-              name="utiles"
-              value={formData.utiles}
+              name="utiles_Jardín"
+              value={formData.utiles_Jardín}
+             onChange={handleChangeStock}
+              placeholder="Útiles"
+            />
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="utiles_Primario">
+              Útiles Primario
+            </label> 
+                <Input
+              className="form-control py-3 w-full"
+              id="utiles_Primario"
+              type="text"
+              required
+              name="utiles_Primario"
+              value={formData.utiles_Primario}
+             onChange={handleChangeStock}
+              placeholder="Útiles"
+            />
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="utiles_Secundario">
+              Útiles Secundario
+            </label> 
+                <Input
+              className="form-control py-3 w-full"
+              id="utiles_Secundario"
+              type="text"
+              required
+              name="utiles_Secundario"
+              value={formData.utiles_Secundario}
              onChange={handleChangeStock}
               placeholder="Útiles"
             />

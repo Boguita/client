@@ -75,14 +75,14 @@ const descontarStock = async (seccional) => {
     const copyBenefit = {
       
       talles: [], // Aquí puedes incluir la lógica para obtener los talles correctos
-      utiles: 0,
+      utiles: [],
       mochila: 0,
       funcion: 'restar',
     };
 
     // Itera sobre los índices (IDs de familiares) del objeto beneficio
     Object.keys(beneficio).forEach((familiarId) => {
-      const { guardapolvo_confirm, mochila, utiles, guardapolvo } = beneficio[familiarId];
+      const { guardapolvo_confirm, mochila, utiles, guardapolvo, año_escolar } = beneficio[familiarId];
 
       // Verifica si los campos guardapolvo_confirm, mochila y utiles son true para incrementar los valores respectivos
      const incrementValues = {
@@ -93,7 +93,7 @@ const descontarStock = async (seccional) => {
 
       // Incrementa los valores en copyBenefit solo si los campos correspondientes son true
       
-      copyBenefit.utiles += incrementValues.utiles;
+      
       copyBenefit.mochila += incrementValues.mochila;
 
       // Agrega el talle del guardapolvo al array de talles solo si guardapolvo_confirm es true
@@ -104,7 +104,16 @@ const descontarStock = async (seccional) => {
         console.log("Llega este talle",talleGuardapolvo)
         copyBenefit.talles.push("talle"+talleGuardapolvo);        
       }
+
+       if (utiles) {
+        console.log("Utiles contiene esto: ", utiles)
+        const añoEscolar = !año_escolar ? isBeneficioOtorgado(familiarId, "año_escolar") : año_escolar;
+
+        console.log("Llega este talle",año_escolar)
+        copyBenefit.utiles.push("utiles_"+añoEscolar);        
+      }
     });
+    
 
     console.log("esto se envia a descontar", copyBenefit);
     // Realiza la solicitud a la API con el objeto copyBenefit
