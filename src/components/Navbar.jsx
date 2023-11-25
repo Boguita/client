@@ -17,8 +17,10 @@ const Navbar = () => {
   const [fix, setFix] = useState(false)
 
   const handleClick = () => {
+    window.scrollTo(0, 0)
   // Verificar si la ruta actual es "/home"
   if (location.pathname === '/home') {
+    
     // Recargar la página si la ruta es "/home"
     window.location.reload();
   }
@@ -108,7 +110,7 @@ const Navbar = () => {
         <ul className="flex flex-col space-y-5 font-medium justify-between">
 
            <li>
-              <Link onClick={() => window.scrollTo(0, 0)} to="/home" onClick={handleClick}  className={`flex items-center text-center transition duration-75 justify-center p-2 hover:bg-white text-white hover:text-[#006084] bg-[#006084]  rounded-lg `}>
+              <Link to="/home" onClick={handleClick}  className={`flex items-center text-center transition duration-75 justify-center p-2 hover:bg-white text-white hover:text-[#006084] bg-[#006084]  rounded-lg `}>
                    <span className="flex-shrink-0 text-lg">
                   Comenzar
                   </span>
