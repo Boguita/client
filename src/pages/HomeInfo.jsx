@@ -59,7 +59,7 @@ FISICAMENTE LA SIGUIENTE DOCUMENTACION</h3>
     </div>
     </div>
 
-    <div className='flex pb-2 max-md:justify-center md:px-20 md:justify-end items-center md:h-2/3  w-full'>
+    <div className='flex mt-6 pb-6 max-md:justify-center md:px-20 md:justify-end items-center md:h-2/3  w-full'>
     <button 
               onClick={() => {
                 // Redirigir a la ruta correspondiente si el usuario está autenticado
@@ -69,9 +69,12 @@ FISICAMENTE LA SIGUIENTE DOCUMENTACION</h3>
                   
                  
               }}
-             className='mt-4 bg-[#006084] w-40 font-bold text-white rounded-lg p-1 hover:bg-opacity-75'>
+             className='mt-4 bg-[#006084] w-48 font-bold text-white rounded-lg p-2 hover:bg-opacity-75'>
                COMENZAR
              </button>
+    </div>
+    <div className='w-8 h-8'>
+            
     </div>
   </div>
   )

@@ -66,21 +66,21 @@ const Login = () => {
 
            
             <div className="flex flex-col justify-center h-full items-center">
-            <h2 className="text-white font-bold text-xl sm:text-lg md:text-xl lg:text-xl xl:text-2xl ">Ingreso al Portal de Administradores</h2>      
+            <h2 className="text-white font-bold max-sm:mt-8 text-xl sm:text-lg md:text-xl lg:text-xl xl:text-2xl ">Ingreso al Portal de Administradores</h2>      
             <h2 className="text-white font-bold text-4xl md:text-5xl lg:text-6xl xl:text-8xl sm:text-7xl">BIENVENIDO</h2>
-            <p className="w-[50%] text-center py-2 text-gray-100 font-semibold text-l">Copyright © 2023 UATRE </p>
+            <p className="sm:w-[50%] text-center py-2 text-gray-100 font-semibold text-l">Copyright © 2023 UATRE </p>
             </div>
           </div>
      
 
-        <div className="row flex flex-col w-full sm:w-full  md:w-[50%] xl:w-[50%] 2xl:w-[50%] lg:w-[50%] h-full justify-center items-center">         
+        <div className="row max-sm:justify-evenly flex flex-col w-full sm:w-full  md:w-[50%] xl:w-[50%] 2xl:w-[50%] lg:w-[50%] h-full sm:justify-center sm:items-center">         
              
-              
+               
 
-                <div className="form-container h-[8rem]">
+                <div className="form-container sm:h-[8rem]">
 
-                  <div className="flex flex-col items-center p-8 ">
-                     <h3 className="title font-extrabold text-3xl md:text-5xl lg:text-6xl xl:text-5xl sm:text-7xl text-[#006084]">Ingresar</h3>
+                 <div className="flex flex-col items-center max-sm:pb-1 sm:p-8 ">
+                     <h3 className="title font-extrabold text-3xl max-sm:!-mt-20 md:text-5xl lg:text-6xl xl:text-5xl sm:text-7xl text-[#006084]">Ingresar</h3>
                   </div>
                  
                     <form ref={yourRef} className="form-horizontal">
@@ -120,8 +120,8 @@ const Login = () => {
                           <span className="forgot-password">
                              <Link className="hi" to="/forgot-password">He olvidado mi contraseña</Link>
                           </span>
-                          <span className="flex ">
-                             <Link className="flex justify-center text-[#787779] " to="/register">¿Todavia no tienes una cuenta?<strong className="text-[#006084] font-bold ml-1 text-[15px]"> Regístrate.</strong></Link>
+                          <span className="flex pb-8 ">
+                             <Link onClick={() => window.scrollTo(0, 0)} className="flex justify-center text-[#787779] " to="/register">¿Todavia no tienes una cuenta?<strong className="text-[#006084] font-bold ml-1 text-[15px]"> Regístrate.</strong></Link>
                           </span>
                     </form>
                 </div>

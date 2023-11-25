@@ -93,7 +93,7 @@ const handleAffiliateDataRequest = async () => {
           <p className='text-gray-500 font-semibold mt-4 md:mt-2'>Recuerda estar atento con la informacion <br/> proporcionada por el sistema.</p>
           
         </div>
-       <div className='flex flex-col md:flex-row pt-20'>
+       <div className='flex flex-col md:flex-row max-sm:pt-8 sm:pt-20'>
 
 
         <div className='flex flex-col justify-around pr-8 md:flex-row gap-2 md:gap-4'>          
@@ -118,7 +118,7 @@ const handleAffiliateDataRequest = async () => {
               : <button 
               onClick={() => {
                 // Redirigir a la ruta correspondiente si el usuario está autenticado
-                
+                  window.scrollTo(0, 0)
                   navigate('/luna-de-miel', {
                     state: { dni }, // Pasamos el DNI como parámetro en el state
                   }); // Agregamos /beneficios/ al inicio de la ruta
@@ -202,7 +202,7 @@ Cada año, al comienzo del ciclo escolar, desde el gremio se distribuyen guardap
                   navigate('/kit-escolar', {
                     state: { dni }, // Pasamos el DNI como parámetro en el state
                   }); // Agregamos /beneficios/ al inicio de la ruta
-                
+                window.scrollTo(0, 0)
                   // Si no está autenticado, redirigir al inicio de sesión
                  
               }}

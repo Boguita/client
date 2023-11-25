@@ -166,7 +166,7 @@ setInputs((prev) => ({ ...prev, delegacion: "" }));
 
 
   return (
-    <div className="flex flex-col  min-h-screen w-screen" style={{ backgroundImage:`url(${BgRegister})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+    <div className="flex flex-col  sm:min-h-screen w-screen" style={{ backgroundImage:`url(${BgRegister})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <div className="w-full  h-full" style={{ backgroundImage: 'linear-gradient(rgba(235, 235, 235, 0.7), rgba(235, 235, 235, 0.7))' }}>
         <div className="p-5 bg-[#006084]">
           <div onClick={()=> {navigate("/login")}} className="logo-register cursor-pointer">
@@ -199,7 +199,7 @@ setInputs((prev) => ({ ...prev, delegacion: "" }));
                 <div className="">
                   <Input
                     required
-                    type="text"
+                    type="number"
                     placeholder="DNI"
                     name="dni"
                     onChange={handleChange}
@@ -210,7 +210,7 @@ setInputs((prev) => ({ ...prev, delegacion: "" }));
                  <div className="">
                   <Input
                     required
-                    type="text"
+                    type="number"
                     placeholder="CUIT/CUIL/CDI"
                     name="cuit"
                     onChange={handleChange}
@@ -351,7 +351,7 @@ setInputs((prev) => ({ ...prev, delegacion: "" }));
                 <div className="">
                   <Input
                     required
-                    type="text"
+                    type="number"
                     placeholder="Teléfono"
                     name="tel"
                     onChange={handleChange}
@@ -401,13 +401,13 @@ setInputs((prev) => ({ ...prev, delegacion: "" }));
 
                {currentStep === 2 && (
                  <>
-                 <div className="flex flex-col h-[40rem] justify-center items-center space-y-4">
-                  <BsCheck2Circle className="text-[8rem] text-[#006084]"/>
-                  <p className="font-extrabold text-3xl text-[#006084]">Gracias por registrarte.</p>
-                  <p className="font-bold text-xl text-gray-500">Muy pronto confirmaremos tu usuario por mail.</p>
+                 <div className="flex flex-col h-[25em] sm:h-[40rem] justify-center items-center space-y-4">
+                  <BsCheck2Circle className="text-8xl sm:text-[8rem] text-[#006084]"/>
+                  <p className="font-extrabold max-sm:text-center text-3xl text-[#006084]">Gracias por registrarte.</p>
+                  <p className="font-bold max-sm:text-center text-xl text-gray-500">Muy pronto confirmaremos tu usuario por mail.</p>
 
                   </div>
-                  <div className="justify-center items-center flex">
+                  <div className="justify-center pb-20 items-center flex">
               <button className="btn  w-1/3" onClick={() => navigate('/login')}><span>VOLVER</span></button>
                 {err && <p>{err}</p>}
                 </div>

@@ -142,6 +142,7 @@ const descontarStock = async (seccional) => {
         if(familiarEnBeneficios && (familiarEnBeneficios.año_escolar && familiarEnBeneficios.guardapolvo)) {
           console.log("CONTENIDO DE AÑO Y TALLE", familiarEnBeneficios.año_escolar, familiarEnBeneficios.guardapolvo);
           updateAñoyTalle();
+          
         return familiar.mochila || familiar.utiles || familiar.guardapolvo_confirm;
         } else {
         return true;
@@ -153,7 +154,7 @@ const descontarStock = async (seccional) => {
         const familiarEnBeneficios = beneficiosOtorgados.find(
           (beneficio) => beneficio.familiar_id === familiarId
         );
-             if (familiarEnBeneficios && familiarEnBeneficios.año_escolar) {
+             if (familiarEnBeneficios && familiarEnBeneficios.año_escolar ) {
         return true; // Ya existe un año escolar en beneficiosOtorgados
       } else {
         // Si no existe, verifica si el familiar en beneficio tiene un año escolar seleccionado
@@ -170,19 +171,25 @@ const descontarStock = async (seccional) => {
     (beneficio) => beneficio.familiar_id === familiarId
   );
 
+  console.log('Familiar En Beneficios:', familiarEnBeneficios);
+
   if (familiarEnBeneficios && familiarEnBeneficios.guardapolvo) {
+    console.log('Primera comprobacion', familiarEnBeneficios.guardapolvo);
+    
     return true; // Ya existe un talle de guardapolvo en beneficiosOtorgados
   } else {
-    // Si no existe, verifica si el familiar en beneficio tiene un talle seleccionado
     const familiarEnBeneficio = beneficio[familiarId];
+    console.log('Familiar En Beneficio:', familiarEnBeneficio);
+
     if (familiarEnBeneficio && familiarEnBeneficio.guardapolvo) {
+      console.log('Segunda comprobacion', familiarEnBeneficio.guardapolvo);
       return true; // El familiar en beneficio tiene un talle seleccionado
     } else {
+      console.log('No hay talle de guardapolvo seleccionado');
       return false; // No hay talle de guardapolvo seleccionado
     }
   }
 });
-    
   
 
       if (!hasSelectedTalle) {
@@ -211,8 +218,10 @@ const descontarStock = async (seccional) => {
 
     
     }
+    
 
     setError(null); // Limpiar cualquier error previo
+    
     setCurrentStep(currentStep + 1);
   };
 
@@ -516,8 +525,9 @@ const updateAñoyTalle = () => {
 
   selectedFamiliares.forEach((familiarId) => {
     const familiar = updatedBeneficio[familiarId];
-    familiar.año_escolar = isBeneficioOtorgado(familiarId, "año_escolar");
-    familiar.guardapolvo = isBeneficioOtorgado(familiarId, "guardapolvo_talle");
+    console.log("wtf que", familiar)
+    familiar.año_escolar !== "" ? familiar.año_escolar : familiar.año_escolar = isBeneficioOtorgado(familiarId, "año_escolar");
+    familiar.guardapolvo !== "" ? familiar.guardapolvo :   familiar.guardapolvo = isBeneficioOtorgado(familiarId, "guardapolvo_talle");
 
   }
   );
@@ -711,23 +721,29 @@ const comprobarStockTalle = (talle) => {
 
 
   return (
-    <div className="bg-gray-200 h-screen w-screen sm:pl-80 max-sm:p-2 sm:ml-5">
+    <div className="bg-gray-200 h-screen w-screen sm:pl-80 max-sm:p-3 sm:ml-5">
       <div className="flex mb-10 mt-32 h-20">
         <img className=" w-12 h-12" src={Libro}></img>
         <div className="flex flex-col pl-4">
           <h2 className=" text-black text-2xl sm:text-3xl font-extrabold">
             Solicitar Beneficio: Kit Escolar
           </h2>
-          { currentStep < 3 &&
-          <p className="max-sm:text-xs py-1 font-bold text-[#757678]">
+          { currentStep < 2 &&
+          <p className="max-sm:text-xs py-2 font-bold text-[#757678]">
             Elige los hijos a los que quieras otorgarle un beneficio <br /> o
             añade uno si es necesario{" "}
+          </p>
+          }
+          { currentStep === 2 &&
+          <p className="max-sm:text-xs py-2 font-bold text-[#757678]">
+            Elige obligatoriamente el talle y el año escolar para cada hijo. Luego elije que quieres entregarle<br />
+            a cada uno si es necesario{" "}
           </p>
           }
         </div>
       </div>
 
-      <div className="flex  justify-center bg-gray-200">
+      <div className="flex max-sm:py-4  justify-center bg-gray-200">
         <div
           ref={animationParent}
            className=" sm:w-2/4 min-h-[35em] bg-white flex p-4 rounded-lg"
@@ -897,13 +913,13 @@ const comprobarStockTalle = (talle) => {
               {selectedFamiliares.map((familiarId) => {
                 const familiar = familiares.find((f) => f.id === familiarId);
                 return (
-                  <div className="pt-10 px-10  " key={familiar.id}>
+                  <div className="pt-10 px-2 sm:px-10  " key={familiar.id}>
                     <h4 className="text-black sm:text-lg capitalize w-max pb-1 font-semibold">
                       {familiar.name}:
                     </h4>
                     <h4 className="text-xs text-[#006084] ">SELECCIONÁ TALLE Y AÑO ESCOLAR DEL HIJO/A</h4>
                     <div className="flex flex-col justify-between">
-                      <div className="flex justify-between max-sm:text-sm items-center border-l-4 border-[#006084] bg-gray-100 mt-2 px-8 h-10">
+                      <div className="flex justify-between  items-center border-l-4 border-[#006084] bg-gray-100 mt-2 px-8 h-10">
                         <label className="font-semibold  text-gray-600">
                           Año Escolar
                         </label>
@@ -929,7 +945,7 @@ const comprobarStockTalle = (talle) => {
                       </div>
 
                           <div
-                        className={`flex items-center justify-between max-sm:text-sm border-l-4 ${
+                        className={`flex items-center justify-between  border-l-4 ${
                           isBeneficioOtorgado(familiar.id, "guardapolvo")
                             ? "border-red-700"
                             : "border-[#006084]"
@@ -977,7 +993,7 @@ const comprobarStockTalle = (talle) => {
 
                                 <h4 className="max-sm:text-xs sm:text-sm text-[#006084] mt-2 ">SELECCIONA ELEMENTOS A ENTREGAR</h4>
                       <div
-                        className={`flex max-sm:text-sm items-center justify-between border-l-4 ${
+                        className={`flex  items-center justify-between border-l-4 ${
                           isBeneficioOtorgado(familiar.id, "mochila")
                             ? "border-red-700"
                             : "border-[#006084]"
@@ -1030,7 +1046,7 @@ const comprobarStockTalle = (talle) => {
                       </p> */}
 
                       <div
-                        className={`flex items-center max-sm:text-sm justify-between border-l-4 ${
+                        className={`flex items-center  justify-between border-l-4 ${
                           isBeneficioOtorgado(familiar.id, "utiles")
                             ? "border-red-700"
                             : "border-[#006084]"
@@ -1082,7 +1098,7 @@ const comprobarStockTalle = (talle) => {
                       </p> */}
 
                        <div
-                        className={`flex items-center max-sm:text-sm justify-between border-l-4 ${
+                        className={`flex items-center  justify-between border-l-4 ${
                           isBeneficioOtorgado(familiar.id, "guardapolvo")
                             ? "border-red-700"
                             : "border-[#006084]"
@@ -1142,7 +1158,7 @@ const comprobarStockTalle = (talle) => {
                 );
               })}
               {error && <p className="text-red-500">{error}</p>}
-              <div className="flex w-full h-2/6 justify-between items-end pt-6 px-4">
+              <div className="flex w-full sm:h-2/6 justify-between items-end pt-6 px-4">
                 <button
                   className="mt-4 bg-gray-500 py-2 hover:bg-gray-900 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
                   onClick={handleBackStep}
@@ -1210,7 +1226,7 @@ const comprobarStockTalle = (talle) => {
                   </div>
                 );
               })}
-              <div className="flex w-full h-2/6 justify-between items-end pt-6 px-4">
+              <div className="flex w-full sm:h-2/6 justify-between items-end pt-6 px-4">
                 <button
                   className="mt-4 bg-gray-500 py-2 hover:bg-gray-900 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
                   onClick={handleBackStep}
@@ -1259,10 +1275,23 @@ const comprobarStockTalle = (talle) => {
                     <p className="font-extrabold text-3xl text-[#006084]">
                       El beneficio ha sido registrado con éxito.
                     </p>
-                    
-                    <p className="font-bold text-lg text-center text-gray-500">
+                    {Object.values(beneficio)
+    .filter((beneficioIndividual) => selectedFamiliares.includes(beneficioIndividual.familiar_id))
+    .every((beneficioIndividual) => 
+      (beneficioIndividual.guardapolvo_confirm || isBeneficioOtorgado(beneficioIndividual.familiar_id, "guardapolvo_confirm")) && (beneficioIndividual.mochila || isBeneficioOtorgado(beneficioIndividual.familiar_id, "mochila")) && (beneficioIndividual.utiles || isBeneficioOtorgado(beneficioIndividual.familiar_id, "utiles"))
+    ) ?     
+       <p className="font-bold text-lg text-center text-gray-500"> 
+                      Por favor, haga entrega de los items que seleccionó.
+                    </p>
+                    :
+                      <p className="font-bold text-lg text-center text-gray-500">
                       Por favor, haga entrega de los items que seleccionó e informe al afiliado que un representante se pondra en contacto para retirar el resto si correspondiere. Recuerde que si no seleccionó ningun item quedaran pendientes de retiro.
                     </p>
+                 
+
+                    }
+                    
+              
 
                     <div>
                       <h3 className="font-bold text-lg text-[#006084]">
@@ -1328,40 +1357,35 @@ const comprobarStockTalle = (talle) => {
           )}
 
           {currentStep === 4 && (
-  <div className="w-full space-y-6">
-    {selectedFamiliares.map((familiarId) => {
-      const familiar = familiares.find((f) => f.id === familiarId);
-      const beneficioIndividual = beneficio[familiarId]; // Obtener el beneficio individual para este familiar
+  <div className="w-full space-y-6">   
+  
 
-      return (
-        <div key={familiarId}>
+        <div>
           <h3 className="font-bold text-3xl text-black">
             Paso 4: Estado de Carga del Beneficio.
           </h3>
           <p className="font-semibold mt-8 text-lg text-[#006084]">
-     {
-  (
-    (beneficioIndividual.mochila || isBeneficioOtorgado(familiar.id, "mochila")) &&
-    (beneficioIndividual.utiles || isBeneficioOtorgado(familiar.id, "utiles")) &&
-    (beneficioIndividual.guardapolvo_confirm || isBeneficioOtorgado(familiar.id, "guardapolvo"))
-  )
-    ? "Debes solicitar al trabajador que firme el recibo por los ítems que se entregan en el momento."
-    : "Debes solicitar al trabajador que firme el recibo por los ítems que se entregan en el momento, los que no seleccionaste quedarán pendientes para retirar."
-}
+         {Object.values(beneficio)
+    .filter((beneficioIndividual) => selectedFamiliares.includes(beneficioIndividual.familiar_id))
+    .every((beneficioIndividual) => 
+      (beneficioIndividual.guardapolvo_confirm || isBeneficioOtorgado(beneficioIndividual.familiar_id, "guardapolvo_confirm")) && (beneficioIndividual.mochila || isBeneficioOtorgado(beneficioIndividual.familiar_id, "mochila")) && (beneficioIndividual.utiles || isBeneficioOtorgado(beneficioIndividual.familiar_id, "utiles"))
+    ) 
+                ? "Debes solicitar al trabajador que firme el recibo por los ítems que se entregan en el momento."
+                :  Object.values(beneficio)
+    .filter((beneficioIndividual) => selectedFamiliares.includes(beneficioIndividual.familiar_id))
+    .every((beneficioIndividual) => 
+      (!beneficioIndividual.guardapolvo_confirm && isBeneficioOtorgado(beneficioIndividual.familiar_id, "guardapolvo_confirm") === false) && (!beneficioIndividual.mochila && isBeneficioOtorgado(beneficioIndividual.familiar_id, "mochila") === false) && (!beneficioIndividual.utiles && isBeneficioOtorgado(beneficioIndividual.familiar_id, "utiles") === false)
+    )  ? "Debes informar al afiliado que sus items van a quedar pendientes de entrega." : "Debes solicitar al trabajador que firme el recibo por los ítems que se entregan en el momento, los items que NO seleccionaste quedarán como pendientes para retirar."
+              }
 
 
           </p>
-          <div className="flex flex-col w-full mt-4 justify-center items-center px-4">
-            {beneficioIndividual.mochila === false &&
-            beneficioIndividual.utiles === false &&
-            beneficioIndividual.guardapolvo_confirm === false ? (
-              <button
-                className="mt-4 bg-[#0E6F4B] py-2 hover:bg-gray-900 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
-                onClick={handleBeneficioOtorgado}
-              >
-                Confirmar
-              </button>
-            ) : (
+          <div className="flex flex-col w-full mt-4 justify-center items-center sm:px-4">
+            {Object.values(beneficio)
+    .filter((beneficioIndividual) => selectedFamiliares.includes(beneficioIndividual.familiar_id))
+    .some((beneficioIndividual) => 
+      beneficioIndividual.guardapolvo_confirm || beneficioIndividual.mochila || beneficioIndividual.utiles
+    ) ? (
               <>
                 <Files
                   label="Subir foto de RECIBO DE ENTREGA"
@@ -1375,11 +1399,16 @@ const comprobarStockTalle = (talle) => {
                   Volver
                 </button>
               </>
+            ) : (
+              <button
+                className="mt-4 bg-[#0E6F4B] py-2 hover:bg-gray-900 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                onClick={handleBeneficioOtorgado}
+              >
+                Confirmar
+              </button>
             )}
           </div>
         </div>
-      );
-    })}
   </div>
 )}
 

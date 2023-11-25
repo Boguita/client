@@ -14,10 +14,11 @@ export const AuthContexProvider = ({ children }) => {
  const login = async (inputs, setError) => {
     try {
       const res = await axios.post(
-        "https://backuatrebeneficios.galgoproductora.com/api/auth/login",
+        "http://localhost:8800/api/auth/login",
         inputs,
         { withCredentials: true } // Asegúrate de incluir esta opción para enviar las cookies
       );
+      console.log(res.data)
       if(res.status === 200){
       setCurrentUser(res.data);
       }
@@ -28,8 +29,9 @@ export const AuthContexProvider = ({ children }) => {
   
   const loginAdmin = async (inputs,setError) => {
     try {
-      const res = await axios.post("https://backuatrebeneficios.galgoproductora.com/api/auth/login-aubenefits", inputs, 
+      const res = await axios.post("http://localhost:8800/api/auth/login-aubenefits", inputs, 
       { withCredentials: true });
+      console.log(res.data)
       if(res.status === 200){
       setCurrentUser(res.data);
       }
@@ -41,7 +43,7 @@ export const AuthContexProvider = ({ children }) => {
   const logout = async () => {
     
     try {
-      await axios.post("https://backuatrebeneficios.galgoproductora.com/api/auth/logout");
+      await axios.post("http://localhost:8800/api/auth/logout");
       setCurrentUser(null);
     } catch (error) {
       console.log(error);

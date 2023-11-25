@@ -421,6 +421,7 @@ const handleAffiliateDataRequest = async (dniparams) => {
     setBeneficio(res.data);
     
      navigate(`/beneficios?dni=${dni}`);
+      window.scrollTo(0, 0);
   } catch (error) {
     console.log(error.response.data.message);
   }
@@ -630,7 +631,7 @@ const handleRecibo = async () => {
     <div  className="h-full mt-20 py-2 md:pl-80 w-full ">
       <div className='flex flex-col p-2 md:p-0 justify-center'>        
         <h1 className="mt-4 text-2xl max-md:text-center md:text-3xl font-extrabold ">{affiliateData ? 'Perfil del Trabajador: Revisar Datos' : 'INGRESA EL NUMERO DE DNI DEL TRABAJADOR'}</h1>
-        <p className='text-gray-500 font-semibold md:mt-4'>{affiliateData ? '' : 'Ingrese un número de DNI para comenzar.'}</p>
+        <p className='text-gray-500 max-sm:text-center font-semibold md:mt-4'>{affiliateData ? '' : 'Ingrese un número de DNI para comenzar.'}</p>
       </div>
 
  
@@ -1219,11 +1220,11 @@ const handleRecibo = async () => {
         </div>
       ) :  (
         // Mostrar campo de búsqueda si no hay datos de afiliado
-        <div ref={animationParent} className="flex flex-col h-full p-8 mt-36 md:mt-48 justify-center items-center">
+        <div ref={animationParent} className="flex flex-col h-full p-8 max-sm:mt-10 sm:mt-36 md:mt-48 justify-center items-center">
           <div ref={animationParent} className='flex flex-col w-full max-md:p-6 md:w-[40rem] h-[14rem] md:items-center justify-center md:align-middle rounded-lg bg-white'>
-          <label className='flex font-bold w-full mt-[-15px] max-md:justify-center md:pl-24 pb-2' htmlFor='dni'>DNI</label>
+          <label className='flex font-bold w-full sm:mt-[-15px] max-md:justify-center md:pl-24 pb-2' htmlFor='dni'>DNI</label>
           <Input
-            type="text"
+            type="number"
             name='dni'
             value={dni}
             onChange={handleDniChange}

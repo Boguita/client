@@ -25,10 +25,10 @@
     /* Cambiar a dirección de columna */
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to top, white 50%, transparent 50%),
+    background: linear-gradient(to top, white 60%, transparent 50%),
       linear-gradient(#006184ad, #006184be),
       url('../assets/img/navbg.jpg') center center no-repeat;
-    background-size: 40rem;
+    background-size: cover;
     background-position: top;
   }
 }

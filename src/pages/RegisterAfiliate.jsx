@@ -97,19 +97,24 @@ const RegisterAfiliate = () => {
  
 
   const handleNextStep = async () => {
+     
 
     if (!areAllFieldsComplete()) {
       setError('Por favor complete todos los campos');
       return;
     }
-
+  
+          // Desplazar a la parte superior después de cambiar el paso
+  window.scrollTo(0, 0);
     if (currentStep === 1) {
       await comprobarAfiliado();
       return;
     }
 
+
   setError(null); // Limpiar cualquier error previo
   setCurrentStep(currentStep + 1);
+  
 };
 
 const handleBackStep = () => {
@@ -124,6 +129,7 @@ const comprobarAfiliado = async () => {
   if (res.status === 200) {
     setError('Ya existe un afiliado con ese DNI');
   } else {
+
     setCurrentStep(currentStep + 1);
     setError(null);
   }
@@ -132,6 +138,12 @@ const comprobarAfiliado = async () => {
 useEffect(() => {
   console.log(formData);
 }, [formData]);
+
+useEffect(() => {
+  console.log(currentStep);
+  window.scrollTo(0, 0);
+}, [currentStep]);
+
 
 
 
@@ -216,6 +228,8 @@ useEffect(() => {
       setIsLoading(false);
       return;
     }
+            // Desplazar a la parte superior después de cambiar el paso
+  window.scrollTo(0, 0);
 
     const formDataToSend = new FormData();
      formDataToSend.append('funcion', formData.funcion);
@@ -387,16 +401,16 @@ const handleImageUpload = async () => {
   };
 
    return (
-    <div className="bg-gray-200 flex justify-center mt-36 h-screen w-screen sm:pl-80 sm:ml-5">
+    <div className="bg-gray-200 flex justify-center pb-4 mt-36 h-screen w-screen sm:pl-80 sm:ml-5">
       
-   <div className="flex flex-col pt-10 rounded-3xl items-center h-[110%] w-[95%] sm:w-2/3 sm:h-2/3 bg-white">
+   <div className="flex flex-col pt-10 rounded-3xl items-center  max-sm:h-max w-[95%] sm:w-2/3 sm:h-2/3 bg-white">
     <div ref={animationParent} className="flex flex-col justify-center items-center h-20">
         <h2 className="text-[#006084] text-2xl sm:text-4xl font-bold">Registro del Trabajador</h2>
         {!datosAfiliado && currentStep === 1 ?
-        <p className="text-red-500 text-xs w-4/5 sm:w-full font-semibold mt-1">No existe afiliado registrado con ese DNI, para continuar carga los datos correspondientes.</p>
+        <p className="text-red-500 text-xs w-4/5 text-center sm:w-full font-semibold mt-1">No existe afiliado registrado con ese DNI, para continuar carga los datos correspondientes.</p>
         :
         datosAfiliado && currentStep === 1 &&
-        <p className="text-red-500 text-xs w-4/5 sm:w-full font-semibold mt-1">Por favor, complete los datos del trabajador antes de continuar.</p>
+        <p className="text-red-500 text-xs text-center w-4/5 sm:w-full font-semibold mt-1">Por favor, complete los datos del trabajador antes de continuar.</p>
       }
       {currentStep === 3 && 
       <h4 className="text-[#006084] text-xl font-bold">Datos del Empleador</h4>
@@ -425,7 +439,7 @@ const handleImageUpload = async () => {
         <div className="mb-4">
           
           <Input
-            type="text"
+            type="number"
             name="dni"
             placeholder={"DNI"}
             pattern="[0-9]*"
@@ -453,16 +467,18 @@ const handleImageUpload = async () => {
                     
                   </select>
                 </div>
-<div className="relative mb-4">
+<div className="relative items-center mb-4">
+    
   <Input
     type="date"
     name="fecha_de_nacimiento"
     required
     value={formData.fecha_de_nacimiento}
     onChange={handleChange}
-    className="w-full focus:text-[#808080] py-2 px-3"
+    className="sm:w-full  max-sm:h-11 focus:text-[#808080] sm:py-2 sm:px-3 "
   />
-  <label className="absolute left-0 bottom-full text-gray-600 text-xs mt-1 opacity-0">
+  
+  <label className="absolute left-0 bottom-full text-gray-600 text-xs mt-1 sm:opacity-0">
     Fecha de nacimiento del trabajador
   </label>
   
@@ -482,7 +498,7 @@ const handleImageUpload = async () => {
             onChange={handleChange}
             className=" bg-gray-200 pl-3 text-base font-semibold focus:outline-none w-full "
           >
-            <option value="">Seleccione</option>
+            <option value="">Sexo</option>
             <option value="Masculino">Masculino</option>
             <option value="Femenino">Femenino</option>
             <option value="Otro">Otro</option>
@@ -602,7 +618,8 @@ const handleImageUpload = async () => {
           />
         </div>
 
-         <div   className="flex justify-between pt-10">
+        <div className="flex justify-between  sm:w-[210%] max-sm:pt-4 sm:pt-10">
+         <div className="pb-8"  >
             <button
                type="button"
                 className="bg-[#23A1D8] hover:bg-[#006084] text-white font-bold py-2 px-4 rounded"
@@ -612,13 +629,8 @@ const handleImageUpload = async () => {
               </button>
              
           {err && <p className="text-red-500">{err}</p>}
-              
-             
             </div>
-
-             <div className="flex justify-end sm:pt-10">
-           
-          
+             <div className="pb-8"  >
               <button
                type="button"
                 className="bg-[#23A1D8] hover:bg-[#006084] text-white font-bold py-2 px-4 rounded"
@@ -628,13 +640,18 @@ const handleImageUpload = async () => {
               </button>
              
             </div>
+            </div>
+           
         </>
+        
+
       )}
+      
 
 
       {currentStep === 2 && (
         <>
-       <div ref={animationParent} className="flex flex-col justify-center items-center bg-gray-200 rounded-xl min-h-[10rem] w-[90%] p-2">
+       <div ref={animationParent} className="flex flex-col sm:justify-center items-center max-sm:mb-3 bg-gray-200 rounded-xl min-h-[10rem] sm:w-[90%] p-2">
   <p className="font-bold">Adjuntar DNI Frente:</p>
   <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
     La imagen debe tener buena iluminación y apreciarse los datos completos.
@@ -662,7 +679,7 @@ const handleImageUpload = async () => {
     ))}
 </div>
 
- <div className="flex flex-col justify-center items-center bg-gray-200 rounded-xl min-h-[10rem] w-[90%] p-2">
+ <div className="flex flex-col justify-center items-center max-sm:mb-3 bg-gray-200 rounded-xl min-h-[10rem] sm:w-[90%] p-2">
   <p className="font-bold">Adjuntar DNI Dorso:</p>
   <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
     La imagen debe tener buena iluminación y apreciarse los datos completos.
@@ -721,8 +738,9 @@ const handleImageUpload = async () => {
 </div>   */}
     
       
-         <div className="flex justify-between pt-10">
-              <button
+         <div className="flex justify-between  sm:w-[210%] max-sm:pt-4 sm:pt-10">
+         <div className="pb-6"  >
+            <button
                type="button"
                 className="bg-[#23A1D8] hover:bg-[#006084] text-white font-bold py-2 px-4 rounded"
                 onClick={handleBackStep}
@@ -731,13 +749,8 @@ const handleImageUpload = async () => {
               </button>
              
           {err && <p className="text-red-500">{err}</p>}
-              
-             
             </div>
-
-             <div className="flex justify-end pt-10">
-             
-          
+             <div className="pb-6"  >
               <button
                type="button"
                 className="bg-[#23A1D8] hover:bg-[#006084] text-white font-bold py-2 px-4 rounded"
@@ -746,6 +759,7 @@ const handleImageUpload = async () => {
                 Siguiente
               </button>
              
+            </div>
             </div>
        
         </>
@@ -807,7 +821,7 @@ const handleImageUpload = async () => {
   </div>
   
 
-    <div className="flex flex-col justify-center items-center bg-gray-200 rounded-xl min-h-[10rem] w-[90%] p-2">
+    <div className="flex flex-col justify-center items-center bg-gray-200 rounded-xl min-h-[10rem] max-sm:mb-4 sm:w-[90%] p-2">
   <p className="font-bold">Adjuntar Recibo de Sueldo:</p>
   <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
     Revisar que coincida con los datos del trabajador.
@@ -840,7 +854,7 @@ const handleImageUpload = async () => {
    {isLoading ? (
   <Loader /> // Muestra el componente de carga si isLoading es true
 ) : (
-  <div className="flex flex-col items-end justify-end">
+  <div className="flex flex-col items-center sm:items-end justify-end">
   <button
     className="bg-[#23A1D8] hover:bg-[#006084] text-white font-bold py-2 px-4 rounded"
     onClick={handleSubmit}
@@ -858,10 +872,10 @@ const handleImageUpload = async () => {
       {currentStep === 4 && (
     <>
 
-    <div className="flex flex-col h-full w-full justify-end items-center space-y-4">
-                  <BsCheck2Circle className="text-[8rem] text-[#006084]"/>
-                  <p className="font-extrabold text-3xl text-[#006084]">El afiliado ha sido registrado.</p>
-                  <p className="font-bold text-xl text-gray-500">Por favor, verifique si se cargaron los datos correctamente.</p>
+    <div className="flex flex-col h-full w-full sm:justify-end items-center space-y-4">
+                  <BsCheck2Circle className="text-8xl sm:text-[8rem] text-[#006084]"/>
+                  <p className="font-extrabold text-2xl sm:text-3xl text-[#006084]">El afiliado ha sido registrado.</p>
+                  <p className="font-bold text-lg max-sm:w-5/6 max-sm:pb-4 text-center sm:text-xl text-gray-500">Por favor, verifique si se cargaron los datos correctamente.</p>
 
                   </div>
                   <div className="h-full w-full items-end pb-10 justify-center flex">
@@ -873,7 +887,7 @@ const handleImageUpload = async () => {
         )}
       
       </div>
-      
+ 
     </div>
   );
 };

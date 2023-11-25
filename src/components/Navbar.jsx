@@ -47,7 +47,7 @@ const Navbar = () => {
       <div className={`fixed top-0 left-0 w-full z-40  px-4 py-2 bg-[#23A1D8] text-white ${fix ? 'shadow-md' : ''}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <Link to="/homeInfo">
+            <Link onClick={() => window.scrollTo(0, 0)} to="/homeInfo">
             <img src={Logo} className="h-12  mr-2" alt="Logo" />
             </Link>
             {/* <span className="text-lg font-semibold">Nombre de la Aplicación</span> */}
@@ -100,7 +100,7 @@ const Navbar = () => {
     >
       
       <div className="h-full w-full ">
-       <Link to="/homeInfo" className={`flex items-center p-2 rounded-lg dark:text-white   ${
+       <Link onClick={() => window.scrollTo(0, 0)} to="/homeInfo" className={`flex items-center p-2 rounded-lg dark:text-white   ${
               location.pathname === '/dashboard' ? 'text-blue-500' : 'text-gray-700'
             }`}>
           <img src={Logo} className="h-full mt-6 mb-6 mr-3 sm:h-full w-full" alt="UATRE Logo" />
@@ -108,7 +108,7 @@ const Navbar = () => {
         <ul className="flex flex-col space-y-5 font-medium justify-between">
 
            <li>
-              <Link to="/home" onClick={handleClick}  className={`flex items-center text-center transition duration-75 justify-center p-2 hover:bg-white text-white hover:text-[#006084] bg-[#006084]  rounded-lg `}>
+              <Link onClick={() => window.scrollTo(0, 0)} to="/home" onClick={handleClick}  className={`flex items-center text-center transition duration-75 justify-center p-2 hover:bg-white text-white hover:text-[#006084] bg-[#006084]  rounded-lg `}>
                    <span className="flex-shrink-0 text-lg">
                   Comenzar
                   </span>
@@ -159,7 +159,7 @@ const Navbar = () => {
         
           <ul className="flex flex-col space-y-5 font-medium mt-auto"> {/* mt-auto para separar estos elementos */}
         <li>
-          <Link to="/soporte" className={`flex items-center p-2 text-gray-900 ${location.pathname === '/soporte' ? 'text-blue-500' : 'text-white'} rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700`}>
+          <Link onClick={() => window.scrollTo(0, 0)} to="/soporte" className={`flex items-center p-2 text-gray-900 ${location.pathname === '/soporte' ? 'text-blue-500' : 'text-white'} rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700`}>
             <BiSupport className="text-2xl"/>
             <span className={`ml-3 ${location.pathname === '/soporte' ? 'text-blue-500' : 'text-white'}`}>Soporte</span>
           </Link>
