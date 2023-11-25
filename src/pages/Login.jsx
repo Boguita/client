@@ -40,7 +40,7 @@ const Login = () => {
     e.preventDefault();
     try {
       setIsLoading(true); 
-      window.scrollTo(0, 0)     
+          
       await login(inputs)   
       setIsLoading(false);   
       navigate("/homeInfo");

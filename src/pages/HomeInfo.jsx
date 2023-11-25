@@ -2,10 +2,15 @@ import { useNavigate } from 'react-router-dom';
 import Avion from '../assets/img/plane.png'
 import Mono from '../assets/img/mono.png'
 import Libro from '../assets/img/libro-abierto.png'
+import { useEffect } from 'react';
 
 
 const HomeInfo = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   return (
   <div className="h-[30vw] py-32 p-8 md:pl-80 w-full">
