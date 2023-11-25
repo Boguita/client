@@ -39,7 +39,8 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setIsLoading(true);      
+      setIsLoading(true); 
+      window.scrollTo(0, 0)     
       await login(inputs)   
       setIsLoading(false);   
       navigate("/homeInfo");

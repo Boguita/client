@@ -156,7 +156,7 @@ const handleAffiliateDataRequest = async () => {
               <button 
               onClick={() => {
                 // Redirigir a la ruta correspondiente si el usuario está autenticado
-                
+                window.scrollTo(0, 0)
                   navigate('/kit-maternal', {
                     state: { dni }, // Pasamos el DNI como parámetro en el state
                   }); // Agregamos /beneficios/ al inicio de la ruta
@@ -171,7 +171,7 @@ const handleAffiliateDataRequest = async () => {
              <button 
               onClick={() => {
                 // Redirigir a la ruta correspondiente si el usuario está autenticado
-                
+                window.scrollTo(0, 0)
                   navigate('/kit-maternal', {
                     state: { dni }, // Pasamos el DNI como parámetro en el state
                   }); // Agregamos /beneficios/ al inicio de la ruta
