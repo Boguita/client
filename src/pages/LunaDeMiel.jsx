@@ -134,7 +134,7 @@ const handleRegisterAfiliate = async (e) => {
       console.log("entro")
       if (res.status !== 200) {
         // Manejar el error o mostrar un mensaje al usuario
-        setError("Error al registrar el familiar", res.data.error);
+        setError("Error al registrar el familiar");
         return;
       }
 
