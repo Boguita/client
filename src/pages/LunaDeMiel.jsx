@@ -454,7 +454,7 @@ return (
 
     <div className="flex justify-center bg-gray-200">
       <div className="sm:w-[95%]">
-        <div ref={animationParent} className="grid grid-cols-2 space-x-8">
+        <div ref={animationParent} className="grid sm:grid-cols-2 space-x-8">
           {isLoading ? (
             <Loader />
           ) : (
