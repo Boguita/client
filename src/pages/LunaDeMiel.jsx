@@ -238,7 +238,7 @@ const handleRegisterAfiliate = async (e) => {
     
 
     if (familiaresDisponibles === null) {
-      setError("No se encontraron datos de familiares.");
+      
       setFamiliares(prevFamiliares => ({
       ...prevFamiliares,
       
@@ -262,7 +262,7 @@ const handleRegisterAfiliate = async (e) => {
     );
 
     if (familiaresConyugue.length === 0) {
-      setError("No se encontraron familiares con categoría 'Conyugue'.");
+      
        setFamiliares(prevFamiliares => ({
       ...prevFamiliares,
       
@@ -658,9 +658,9 @@ return (
                      {selectedFiles.map((file, index) => (
                       <li key={index}>{file.name}</li>
                     ))}
-                      {validationErrors.libreta && (
+                      {/* {validationErrors.libreta && (
                       <p className="text-red-500">{validationErrors.libreta}</p>
-                    )}
+                    )} */}
                   </div>
                       {error && <p className="text-xs font-semibold text-red-500">{error}</p>}
                   {/* } */}
