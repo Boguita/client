@@ -1,4 +1,4 @@
-  import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import {BiError} from "react-icons/bi"
@@ -10,15 +10,15 @@ import Files from "../components/Files";
 import Avion from '../assets/img/plane.png';
 import Input from "../components/Input";
 import Loader from "../components/Loader";
-  
-  const LunaDeMiel = () => {
+
+const LunaDeMiel = () => {
 
   const { currentUser, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [dni, setDni] = useState("");
   const [useConyugue, useSetConyugue] = useState(false);
-
+ 
   const [currentStep, setCurrentStep] = useState(1);
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -26,16 +26,16 @@ import Loader from "../components/Loader";
   const [selectedFiles, setSelectedFiles] = useState([]);
 const [beneficio, setBeneficio] = useState({
 
-  "0": {
+  "0": {  
         usuario_otorgante: currentUser?.username,
         id: "",
         tipo: "Luna de miel",
         numero_libreta: "",
         afiliado_id: "",
-        familiar_id: null,
+        familiar_id: null,    
         detalles: "",
         estado: "Pendiente",
-
+        
   }
 });
 
@@ -43,7 +43,7 @@ const [error, setError] = useState(null);
 
 const [animationParent] = useAutoAnimate();
 
-
+ 
   const [familiares, setFamiliares] = useState({
     name: "",
     dni: "",
@@ -53,9 +53,11 @@ const [animationParent] = useAutoAnimate();
     numero_libreta: "",
     id_afiliado: "",
  } );
-   
-const handleNextStep = async () => {
 
+
+
+const handleNextStep = async () => {
+  
   setError(null); // Limpiar cualquier error previo
   setCurrentStep(currentStep + 1);
 };
@@ -64,7 +66,7 @@ const handleNextStep = async () => {
     const handleBackStep = async () => {
     setCurrentStep(currentStep - 1);
 
-
+  
   };
 
    useEffect(() => {
@@ -79,9 +81,9 @@ const handleNextStep = async () => {
     if  (tipo === 'familiar') {
     setFamiliares(prevFamiliares => ({
       ...prevFamiliares,
-
+      
       [name]: value,
-
+      
     }));
   } else {
     setBeneficio(prevBeneficio => ({
@@ -98,25 +100,27 @@ const handleNextStep = async () => {
     }));
   }
   }
-
+    
   };
+
+
 
 
 useEffect(() => {
   const familia = familiares;
-  console.log('Estado de beneficios actualizado:', beneficio[0].familiar_id);
+  console.log('Estado de beneficios actualizado:', beneficio[0].familiar_id); 
   console.log('Estado de familiares actualizado:', familiares);
 }, [familiares, beneficio, selectedFiles]);
 
 
 const handleLibretaChange = (e) => {
     const filesArray = Array.from(e.target.files);
-
+    
     setSelectedFiles(filesArray);
   };
 
 const handleRegisterAfiliate = async (e) => {
-
+  
   try {
   setError(null)
    const errors = validateFields();
@@ -137,10 +141,9 @@ const handleRegisterAfiliate = async (e) => {
         setError("Error al registrar el familiar");
         return;
       }
-
+      
       // Actualizar el estado de beneficio con la ID del familiar registrado
-
-     const updatedBeneficio = {
+      const updatedBeneficio = {
           ...beneficio,
           [0]: {
             ...beneficio[0],
@@ -151,7 +154,7 @@ const handleRegisterAfiliate = async (e) => {
         setBeneficio(updatedBeneficio);
     console.log(updatedBeneficio);
 
-
+       
     const res2 = await api.post("/tasks/", updatedBeneficio)
     const nuevoBeneficioIds = res2.data.ids;
     console.log(nuevoBeneficioIds);
@@ -166,15 +169,15 @@ const handleRegisterAfiliate = async (e) => {
 
       setBeneficio(updatedBeneficios);
 
-
-
+    
+    
    const res3 = await handleImageUpload();
    if(res3.status === 200) {
     handleNextStep();
     }
     return res2;
       // Continuar con el proceso de otorgar el beneficio
-
+      
     } else {
       console.log("no entro")
     await handleBeneficioOtorgado(e);
@@ -189,7 +192,7 @@ const handleRegisterAfiliate = async (e) => {
       setError("No se pudieron subir los archivos.");
       return;
     }
-    try {
+    try {    
       // Upload Libreta images
       // const libretaFormData = new FormData();
       // libretaFormData .append("id", beneficio.familiar_id);
@@ -199,20 +202,19 @@ const handleRegisterAfiliate = async (e) => {
       // // await Promise.all(formData.dni_img.map(loadImage));
       // const responseLibreta = await api.post("/uploads/images-libreta", libretaFormData );
 
-    
         const libretaFormData = new FormData();
-
+      
       selectedFiles.forEach((libretaImg) => {
         libretaFormData.append("dni", familiares.dni ? familiares.dni : idPass);
         libretaFormData.append("libreta", libretaImg);
-
+        
       });
       // await Promise.all(formData.dni_img.map(loadImage));
       const responseCertificado = await api.post("/uploads/images-libreta", libretaFormData);
-
+   
 
       return responseCertificado;
-
+    
 
       // Aquí puedes mostrar un mensaje de éxito o realizar acciones adicionales después de la carga de imágenes
     } catch (err) {
@@ -233,16 +235,16 @@ const handleRegisterAfiliate = async (e) => {
     const res = await api.get(`users/afiliados/${dni}`);
     const familiaresDisponibles = res.data.familiares;
     const afiliado = res.data;
-
+    
 
     if (familiaresDisponibles === null) {
-
+      setError("No se encontraron datos de familiares.");
       setFamiliares(prevFamiliares => ({
       ...prevFamiliares,
-
-
+      
+        
       id_afiliado: afiliado.idafiliados,
-
+    
     }));
           setBeneficio(prevBeneficio => ({
       ...prevBeneficio,
@@ -255,19 +257,18 @@ const handleRegisterAfiliate = async (e) => {
       return;
     }
 
-    
     const familiaresConyugue = familiaresDisponibles.filter(
       (familiar) => familiar.categoria === 'Conyugue'
     );
 
     if (familiaresConyugue.length === 0) {
-
+      setError("No se encontraron familiares con categoría 'Conyugue'.");
        setFamiliares(prevFamiliares => ({
       ...prevFamiliares,
-
-
+      
+    
       id_afiliado: afiliado.idafiliados,
-
+   
     }));
           setBeneficio(prevBeneficio => ({
       ...prevBeneficio,
@@ -276,13 +277,13 @@ const handleRegisterAfiliate = async (e) => {
         afiliado_id: afiliado.idafiliados,
       },
     }));
-
+      
       setIsLoading(false);
       return;
     }
 
-
-
+ 
+    
     // setBeneficio(prevBeneficio => ({
     //   ...prevBeneficio,
     //   [name]: value,
@@ -297,9 +298,9 @@ const handleRegisterAfiliate = async (e) => {
       },
     }));
     setIsLoading(false);
-
-
-
+    
+  
+    
   } catch (err) {
     console.log(err);
   }
@@ -330,10 +331,10 @@ const validateFields = () => {
     fieldNames.forEach(fieldName => {
       if (familiares[fieldName] === "" && fieldGroup === 'familiares') {
         errors[fieldName] = "Campo requerido";
-
+        
       }
       if (!beneficio[0][fieldName] && fieldGroup === 'beneficio') {
-
+        
         errors[fieldName] = "Campo requerido";
       }
 
@@ -342,22 +343,22 @@ const validateFields = () => {
   });
   console.log(selectedFiles)
         if (selectedFiles.length === 0) {
-
-      errors.libreta = "Campo requerido";
+      
+      errors.certificado = "Campo requerido";
 }
 
   return errors;
 };
 
 
-
+  
   const handleBeneficioOtorgado = async (e) => {
   e.preventDefault();
 
   try {
     setError(null); // Limpiar cualquier error previo
     setIsLoading(true);
-
+    
 
     const errors = validateFields();
     if (Object.keys(errors).length > 0) {
@@ -368,15 +369,14 @@ const validateFields = () => {
     }
     console.log("llega esto",beneficio)
     const res = await api.post("/tasks/", beneficio);
-
+    
     const nuevoBeneficioIds = res.data.ids;
     console.log(nuevoBeneficioIds);
     // Actualizar el estado "beneficio" con la ID para cada familiar otorgado
-
-   const updatedBeneficio = { ...beneficio };
-
+    const updatedBeneficio = { ...beneficio };
+    
       updatedBeneficio[0].id = nuevoBeneficioIds[0];
-
+    
     console.log(updatedBeneficio);
 
     setBeneficio(updatedBeneficio);
@@ -404,9 +404,9 @@ const validateFields = () => {
 //     const res = await api.get(`/tasks/verified-kit-escolar/${queryParams}`);
 
 //     setBeneficiosOtorgados(res.data);
-
+    
 //     // setIsLoading(false);
-
+    
 //   } catch (err) {
 //     console.log(err);
 //   }
@@ -425,7 +425,7 @@ useEffect(() => {
   error && console.log(error);
 }, [error]);
 
-
+  
   useEffect(() => {
     if (dni) {
       // Si hay un DNI válido en el estado local, realizar la búsqueda del afiliado
@@ -433,17 +433,18 @@ useEffect(() => {
     }
   }, [dni]);
 
+  
 
 return (
-  <div className="bg-gray-200 p-2 h-screen w-screen sm:pl-80 sm:ml-5">
+  <div className="bg-gray-200 h-screen w-screen sm:pl-80 ml-5">
     <div className="flex mb-10 mt-40 h-20">
-      <img className=" w-8 h-8 sm:w-12 sm:h-12" src={Avion}></img>
+      <img className=" w-12 h-12" src={Avion}></img>
       <div className="flex flex-col pl-4">
-        <h2 className=" text-black text-xl sm:text-3xl font-extrabold">
+        <h2 className=" text-black text-3xl font-extrabold">
           Solicitar Beneficio: Luna de Miel
         </h2>
         { currentStep === 1 &&
-        <p className="text-xs sm:text-md p-1 sm:p-2 font-bold text-[#757678]">
+        <p className="p-2 font-bold text-[#757678]">
           Carga los datos y los archivos correspondientes <br /> para realizar
           la solicitud.
         </p>
@@ -453,14 +454,14 @@ return (
 
     <div className="flex justify-center bg-gray-200">
       <div className="sm:w-[95%]">
-        <div ref={animationParent} className="grid sm:grid-cols-2 sm:space-x-8">
+        <div ref={animationParent} className="grid grid-cols-2 space-x-8">
           {isLoading ? (
             <Loader />
           ) : (
             currentStep === 1 && (
               <>
-                <div ref={animationParent} className="rounded-lg mb-2 p-8  bg-white ">
-                  <h3 className="text-black text-xl font-bold">
+                <div ref={animationParent} className="rounded-lg  p-8  bg-white ">
+                  <h3 className="text-black text-2xl font-bold">
                     Datos del Conyugue
                   </h3>
 
@@ -475,8 +476,8 @@ return (
                           </label>
 
                           <div
-
-   key={familiar.id}
+                          
+                            key={familiar.id}
                             className={`flex  items-center mt-2 justify-between border-l-4 border-[#006084] w-[95%] bg-gray-200  `}
                           >
                             <label
@@ -519,7 +520,7 @@ return (
 
                           <div
                             key={familiar.id}
-                            className={`flex  items-center mt-2 justify-between border-l-4 border-[#006084] w-[95%] bg-gray-200 "
+                            className={`flex  items-center mt-2 justify-between border-l-4 border-[#006084] w-[95%] bg-gray-200 " 
               }`}
                           >
                             <label className="font-semibold text-black p-3 ">
@@ -534,8 +535,7 @@ return (
                       </div>
                     ))
                   ) : ( */}
-
-    <div className="flex flex-col gap-2 px-4 w-full">
+                    <div className="flex flex-col gap-2 px-4 w-full">
                       {/* {familiares.length > 0 &&
                       <>
                       <p className="text-red-500 font-semibold mt-3">Ya existe una conyugue registrada, ¿Deseas utilizar estos datos?</p>
@@ -593,6 +593,9 @@ return (
                   {/* )} */}
                 </div>
 
+                
+                
+                   
                 <div className="rounded-lg  p-8   bg-white ">
                   <h3 className="text-black text-2xl font-bold mb-4">
                     Libreta de Matrimonio
@@ -610,18 +613,18 @@ return (
                       className={"w-[95%] p-3"}
                       placeholder={"12345"}
                     />
-                    {validationErrors.numero_libreta && (
-                      <p className="text-red-500">{validationErrors.numero_libreta}</p>
+                    {validationErrors.semanas && (
+                      <p className="text-red-500">{validationErrors.semanas}</p>
                     )}
-
+                    
                   </div>
                   {/* </>
-                  ) :
+                  ) : 
                   <>
                     <h3 className="font-bold text-green-500">Ya registrada en el sistema.</h3>
                   </>
                   } */}
-{/*
+{/* 
                     {!useConyugue &&      */}
                   <div className="flex flex-col justify-center items-center mt-4 rounded-xl min-h-[6rem] w-[100%] p-2">
                     <p className="font-bold">Subir foto de libreta:</p>
@@ -646,21 +649,17 @@ return (
                       onChange={handleLibretaChange}
                     />
 
-    <p className="text-xs font-semibold text-gray-600 text-center">
+                    <p className="text-xs font-semibold text-gray-600 text-center">
                       Click aquí para cargar o{" "}
-
-    <strong className="text-[#006084]">
+                      <strong className="text-[#006084]">
                         elegir archivos.
                       </strong>
                     </p>
                      {selectedFiles.map((file, index) => (
                       <li key={index}>{file.name}</li>
                     ))}
-                      {validationErrors.libreta && (
-                      <p className="text-red-500">{validationErrors.libreta}</p>
-                    )}
                   </div>
-                      {error && <p className="text-xs font-semibold text-red-500">{error}</p>}
+           
                   {/* } */}
                   <div className="flex justify-end items-end mt-20 flex-col">
                   <button
@@ -674,16 +673,16 @@ return (
                 {/* <div></div>
 
                 <div className="flex justify-end pt-6">
-
+                  
                 </div> */}
               </>
             )
           )}
-
+          
         </div>
         {/* {currentStep === 2 && (
             <>
-
+                           
                   <div className="flex flex-col h-full w-full justify-end items-center space-y-4">
                    <Files label="Subir foto de REMITO DE ENTREGA" instructions="Recuerde que debe estar firmada por el trabajador." id={beneficio[0].id}  />
 
@@ -703,12 +702,11 @@ return (
                       <span>VOLVER</span>
                     </button>
                   </div>
-
-
+               
+             
             </>
           )} */}
-
-{currentStep === 2 && (
+        {currentStep === 2 && (
             <>
               {error ? (
                 <>
@@ -725,21 +723,21 @@ return (
                       <span>FINALIZAR</span>
                     </button>
                   </div>
-
-
+                  
+               
                 </>
               ) : (
                 <>
                   <div className="flex flex-col h-full w-full justify-end items-center space-y-4">
                     <img className="w-[4rem] text-[#006084]" src={Avion} />
-                    <p className="font-extrabold text-2xl sm:text-3xl text-[#0E6F4B]">
+                    <p className="font-extrabold text-3xl text-[#0E6F4B]">
                       El beneficio ha sido registrado con éxito.
                     </p>
-                    <p className="font-bold text-lg sm:text-xl text-gray-500">
+                    <p className="font-bold text-xl text-gray-500">
                       Por favor, informe al afiliado que un representante se pondra en contacto para continuar con la gestion.
                     </p>
                   </div>
-                  <div className="sm:h-full sm:w-full max-sm:mt-4 items-end sm:pb-10 justify-center flex">
+                  <div className="h-full w-full items-end pb-10 justify-center flex">
                     <button
                       className="btn bg-[#0E6F4B] border-[#0E6F4B] w-1/3"
                       onClick={() => navigate("/home")}
@@ -752,13 +750,13 @@ return (
             </>
           )}
       </div>
-
+      
     </div>
-
+    
   </div>
 );
 
-
+  
 };
 
 export default LunaDeMiel;
