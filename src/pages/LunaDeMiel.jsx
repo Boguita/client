@@ -74,6 +74,10 @@ const handleNextStep = async () => {
     setDni(location.state?.dni);
   }, []);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
 
  const handleInputChange = async (e, tipo) => {
     const { name, value, type } = e.target;
@@ -557,6 +561,7 @@ return (
                       <label className="font-semibold mt-2 ">DNI</label>
                       <Input
                         name={"dni"}
+                        type={"number"}
                         onChange={(e) => handleInputChange(e, "familiar")}
                         value={familiares.dni}
                         className={"w-full p-3"}
@@ -582,6 +587,7 @@ return (
                       <label className="font-semibold mt-2 ">Teléfono</label>
                       <Input
                         name={"tel"}
+                        type={"number"}
                         onChange={(e) => handleInputChange(e, "familiar")}
                         value={familiares.tel}
                         className={"w-full p-3"}
@@ -608,6 +614,7 @@ return (
                   <div className="mt-2 mb-2">
                     <Input
                       name={"numero_libreta"}
+                      type={"number"}
                       onChange={handleInputChange}
                       value={beneficio.numero_libreta}
                       className={"w-[95%] p-3"}

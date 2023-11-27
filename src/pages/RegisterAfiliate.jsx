@@ -785,7 +785,7 @@ const handleImageUpload = async () => {
    <div className="mb-4">
           
           <Input
-            type="text"
+            type="number"
             name="tel_empleador"
             placeholder={"Teléfono Empleador"}
             required
@@ -798,7 +798,7 @@ const handleImageUpload = async () => {
   <div className="mb-4">
     
     <Input
-      type="text"
+      type="number"
       name="cuit_empleador"
       placeholder={"CUIT"}
       required

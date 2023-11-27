@@ -703,6 +703,10 @@ const comprobarStockTalle = (talle) => {
   }
 };
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
 // useEffect(() => {
 //   const updatedBeneficio = { ...beneficio };
 
@@ -1435,21 +1439,23 @@ const comprobarStockTalle = (talle) => {
               overlay: {
                 backgroundColor: "rgba(0, 0, 0, 0.5)",
               },
-              content: {
-                border: "none",
-                background: "white",
-                color: "black",
-                top: "50%",
-                left: "50%",
-                right: "auto",
-                bottom: "auto",
-                marginRight: "-50%",
-                transform: "translate(-50%, -50%)",
-                padding: "2rem",
-                width: "80%",
-                maxWidth: "40rem",
-              },
-            }}
+               content: {
+                  border: "none",
+                  background: "white",
+                  color: "black",
+                  top: "55%",
+                  left: "50%",
+                  right: "auto",
+                  bottom: "auto",
+                  marginRight: "-50%",
+                  transform: "translate(-50%, -50%)",
+                  padding: "2rem",
+                  width: "80%",
+                  maxWidth: "40rem",
+                  maxHeight: "70vh", // Agregado para limitar la altura y agregar desplazamiento vertical
+                  overflowY: "auto", // Agregado para agregar desplazamiento vertical si es necesario
+                },
+              }}
           >
             <h2 className="text-2xl font-bold mb-4">Añadir Hijos</h2>
             {error && <p className="font-bold text-red-500">{error}</p>}
@@ -1481,7 +1487,7 @@ const comprobarStockTalle = (talle) => {
                 required
                 name="dni"
                 className="w-full"
-                type="text"
+                type="number"
                 value={formData.dni}
                 onChange={handleChangeHijo}
               />

@@ -98,6 +98,10 @@ const handleNextStep = async () => {
     setDni(location.state?.dni);
   }, []);
 
+    useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
 
  const handleInputChange = async (e, tipo) => {
     const { name, value, type } = e.target;
@@ -744,8 +748,8 @@ return (
                        <>
                       <p className="text-red-500 max-sm:text-xs text-center font-semibold mt-3">Existe una conyugue registrada, ¿Deseas utilizar estos datos?</p>
                       <div className="flex justify-around">
-                          <button onClick={() => handleUseConyugue()} className="bg-[#006084] sm:w-1/3 font-bold text-white rounded-lg p-2 hover:bg-opacity-75">Usar datos existentes</button>
-                          <button onClick={() => setShowButton(false)} className="bg-red-500 sm:w-1/3 font-bold text-white rounded-lg p-2 hover:bg-opacity-75">No</button>
+                          <button onClick={() => handleUseConyugue()} className="bg-[#006084]  sm:w-1/3 font-bold text-white rounded-lg p-2 hover:bg-opacity-75">Usar datos existentes</button>
+                          <button onClick={() => setShowButton(false)} className="bg-red-500 w-1/3 sm:w-1/3 font-bold text-white rounded-lg p-2 hover:bg-opacity-75">No</button>
                       </div>
                       </>
                       }   

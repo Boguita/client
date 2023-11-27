@@ -58,6 +58,10 @@ const handleAffiliateDataRequest = async () => {
     return formattedDate;
   };
 
+    useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
 
 
   const handleValidateBenefit = async () => {

@@ -84,8 +84,12 @@ setInputs((prev) => ({ ...prev, delegacion: "" }));
 
   useEffect(() => {
     axios.get("https://apis.datos.gob.ar/georef/api/provincias?campos=id,nombre").then((res) => {
-      setProvincias(res.data.provincias);
-       // Almacenar las provincias en el estado
+      const provinciasFiltradas = res.data.provincias.filter(
+          provincia => provincia.nombre !== "Ciudad Autónoma de Buenos Aires"
+        );
+
+        // Almacenar las provincias filtradas en el estado
+        setProvincias(provinciasFiltradas);
     });
     axios.get("https://restcountries.com/v3.1/all?fields=name").then((res) => {
       const commonNames = res.data.map((country) => country.name.common);
