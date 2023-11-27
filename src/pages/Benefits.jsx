@@ -118,7 +118,7 @@ const handleAffiliateDataRequest = async () => {
               : <button 
               onClick={() => {
                 // Redirigir a la ruta correspondiente si el usuario está autenticado
-                  window.scrollTo(0, 0)
+                  // window.scrollTo(0, 0)
                   navigate('/luna-de-miel', {
                     state: { dni }, // Pasamos el DNI como parámetro en el state
                   }); // Agregamos /beneficios/ al inicio de la ruta
@@ -156,7 +156,7 @@ const handleAffiliateDataRequest = async () => {
               <button 
               onClick={() => {
                 // Redirigir a la ruta correspondiente si el usuario está autenticado
-                window.scrollTo(0, 0)
+                // window.scrollTo(0, 0)
                   navigate('/kit-maternal', {
                     state: { dni }, // Pasamos el DNI como parámetro en el state
                   }); // Agregamos /beneficios/ al inicio de la ruta
@@ -171,7 +171,7 @@ const handleAffiliateDataRequest = async () => {
              <button 
               onClick={() => {
                 // Redirigir a la ruta correspondiente si el usuario está autenticado
-                window.scrollTo(0, 0)
+                // window.scrollTo(0, 0)
                   navigate('/kit-maternal', {
                     state: { dni }, // Pasamos el DNI como parámetro en el state
                   }); // Agregamos /beneficios/ al inicio de la ruta
@@ -202,7 +202,7 @@ Cada año, al comienzo del ciclo escolar, desde el gremio se distribuyen guardap
                   navigate('/kit-escolar', {
                     state: { dni }, // Pasamos el DNI como parámetro en el state
                   }); // Agregamos /beneficios/ al inicio de la ruta
-                window.scrollTo(0, 0)
+                // window.scrollTo(0, 0)
                   // Si no está autenticado, redirigir al inicio de sesión
                  
               }}
