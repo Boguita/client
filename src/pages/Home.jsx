@@ -421,7 +421,7 @@ const handleAffiliateDataRequest = async (dniparams) => {
     setBeneficio(res.data);
     
      navigate(`/beneficios?dni=${dni}`);
-      window.scrollTo(0, 0);
+
   } catch (error) {
     console.log(error.response.data.message);
   }
