@@ -238,7 +238,7 @@ const handleRegisterAfiliate = async (e) => {
     
 
     if (familiaresDisponibles === null) {
-      
+      setError("No se encontraron datos de familiares.");
       setFamiliares(prevFamiliares => ({
       ...prevFamiliares,
       
@@ -262,7 +262,7 @@ const handleRegisterAfiliate = async (e) => {
     );
 
     if (familiaresConyugue.length === 0) {
-      
+      setError("No se encontraron familiares con categoría 'Conyugue'.");
        setFamiliares(prevFamiliares => ({
       ...prevFamiliares,
       
