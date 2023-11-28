@@ -6,7 +6,7 @@ import { AuthContext } from "../context/authContext";
 import Logo from '../assets/img/logo.png'
 import { useRef } from 'react';
 import autoAnimate from '@formkit/auto-animate';
-
+import Modal from 'react-modal';
 import '../css/auth.css';
 import Loader from "../components/Loader";
 import Input from "../components/Input";
@@ -19,6 +19,7 @@ const Login = () => {
   });
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [modalTutorialIsOpen, setModalTutorialIsOpen] = useState(false);
   
 
   const navigate = useNavigate();
@@ -121,14 +122,64 @@ const Login = () => {
                           <span className="forgot-password">
                              <Link className="hi" to="/forgot-password">He olvidado mi contraseña</Link>
                           </span>
-                          <span className="flex pb-8 ">
+                          <span className="flex  ">
                              <Link  className="flex justify-center text-[#787779] " to="/register">¿Todavia no tienes una cuenta?<strong className="text-[#006084] font-bold ml-1 text-[15px]"> Regístrate.</strong></Link>
                           </span>
+                          <div className="text-center sm:w-80 flex justify-center items-center">
+                           <span className="flex mt-2 pb-8  ">
+                             <Link onClick={() => setModalTutorialIsOpen(true)}  className="flex justify-center text-sm text-[#787779] ">No puedo ingresar.<strong className="text-[#006084] font-bold ml-1 text-[13px]"> AYUDA</strong></Link>
+                          </span>
+                          </div>
                     </form>
                 </div>
             </div>
         
     </div>
+    <Modal
+            isOpen={modalTutorialIsOpen}
+            onRequestClose={() => setModalTutorialIsOpen(false)}
+     
+            contentLabel="Tutorial Login"
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                zIndex: 1000,
+              },
+              content: {
+                border: "none",
+                background: "white",
+                color: "black",
+                top: "55%",
+                left: "50%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+                padding: "2rem",
+                width: "80%",
+                maxWidth: "40rem",
+              },
+            }}
+          >
+            <h2 className="text-2xl font-bold mb-4">Tutorial Login.</h2>
+            
+            <div className="mb-2">
+             <div className="mt-2 flex items-center justify-center">
+                <iframe width="560" height="315" src={`https://www.youtube.com/embed/fP_JcfG-030?si=a1JL6HgqFuRs9JVU`} 
+                title="YouTube video player"
+                 frameborder="0" 
+                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
+
+                </iframe>
+              </div>
+              <div className="flex items-center justify-center">
+              <button className="mt-4  bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75" onClick={() => setModalTutorialIsOpen(false)}>Cerrar</button>
+              </div>
+            </div>
+                          
+
+       
+          </Modal>
 </div>
   );
 };

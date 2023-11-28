@@ -7,6 +7,7 @@ import BgRegister from '../assets/img/bg-register.jpg'
 import api from "../common/Axiosconfig";
 import {BsCheck2Circle} from 'react-icons/bs'
 import Select from "react-select";
+import Modal from "react-modal";
 
 const Register = () => {
   const [inputs, setInputs] = useState({
@@ -34,7 +35,7 @@ const Register = () => {
     const [selectedSeccionales, setSelectedSeccionales] = useState([]);
       const [delegaciones, setDelegaciones] = useState([]);
       const [seccionalesFiltradas, setSeccionalesFiltradas] = useState([]);
-
+    const [modalTutorialIsOpen, setModalTutorialIsOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -394,12 +395,16 @@ setInputs((prev) => ({ ...prev, delegacion: "" }));
                   />
                 </div>
 
+              
+
                 
               </form>
               <div className="justify-center pb-4 items-center flex flex-col">
               <button className="btn  w-32 2xl:w-1/3 xl:w-1/3 lg:w-1/3 md:1/3" onClick={handleSubmit}><span className="!text-xs">REGISTRARME</span></button>
-                {err && <p className="text-red-500 pt-1">{err}</p>}
+                {err && <p className="text-red-500 pt-1">{err}</p>}     
                 </div>
+                 <p onClick={() => setModalTutorialIsOpen(true)} className="text-sm mt-2 text-center pb-2 text-gray-500">¿Necesitas ayuda? <strong className="text-[#006084] text-sm font-semibold">Tutorial de registro</strong></p>
+
                 </>
                )}
 
@@ -429,6 +434,51 @@ setInputs((prev) => ({ ...prev, delegacion: "" }));
           <p className="text-[#006084] text-sm font-semibold">© 2023 UATRE - Unión Argentina de Trabajadores Rurales y Estibadores</p>
           </div>
       </footer>
+       <Modal
+            isOpen={modalTutorialIsOpen}
+            onRequestClose={() => setModalTutorialIsOpen(false)}
+     
+            contentLabel="Tutorial Registro"
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                zIndex: 1000,
+              },
+              content: {
+                border: "none",
+                background: "white",
+                color: "black",
+                top: "55%",
+                left: "50%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+                padding: "2rem",
+                width: "80%",
+                maxWidth: "40rem",
+              },
+            }}
+          >
+            <h2 className="text-2xl font-bold mb-4">Tutorial Registro.</h2>
+            
+            <div className="mb-2">
+             <div className="mt-2 flex items-center justify-center">
+                <iframe width="560" height="315" src={`https://www.youtube.com/embed/bcf1P92sBBs?si=SKjKUqnk6jM4YC-g`} 
+                title="YouTube video player"
+                 frameborder="0" 
+                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
+
+                </iframe>
+              </div>
+              <div className="flex items-center justify-center">
+              <button className="mt-4  bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75" onClick={() => setModalTutorialIsOpen(false)}>Cerrar</button>
+              </div>
+            </div>
+                          
+
+       
+          </Modal>
     </div>
   );
 };
