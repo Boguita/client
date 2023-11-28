@@ -561,7 +561,7 @@ return (
                       <label className="font-semibold mt-2 ">DNI</label>
                       <Input
                         name={"dni"}
-                        type={"number"}
+                        type={"text"}
                         onChange={(e) => handleInputChange(e, "familiar")}
                         value={familiares.dni}
                         className={"w-full p-3"}
@@ -587,7 +587,7 @@ return (
                       <label className="font-semibold mt-2 ">Teléfono</label>
                       <Input
                         name={"tel"}
-                        type={"number"}
+                        type={"text"}
                         onChange={(e) => handleInputChange(e, "familiar")}
                         value={familiares.tel}
                         className={"w-full p-3"}
@@ -614,7 +614,7 @@ return (
                   <div className="mt-2 mb-2">
                     <Input
                       name={"numero_libreta"}
-                      type={"number"}
+                      type={"text"}
                       onChange={handleInputChange}
                       value={beneficio.numero_libreta}
                       className={"w-[95%] p-3"}
