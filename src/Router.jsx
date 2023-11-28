@@ -34,6 +34,7 @@ import KitEscolarAdmin from "./pages/KitEscolarAdmin";
 import Seccionales from "./pages/SeccionalesAdmin";
 import ListBenefits from "./components/ListBenefits";
 import ProfileAfilliate from "./pages/ProfileAfiliatte";
+import Ayuda from "./pages/Ayuda";
 
 
 const PrivateRoute = ({children, redirectTo="/"}) => {
@@ -91,6 +92,7 @@ export const AppRouter = () => {
         <Route path='/luna-de-miel' element={<LunaDeMiel />} />
         <Route path='/upload-images' element={<ImageUpload />} />
         <Route path='/profile' element={<Profile />} />
+          <Route path='/ayuda' element={<Ayuda />} />
         <Route path='/soporte' element={<Soporte />} />
       </Route>
     </Route> 
