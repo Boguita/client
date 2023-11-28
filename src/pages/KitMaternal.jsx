@@ -31,6 +31,7 @@ const KitMaternal = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [disabled, setDisabled] = useState(false);
   const [cantidad, setCantidad] = useState(0);
+  const [modalTutorialIsOpen, setModalTutorialIsOpen] = useState(false);
   const [beneficiosOtorgados, setBeneficiosOtorgados] = useState([]);
 const [beneficio, setBeneficio] = useState({
 
@@ -648,7 +649,8 @@ return (
   <div className="bg-gray-200 h-screen w-screen sm:pl-80 max-sm:p-3 sm:ml-5">
     <div className="flex mb-10 mt-32 h-20">
       <img className=" w-12 h-12" src={Mono}></img>
-      <div className="flex flex-col pl-4">
+      <div className="flex sm:w-[90%] max-sm:flex-col justify-between pl-4">
+        <div className="flex-col">
         <h2 className=" text-black text-2xl sm:text-3xl font-extrabold">
           Solicitar Beneficio: Kit Nacimiento
         </h2>
@@ -658,11 +660,15 @@ return (
           la solicitud.
         </p>
         }
+        </div>
+        <div>
+          <p className="text-xs  sm:text-md font-bold text-[#757678]">¿Necesitas ayuda? Accedé al <strong onClick={() => setModalTutorialIsOpen(true)} className="cursor-pointer text-[#23A1D8]">Tutorial.</strong></p>
+        </div>
       </div>
     </div>
 
-    <div className="flex justify-center bg-gray-200">
-      <div className="sm:w-[95%]">
+    <div className="flex  justify-center bg-gray-200">
+      <div className="max-sm:mt-8 sm:w-[95%]">
         <div ref={animationParent} className="grid sm:grid-cols-2 sm:space-x-8">
           {isLoading ? (
             <Loader />
@@ -770,6 +776,7 @@ return (
                       <label className="font-semibold mt-2 ">DNI</label>
                       <Input
                         name={"dni"}
+                        type={"number"}
                         onChange={(e) => handleInputChange(e, "familiar")}
                         value={familiares.dni}
                         className={"w-full p-3"}
@@ -798,6 +805,7 @@ return (
                       <Input
 
                         name={"tel"}
+                        type={"number"}
                         onChange={(e) => handleInputChange(e, "familiar")}
                         value={familiares.tel}
                         className={"w-full p-3"}
@@ -820,6 +828,7 @@ return (
                   <div className="mt-2 mb-2">
                     <Input
                       name={"semanas"}
+                      type={"number"}
                       onChange={handleInputChange}
                       value={beneficio.semana}
                       className={"w-[95%] p-3"}
@@ -1135,6 +1144,51 @@ return (
                       </div>
                     ))
                           }
+            </div>
+                          
+
+       
+          </Modal>
+
+          <Modal
+            isOpen={modalTutorialIsOpen}
+            onRequestClose={() => setModalTutorialIsOpen(false)}
+     
+            contentLabel="Tutorial Kit Nacimiento"
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+              },
+              content: {
+                border: "none",
+                background: "white",
+                color: "black",
+                top: "55%",
+                left: "50%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+                padding: "2rem",
+                width: "80%",
+                maxWidth: "40rem",
+              },
+            }}
+          >
+            <h2 className="text-2xl font-bold mb-4">Tutorial Kit Nacimiento.</h2>
+            
+            <div className="mb-2">
+             <div className="mt-2 flex items-center justify-center">
+                <iframe width="560" height="315" src={`https://www.youtube.com/embed/cj4W61IAhYM?si=PYOZSvx9eIKIQkTF`} 
+                title="YouTube video player"
+                 frameborder="0" 
+                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
+
+                </iframe>
+              </div>
+              <div className="flex items-center justify-center">
+              <button className="mt-4  bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75" onClick={() => setModalTutorialIsOpen(false)}>Cerrar</button>
+              </div>
             </div>
                           
 

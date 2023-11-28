@@ -51,7 +51,7 @@ const KitEscolar = () => {
     dni_img_frente: null,
     
   });
-
+  const [modalTutorialIsOpen, setModalTutorialIsOpen] = useState(false);
   const [familiares, setFamiliares] = useState([]);
 
   // const handleFamiliarSelection = (selectedOptions) => {
@@ -728,13 +728,14 @@ const comprobarStockTalle = (talle) => {
     <div className="bg-gray-200 h-screen w-screen sm:pl-80 max-sm:p-3 sm:ml-5">
       <div className="flex mb-10 mt-32 h-20">
         <img className=" w-12 h-12" src={Libro}></img>
-        <div className="flex flex-col pl-4">
+        <div className="flex sm:w-[90%] max-sm:flex-col justify-between pl-4">
+          <div className="flex-col">
           <h2 className=" text-black text-2xl sm:text-3xl font-extrabold">
             Solicitar Beneficio: Kit Escolar
           </h2>
           { currentStep < 2 &&
           <p className="max-sm:text-xs py-2 font-bold text-[#757678]">
-            Elige los hijos a los que quieras otorgarle un beneficio <br /> o
+            Elige los hijos a los que quieras otorgarle un beneficio o
             añade uno si es necesario{" "}
           </p>
           }
@@ -744,10 +745,14 @@ const comprobarStockTalle = (talle) => {
             a cada uno si es necesario{" "}
           </p>
           }
+          </div>
+             <div>
+          <p className="text-xs  sm:text-md font-bold text-[#757678]">¿Necesitas ayuda? Accedé al <strong onClick={() => setModalTutorialIsOpen(true)} className="cursor-pointer text-[#23A1D8]">Tutorial.</strong></p>
+        </div>
         </div>
       </div>
 
-      <div className="flex max-sm:py-4  justify-center bg-gray-200">
+      <div className="flex max-sm:py-10  justify-center bg-gray-200">
         <div
           ref={animationParent}
            className=" sm:w-2/4 min-h-[35em] bg-white flex p-4 rounded-lg"
@@ -1276,7 +1281,7 @@ const comprobarStockTalle = (talle) => {
                 <>
                   <div className="flex flex-col h-full w-full justify-center items-center space-y-4">
                     <img className="w-[4rem] text-[#006084]" src={Libro} />
-                    <p className="font-extrabold text-3xl text-[#006084]">
+                    <p className="font-extrabold max-sm:text-center text-3xl text-[#006084]">
                       El beneficio ha sido registrado con éxito.
                     </p>
                     {Object.values(beneficio)
@@ -1614,6 +1619,51 @@ const comprobarStockTalle = (talle) => {
                 Confirmar
               </button>
             </div>
+          </Modal>
+
+           <Modal
+            isOpen={modalTutorialIsOpen}
+            onRequestClose={() => setModalTutorialIsOpen(false)}
+     
+            contentLabel="Tutorial Kit Escolar"
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+              },
+              content: {
+                border: "none",
+                background: "white",
+                color: "black",
+                top: "55%",
+                left: "50%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+                padding: "2rem",
+                width: "80%",
+                maxWidth: "40rem",
+              },
+            }}
+          >
+            <h2 className="text-2xl font-bold mb-4">Tutorial Kit Escolar.</h2>
+            
+            <div className="mb-2">
+             <div className="mt-2 flex items-center justify-center">
+                <iframe width="560" height="315" src={`https://www.youtube.com/embed/aMdexgxETUg?si=QbsZqMhNafLmCUSo`} 
+                title="YouTube video player"
+                 frameborder="0" 
+                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
+
+                </iframe>
+              </div>
+              <div className="flex items-center justify-center">
+              <button className="mt-4  bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75" onClick={() => setModalTutorialIsOpen(false)}>Cerrar</button>
+              </div>
+            </div>
+                          
+
+       
           </Modal>
         </div>
       </div>

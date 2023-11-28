@@ -3,7 +3,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import {BiError} from "react-icons/bi"
 import api from "../common/Axiosconfig";
-
+import Modal from "react-modal";
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import {FiDownload} from 'react-icons/fi'
 import Files from "../components/Files";
@@ -18,7 +18,7 @@ const LunaDeMiel = () => {
   const location = useLocation();
   const [dni, setDni] = useState("");
   const [useConyugue, useSetConyugue] = useState(false);
-
+  const [modalTutorialIsOpen, setModalTutorialIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -443,7 +443,8 @@ return (
   <div className="bg-gray-200 p-2 h-screen w-screen sm:pl-80 sm:ml-5">
     <div className="flex mb-10 mt-40 h-20">
       <img className=" w-8 h-8 sm:w-12 sm:h-12" src={Avion}></img>
-      <div className="flex flex-col pl-4">
+      <div className="flex max-sm:flex-col sm:w-[90%] justify-between pl-4">
+        <div className="flex-col">
         <h2 className=" text-black text-xl sm:text-3xl font-extrabold">
           Solicitar Beneficio: Luna de Miel
         </h2>
@@ -453,6 +454,10 @@ return (
           la solicitud.
         </p>
         }
+        </div>
+        <div>
+          <p className="text-xs sm:text-md font-bold text-[#757678]">¿Necesitas ayúda? Accedé al <strong onClick={() => setModalTutorialIsOpen(true)} className="text-[#23A1D8] cursor-pointer">Tutorial.</strong></p>
+        </div>
       </div>
     </div>
 
@@ -561,7 +566,7 @@ return (
                       <label className="font-semibold mt-2 ">DNI</label>
                       <Input
                         name={"dni"}
-                        type={"text"}
+                        type={"number"}
                         onChange={(e) => handleInputChange(e, "familiar")}
                         value={familiares.dni}
                         className={"w-full p-3"}
@@ -587,7 +592,7 @@ return (
                       <label className="font-semibold mt-2 ">Teléfono</label>
                       <Input
                         name={"tel"}
-                        type={"text"}
+                        type={"number"}
                         onChange={(e) => handleInputChange(e, "familiar")}
                         value={familiares.tel}
                         className={"w-full p-3"}
@@ -762,6 +767,50 @@ return (
       </div>
       
     </div>
+     <Modal
+            isOpen={modalTutorialIsOpen}
+            onRequestClose={() => setModalTutorialIsOpen(false)}
+     
+            contentLabel="Tutorial Luna de Miel"
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+              },
+              content: {
+                border: "none",
+                background: "white",
+                color: "black",
+                top: "55%",
+                left: "50%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+                padding: "2rem",
+                width: "80%",
+                maxWidth: "40rem",
+              },
+            }}
+          >
+            <h2 className="text-2xl font-bold mb-4">Tutorial Luna de Miel.</h2>
+            
+            <div className="mb-2">
+             <div className="mt-2 flex items-center justify-center">
+                <iframe width="560" height="315" src={`https://www.youtube.com/embed/ALzWPnuHpzM?si=ym1R20969j0p6saX`} 
+                title="YouTube video player"
+                 frameborder="0" 
+                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
+
+                </iframe>
+              </div>
+              <div className="flex items-center justify-center">
+              <button className="mt-4  bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75" onClick={() => setModalTutorialIsOpen(false)}>Cerrar</button>
+              </div>
+            </div>
+                          
+
+       
+          </Modal>
     
   </div>
 );
