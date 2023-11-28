@@ -97,6 +97,10 @@ const handleEdit = () => {
    useEffect(() => {
     console.log(isEditing)
   }, [isEditing])
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
    
 
 
