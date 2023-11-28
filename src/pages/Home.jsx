@@ -364,13 +364,13 @@ const handleAffiliateDataRequest = async (dniparams) => {
 
   const getDniImg = async () => {
    
-    window.open(`https://backuatrebeneficios.galgoproductora.com/${affiliateData.dni_img_frente}`, '_blank');
+    window.open(`https://back.beneficiosuatre.com.ar/${affiliateData.dni_img_frente}`, '_blank');
  
     
   }
    const getDniImgDorso = async () => {
    
-    window.open(`https://backuatrebeneficios.galgoproductora.com/${affiliateData.dni_img_dorso}`, '_blank');
+    window.open(`https://back.beneficiosuatre.com.ar/${affiliateData.dni_img_dorso}`, '_blank');
  
     
   }
@@ -384,7 +384,7 @@ const handleAffiliateDataRequest = async (dniparams) => {
 
     if (libretaImgArray && Array.isArray(libretaImgArray)) {
       libretaImgArray.forEach((libreta) => {
-        window.open(`https://backuatrebeneficios.galgoproductora.com/${libreta}`, '_blank');
+        window.open(`https://back.beneficiosuatre.com.ar/${libreta}`, '_blank');
       });
     } else {
       console.log("La propiedad libreta_img no es un arreglo o es null.");
@@ -406,7 +406,7 @@ const handleAffiliateDataRequest = async (dniparams) => {
   const imagenDNI = lado === "frente" ? familiar.dni_img_frente : lado === "dorso" ? familiar.dni_img_dorso : null;
 
   if (imagenDNI) {
-    window.open(`https://backuatrebeneficios.galgoproductora.com/${imagenDNI}`, '_blank');
+    window.open(`https://back.beneficiosuatre.com.ar/${imagenDNI}`, '_blank');
   } else {
     console.log(`No se encontró una imagen del ${lado === "frente" ? "frente" : lado === "dorso" ? "dorso" : "DNI"}.`);
   }
@@ -1176,7 +1176,7 @@ const handleRecibo = async () => {
                               <div className='flex-col flex justify-center items-center' key={index}>
                                 
                                 <a
-                                  href={`https://backuatrebeneficios.galgoproductora.com/${recibo}`} // Utiliza la URL de tu API
+                                  href={`https://back.beneficiosuatre.com.ar/${recibo}`} // Utiliza la URL de tu API
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-[#23A1D8] hover:underline"
