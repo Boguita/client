@@ -122,7 +122,7 @@ const Login = () => {
                              <Link className="hi" to="/forgot-password">He olvidado mi contraseña</Link>
                           </span>
                           <span className="flex pb-8 ">
-                             <Link onClick={() => window.scrollTo(0, 0)} className="flex justify-center text-[#787779] " to="/register">¿Todavia no tienes una cuenta?<strong className="text-[#006084] font-bold ml-1 text-[15px]"> Regístrate.</strong></Link>
+                             <Link  className="flex justify-center text-[#787779] " to="/register">¿Todavia no tienes una cuenta?<strong className="text-[#006084] font-bold ml-1 text-[15px]"> Regístrate.</strong></Link>
                           </span>
                     </form>
                 </div>
