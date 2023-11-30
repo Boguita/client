@@ -17,6 +17,7 @@ const LunaDeMiel = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [dni, setDni] = useState("");
+  const [disabled, setDisabled] = useState(false);
   const [useConyugue, useSetConyugue] = useState(false);
   const [modalTutorialIsOpen, setModalTutorialIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
@@ -233,6 +234,49 @@ const handleRegisterAfiliate = async (e) => {
     // }
   };
 
+    const handleValidateBenefit = async () => {
+  try {
+    const res = await api.get(`tasks/beneficio/${dni}`);
+    if (!res.data) {
+      // La respuesta está vacía o nula, manejar este caso apropiadamente
+      console.log('No se encontraron beneficios para el DNI proporcionado.');
+       setIsLoading(false);
+      return;
+    }
+
+    const benefit = res.data;
+
+    // const beneficioCantidad = benefit.filter(
+    //   (beneficio) =>
+    //     beneficio.tipo === 'Kit maternal' &&
+    //     (beneficio.estado === 'Pendiente' || beneficio.estado === 'Enviado') &&
+    //     beneficio.fecha_otorgamiento.includes(new Date().getFullYear()) 
+    // );
+
+    // setCantidad(beneficioCantidad.cantidad);
+
+    // Filtra beneficios por tipo "Kit maternal" y estado "Aprobado" o "Entregado"
+    const beneficioLunaDeMiel = benefit.filter(
+      (beneficio) =>
+        beneficio.tipo === 'Luna de miel' &&
+        (beneficio.estado === 'Aprobado' || beneficio.estado === 'Entregado' || beneficio.estado === 'Enviado' || beneficio.estado === 'Pendiente') 
+    );
+
+    if (beneficioLunaDeMiel.length > 0) {
+      setDisabled(true);
+    }
+
+    console.log(res.data);
+    // Restablecer el estado del error si la solicitud tiene éxito
+  } catch (error) {
+    console.log(error);
+    setIsLoading(false);
+    // setError(error.response.data.message);
+  }
+};
+
+
+
 
    const handleAfiliadoSearch = async (dni) => {
   try {
@@ -281,7 +325,7 @@ const handleRegisterAfiliate = async (e) => {
         afiliado_id: afiliado.idafiliados,
       },
     }));
-      
+   
       setIsLoading(false);
       return;
     }
@@ -303,7 +347,7 @@ const handleRegisterAfiliate = async (e) => {
     }));
     setIsLoading(false);
     
-  
+     await handleValidateBenefit();
     
   } catch (err) {
     console.log(err);
@@ -456,8 +500,10 @@ return (
         }
         </div>
         <div>
+          { currentStep === 1 &&
           <p className="text-xs sm:text-md font-bold text-[#757678]">¿Necesitas ayúda? Accedé al <strong onClick={() => setModalTutorialIsOpen(true)} className="text-[#23A1D8] cursor-pointer">Tutorial.</strong></p>
-        </div>
+          }
+          </div>
       </div>
     </div>
 
@@ -469,7 +515,7 @@ return (
           ) : (
             currentStep === 1 && (
               <>
-                <div ref={animationParent} className="rounded-lg mb-2 p-8  bg-white ">
+                <div disabled={disabled} ref={animationParent} className="rounded-lg mb-2 p-8  bg-white ">
                   <h3 className="text-black text-xl font-bold">
                     Datos del Conyugue
                   </h3>
@@ -558,6 +604,7 @@ return (
                         name={"name"}
                         onChange={(e) => handleInputChange(e, "familiar")}
                         value={familiares.name}
+                        disabled={disabled}
                         className={"w-full p-3"}
                       />
                       {validationErrors.name && (
@@ -569,6 +616,7 @@ return (
                         type={"number"}
                         onChange={(e) => handleInputChange(e, "familiar")}
                         value={familiares.dni}
+                        disabled={disabled}
                         className={"w-full p-3"}
                       />
                       {validationErrors.dni && (
@@ -582,6 +630,7 @@ return (
                         type={"date"}
                         value={familiares.fecha_de_nacimiento}
                         onChange={(e) => handleInputChange(e, "familiar")}
+                        disabled={disabled}
                         className={"w-full p-3"}
                       />
                       {validationErrors.fecha_de_nacimiento && (
@@ -595,6 +644,7 @@ return (
                         type={"number"}
                         onChange={(e) => handleInputChange(e, "familiar")}
                         value={familiares.tel}
+                        disabled={disabled}
                         className={"w-full p-3"}
                       />
                       {validationErrors.tel && (
@@ -619,8 +669,9 @@ return (
                   <div className="mt-2 mb-2">
                     <Input
                       name={"numero_libreta"}
-                      type={"text"}
+                      type={"number"}
                       onChange={handleInputChange}
+                      disabled={disabled}
                       value={beneficio.numero_libreta}
                       className={"w-[95%] p-3"}
                       placeholder={"12345"}
@@ -656,6 +707,7 @@ return (
                       name="libreta"
                       id="libreta"
                       multiple
+                      disabled={disabled}
                       required
                       style={{ display: "none" }}
                       onChange={handleLibretaChange}
@@ -678,12 +730,16 @@ return (
                   {/* } */}
                   <div className="flex justify-end items-end mt-20 flex-col">
                   <button
-                    className="bg-[#0E6F4B] w-1/3 font-bold text-white rounded-lg p-2 sm:hover:bg-opacity-75"
+                  disabled={disabled}
+                    className="bg-[#0E6F4B] w-full sm:w-1/3 font-bold text-white rounded-lg p-2 sm:hover:bg-opacity-75"
                     onClick={handleRegisterAfiliate}
                   >
                     Confirmar
                   </button>
+                  
                   </div>
+                                        {disabled && <p className="text-xs max-sm:pt-2 max-sm:text-center font-semibold text-red-500">Ya existe un beneficio registrado para este afiliado.</p>}
+
                 </div>
                 {/* <div></div>
 

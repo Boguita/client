@@ -403,7 +403,7 @@ const handleImageUpload = async () => {
    return (
     <div className="bg-gray-200 flex justify-center pb-4 mt-36 h-screen w-screen sm:pl-80 sm:ml-5">
       
-   <div className="flex flex-col pt-10 rounded-3xl items-center  max-sm:h-max w-[95%] sm:w-2/3 sm:h-2/3 bg-white">
+   <div className="flex flex-col pt-10 rounded-3xl items-center  max-sm:h-max w-[95%] sm:w-2/3 sm:h-max bg-white">
     <div ref={animationParent} className="flex flex-col justify-center items-center h-20">
         <h2 className="text-[#006084] text-2xl sm:text-4xl font-bold">Registro del Trabajador</h2>
         {!datosAfiliado && currentStep === 1 ?
@@ -872,7 +872,7 @@ const handleImageUpload = async () => {
       {currentStep === 4 && (
     <>
 
-    <div className="flex flex-col h-full w-full sm:justify-end items-center space-y-4">
+    <div className="flex flex-col sm:p-28 h-full w-full sm:justify-end items-center space-y-4">
                   <BsCheck2Circle className="text-8xl sm:text-[8rem] text-[#006084]"/>
                   <p className="font-extrabold text-2xl sm:text-3xl text-[#006084]">El afiliado ha sido registrado.</p>
                   <p className="font-bold text-lg max-sm:w-5/6 max-sm:pb-4 text-center sm:text-xl text-gray-500">Por favor, verifique si se cargaron los datos correctamente.</p>

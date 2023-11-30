@@ -747,15 +747,17 @@ const comprobarStockTalle = (talle) => {
           }
           </div>
              <div>
+              { currentStep < 4 &&
           <p className="text-xs  sm:text-md font-bold text-[#757678]">¿Necesitas ayuda? Accedé al <strong onClick={() => setModalTutorialIsOpen(true)} className="cursor-pointer text-[#23A1D8]">Tutorial.</strong></p>
-        </div>
+              }
+          </div>
         </div>
       </div>
 
       <div className="flex max-sm:py-10  justify-center bg-gray-200">
         <div
           ref={animationParent}
-           className=" sm:w-2/4 min-h-[35em] bg-white flex p-4 rounded-lg"
+           className=" sm:w-2/4 min-h-[35em] mb-4 bg-white flex p-4 rounded-lg"
            >
            {isLoading ? (
             <Loader />
@@ -1167,7 +1169,7 @@ const comprobarStockTalle = (talle) => {
                 );
               })}
               {error && <p className="text-red-500">{error}</p>}
-              <div className="flex w-full sm:h-2/6 justify-between items-end pt-6 px-4">
+              <div className="flex w-full  justify-between items-end pt-6 px-4">
                 <button
                   className="mt-4 bg-gray-500 py-2 hover:bg-gray-900 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
                   onClick={handleBackStep}
@@ -1456,8 +1458,9 @@ const comprobarStockTalle = (talle) => {
                   transform: "translate(-50%, -50%)",
                   padding: "2rem",
                   width: "80%",
+                  height: "80%",
                   maxWidth: "40rem",
-                  maxHeight: "70vh", // Agregado para limitar la altura y agregar desplazamiento vertical
+                  maxHeight: "80rem", // Agregado para limitar la altura y agregar desplazamiento vertical
                   overflowY: "auto", // Agregado para agregar desplazamiento vertical si es necesario
                 },
               }}
@@ -1592,7 +1595,7 @@ const comprobarStockTalle = (talle) => {
 
             <div className="flex justify-between">
               <button
-                className="mt-4 bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                className="mt-4 bg-red-600 sm:w-36 w-28 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
                 onClick={() => {
                   setModalIsOpen(false)
                   setError(null)
@@ -1613,7 +1616,7 @@ const comprobarStockTalle = (talle) => {
                 Cerrar
               </button>
               <button
-                className="mt-4 bg-[#006084] w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                className="mt-4 bg-[#006084] sm:w-36 w-28 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
                 onClick={handleRegister}
               >
                 Confirmar

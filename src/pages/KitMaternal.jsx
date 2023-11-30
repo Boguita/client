@@ -647,7 +647,7 @@ useEffect(() => {
 
 return (
   <div className="bg-gray-200 h-screen w-screen sm:pl-80 max-sm:p-3 sm:ml-5">
-    <div className="flex mb-10 mt-32 h-20">
+    <div className="flex max-sm:mb-8 2xl:mb-8 mb-2 2xl:mt-32 mt-28 h-20">
       <img className=" w-12 h-12" src={Mono}></img>
       <div className="flex sm:w-[90%] max-sm:flex-col justify-between pl-4">
         <div className="flex-col">
@@ -655,15 +655,17 @@ return (
           Solicitar Beneficio: Kit Nacimiento
         </h2>
         { currentStep === 1 &&
-        <p className="p-2 text-xs sm:text-md font-bold text-[#757678]">
+        <p className="p-2 2xl:p-2 sm:p-1 text-xs sm:text-md font-bold text-[#757678]">
           Carga los datos y los archivos correspondientes <br /> para realizar
           la solicitud.
         </p>
         }
         </div>
         <div>
+          { currentStep === 1 &&
           <p className="text-xs  sm:text-md font-bold text-[#757678]">¿Necesitas ayuda? Accedé al <strong onClick={() => setModalTutorialIsOpen(true)} className="cursor-pointer text-[#23A1D8]">Tutorial.</strong></p>
-        </div>
+          }
+          </div>
       </div>
     </div>
 
@@ -675,7 +677,7 @@ return (
           ) : (
             currentStep === 1 && (
               <>
-                <div ref={animationParent} className="rounded-lg  p-8  bg-white ">
+                <div ref={animationParent} className="rounded-lg p-8  bg-white ">
                   <h3 className="text-black text-xl sm:text-2xl font-bold">
                     Datos de la Madre
                   </h3>
@@ -928,7 +930,7 @@ return (
                           )}
                 </div>
 
-             <div className="flex justify-end max-sm:pb-2 pt-6">
+             <div className="flex justify-end  max-sm:pb-2 max-sm:pt-6">
   {disabled ? (
     <p className="font-bold text-red-500">Ya se otorgó un beneficio durante el año actual.</p>
   ) : (  
