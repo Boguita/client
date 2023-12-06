@@ -877,8 +877,7 @@ const comprobarBeneficios = async (familiarIds) => {
           .filter((familiar) =>
             beneficiosOtorgados.some(
               (beneficio) =>
-                beneficio.familiar_id === familiar.id &&
-                beneficio.estado === 'Entregado'                 
+                beneficio.familiar_id === familiar.id           
             )
           )
           .map((familiar) => (
@@ -888,7 +887,7 @@ const comprobarBeneficios = async (familiarIds) => {
                 
                 <div className="flex p-4 font-semibold  text-gray-400">
                   {beneficiosOtorgados
-                    .filter((beneficio) => beneficio.familiar_id === familiar.id && beneficio.estado === 'Entregado')
+                    .filter((beneficio) => beneficio.familiar_id === familiar.id)
                     .map((beneficio) => (
                       <div key={beneficio.id}>
                         <img className="w-auto h-8" src={beneficio.tipo === 'Luna de miel' ? Avion : beneficio.tipo === 'Kit escolar' ? Libro : Mono} alt="Avion" />
@@ -901,7 +900,7 @@ const comprobarBeneficios = async (familiarIds) => {
                             DNI del Familiar: {beneficio.familiar_dni}
                           </span>
                           <span className='block'>
-                            Fecha de Otorgamiento: {new Date(beneficio.fecha_otorgamiento).toLocaleDateString()}
+                            Fecha de Entrega: {beneficio.constancia_img ? new Date(beneficio.fecha_otorgamiento).toLocaleDateString() : "Sin fecha"}
                           </span>
                           <span className='block'>
                             Usuario Otorgante: {beneficio.usuario_otorgante}
@@ -915,7 +914,7 @@ const comprobarBeneficios = async (familiarIds) => {
                             </div>
                           ) : (<span>Sin constancia</span>)}
                         </p>
-                        <span className='font-semibold text-sm text-green-500'>Entregado</span>
+                        <span className='font-semibold text-sm text-[#23a2d9ff]'>{beneficio.estado} </span>
                       </div>
                     ))}
                 </div>

@@ -75,6 +75,7 @@ const generarClaveAgrupacion = (beneficio) => {
             utiles: beneficioExistente.utiles || beneficio.utiles,
             mochila: beneficioExistente.mochila || beneficio.mochila,
             guardapolvo_confirm: beneficioExistente.guardapolvo_confirm || beneficio.guardapolvo_confirm,
+            fecha_otorgamienton: beneficioExistente.fecha_otorgamiento || beneficio.fecha_otorgamiento,
             // Agrega aquí otros campos booleanos que necesites manejar
           };
         }

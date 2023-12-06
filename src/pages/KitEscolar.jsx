@@ -495,6 +495,7 @@ useEffect(function () {
       const initialBeneficios = familiaresHijos.reduce((acc, familiar) => {
         acc[familiar.id] = {
           usuario_otorgante: currentUser?.username,
+          usuario_otorgante_id: currentUser?.id,
           seccional_id:currentUser?.seccional_id,
           id: "",
           tipo: "Kit escolar",
@@ -1450,7 +1451,7 @@ const comprobarStockTalle = (talle) => {
                   border: "none",
                   background: "white",
                   color: "black",
-                  top: "55%",
+                  top: "58%",
                   left: "50%",
                   right: "auto",
                   bottom: "auto",
@@ -1460,14 +1461,14 @@ const comprobarStockTalle = (talle) => {
                   width: "80%",
                   height: "80%",
                   maxWidth: "40rem",
-                  maxHeight: "80rem", // Agregado para limitar la altura y agregar desplazamiento vertical
-                  overflowY: "auto", // Agregado para agregar desplazamiento vertical si es necesario
+                  maxHeight: "37rem", // Agregado para limitar la altura y agregar desplazamiento vertical
+                   // Agregado para agregar desplazamiento vertical si es necesario
                 },
               }}
           >
             <h2 className="text-2xl font-bold mb-4">Añadir Hijos</h2>
             {error && <p className="font-bold text-red-500">{error}</p>}
-            <div className="mb-2">
+            <div className="sm:mb-2">
               <label className="block font-bold mb-1">
                 Nombre y Apellido{" "}
                 <strong className="text-red-500 text-sm">
@@ -1484,7 +1485,7 @@ const comprobarStockTalle = (talle) => {
               />
             </div>
 
-            <div className="mb-2">
+            <div className="sm:mb-2">
               <label className="block font-bold mb-1">
                 DNI{" "}
                 <strong className="text-red-500 text-sm">
@@ -1501,7 +1502,7 @@ const comprobarStockTalle = (talle) => {
               />
             </div>
 
-            <div className="mb-4">
+            <div className="sm:mb-4">
               <label className="block font-bold mb-1">
                 Fecha de Nacimiento{" "}
                 <strong className="text-red-500 text-sm">
@@ -1517,10 +1518,10 @@ const comprobarStockTalle = (talle) => {
                 onChange={handleChangeHijo}
               />
             </div>
-
-            <div className="flex flex-col justify-center items-center mt-4 rounded-xl min-h-[6rem] w-[100%] bg-gray-200 p-2">
-              <p className="font-bold">Subir foto de DNI:</p>
-              <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
+           <div className="flex gap-x-2"> 
+            <div className="flex flex-col justify-center items-center mt-2 sm:mt-4 rounded-xl h-[10rem] sm:min-h-[6rem] w-[90%] bg-gray-200 p-3 sm:p-2">
+              <p className="font-bold max-sm:text-sm">Subir foto de DNI:</p>
+              <p className="text-sm max-sm:text-xs font-semibold text-gray-600 max-w-[80%] text-center mt-1">
                 Frente.
               </p>
 
@@ -1528,7 +1529,7 @@ const comprobarStockTalle = (talle) => {
                 htmlFor="dni_img_frente"
                 className="cursor-pointer mt-auto mb-2"
               >
-                <FiDownload className="text-5xl text-[#23A1D8]" />
+                <FiDownload className="max-sm:text-3xl sm:text-5xl text-[#23A1D8]" />
               </label>
 
               <input
@@ -1543,7 +1544,7 @@ const comprobarStockTalle = (talle) => {
               <p className="text-xs font-semibold text-gray-600 text-center">
                 Click aquí para cargar o{" "}
                 <strong className="text-[#006084]">elegir archivos.</strong>
-                <strong className="text-red-500 text-xl">
+                <strong className="text-red-500 max-sm:text-sm text-xl">
                   {validationErrors.dni_img_frente}
                 </strong>
               </p>
@@ -1555,9 +1556,9 @@ const comprobarStockTalle = (talle) => {
               )}
             </div>
 
-                    <div className="flex flex-col justify-center items-center mt-4 rounded-xl min-h-[6rem] w-[100%] bg-gray-200 p-2">
-              <p className="font-bold">Subir foto de DNI:</p>
-              <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
+                    <div className="flex flex-col justify-center items-center mt-2 sm:mt-4 rounded-xl h-[10rem] sm:min-h-[6rem] w-[90%] bg-gray-200 p-3 sm:p-2">
+              <p className="font-bold max-sm:text-sm">Subir foto de DNI:</p>
+              <p className="text-sm max-sm:text-xs font-semibold text-gray-600 max-w-[80%] text-center mt-1">
                 Dorso.
               </p>
 
@@ -1565,7 +1566,7 @@ const comprobarStockTalle = (talle) => {
                 htmlFor="dni_img_dorso"
                 className="cursor-pointer mt-auto mb-2"
               >
-                <FiDownload className="text-5xl text-[#23A1D8]" />
+                <FiDownload className="max-sm:text-3xl sm:text-5xl text-[#23A1D8]" />
               </label>
 
               <input
@@ -1578,9 +1579,8 @@ const comprobarStockTalle = (talle) => {
               />
 
               <p className="text-xs font-semibold text-gray-600 text-center">
-                Click aquí para cargar o{" "}
-                <strong className="text-[#006084]">elegir archivos.</strong>
-                <strong className="text-red-500 text-xl">
+                Click aquí para cargar o{" "}<strong className="text-[#006084]">elegir archivos.</strong>
+                <strong className="text-red-500 text-xs">
                   {validationErrors.dni_img_dorso}
                 </strong>
               </p>
@@ -1592,6 +1592,7 @@ const comprobarStockTalle = (talle) => {
               )}
                
             </div>
+            </div>  
 
             <div className="flex justify-between">
               <button

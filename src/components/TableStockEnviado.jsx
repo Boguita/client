@@ -283,7 +283,7 @@ const rechazarUsuario = async (afiliado) => {
                               <td className="px-6 py-3 capitalize text-[#006084] whitespace-no-wrap">{row.provincia}</td>
                               <td className="px-6 py-3 whitespace-no-wrap">{row.delegacion}</td>
                   <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.nombre}</td>
-                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.direccion + " N°" + row.numero}</td>                  
+                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.direccion}</td>                  
                   <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{""}</td>   
                   <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.talle6}</td> 
                   <td className="px-1 2xl:px-4 py-3 whitespace-no-wrap">{row.talle8}</td>   

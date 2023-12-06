@@ -228,45 +228,50 @@ const rechazarUsuario = async (afiliado) => {
           <table   className="table-fixed w-full divide-y-4 divide-[#006084]">
             <thead >
               <tr>
-                <th className="px-1 2xl:px-3 py-3   text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                <th className="px-1 2xl:px-2 py-3   text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Provincia
                 </th>
-                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Delegación
                 </th>
-                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Seccional
                 </th>
-                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Dirección
                 </th>
-                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                 <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Afiliado
                 </th>
                  <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   DNI
                 </th>
-                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                 <th className="px-1 2xl:px-1 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   HIJO/A
                 </th>
                  <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   DNI HIJO/A
                 </th>
-                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Año Escolar
                 </th>                  
-                  <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  <th className="px-1 2xl:px-1 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Útiles
                 </th>
-                <th className="px-2 2xl:px-6 py-3  text-left text-[10px] leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Guardapolvo talle
+                <th className="  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  Guardapolvo
                 </th>  
-                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                 <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Mochilas
                 </th>  
-                     <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                     <th className="
+                      py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Estado
-                </th>              
+                </th>     
+                   <th className="
+                      py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  Fecha de Entrega
+                </th>          
                 
                  <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Acciones
@@ -283,19 +288,24 @@ const rechazarUsuario = async (afiliado) => {
               {data?.slice(startIndex, endIndex).map((row, index) => (
                 <tr  key={index} className={`text-gray-600 text-sm font-semibold ${index % 2 === 0 ? grayRowClass : whiteRowClass }`}>
                   <td className="px-6 py-3 capitalize text-[#006084] whitespace-no-wrap">{row.provincia}</td>
-                  <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.delegacion}</td>
-                  <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.seccional}</td>
-                  <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.direccion}</td>
-                  <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.afiliado_name}</td>
+                  <td className="px-1 2xl:px-2 capitalize py-3 whitespace-no-wrap">{row.delegacion}</td>
+                  <td className="px-1 2xl:px-2 capitalize py-3 whitespace-no-wrap">{row.seccional}</td>
+                  <td className="px-1 2xl:px-2 capitalize py-3 whitespace-no-wrap">{row.direccion}</td>
+                  <td className="px-1 2xl:px-2 capitalize py-3 whitespace-no-wrap">{row.afiliado_name}</td>
                    <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.afiliado_dni}</td>
-                  <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.familiar_name}</td>
+                  <td className="px-1 2xl:px-2 capitalize py-3 whitespace-no-wrap">{row.familiar_name}</td>
                   <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.familiar_dni}</td>                  
-                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.año_escolar}</td> 
-                  <td className="px-1 2xl:px-4 py-3 whitespace-no-wrap">{row.utiles === 0 ? "Pendiente" : "Entregado"}</td>   
-                  <td className="px-1 2xl:px-4 py-3 whitespace-no-wrap">{row.guardapolvo_confirm === 0 ? "Pendiente" : "Entregado"} Talle: {row.guardapolvo} </td> 
-                   <td className="px-1 2xl:px-4 py-3 whitespace-no-wrap">{row.mochila === 0 ? "Pendiente" : "Entregado"}</td> 
+                  <td className="px-1 2xl:px-2 py-3 whitespace-no-wrap">{row.año_escolar}</td> 
+                  <td className={`px-1  2xl:px-2 py-3 whitespace-no-wrap`}><span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.utiles === 0 ? 'bg-red-400 text-red-500' : "bg-green-400 text-green-500"}`}>{row.utiles === 0 ? "No" : "Si"}</span></td>   
+                  <td className="px-1 2xl:px-2 py-3 whitespace-no-wrap"><span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.guardapolvo_confirm === 0 ? 'bg-red-400 text-red-500' : "bg-green-400 text-green-500"}`}>{row.guardapolvo_confirm === 0 ? "No" : "Si"}</span> T: {row.guardapolvo}</td> 
+                  <td className={`px-1  2xl:px-4 py-3 whitespace-no-wrap`}><span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.mochila === 0 ? 'bg-red-400 text-red-500' : "bg-green-400 text-green-500"}`}>{row.mochila === 0 ? "No" : "Si"}</span></td>   
+                  
       
-                  <td className="px-2 2xl:px-6  capitalize whitespace-no-wrap"><span className={`bg-opacity-30 ${(row.utiles && row.mochila && row.guardapolvo_confirm) ? 'bg-green-400 text-green-500 ' : 'bg-yellow-200 text-yellow-400'}  rounded-lg px-2 p-1`}>{row.utiles && row.mochila && row.guardapolvo_confirm ? "Completo" : "Incompleto"}</span></td>                
+                  <td className="  capitalize whitespace-no-wrap"><span className={`bg-opacity-30 ${(row.utiles && row.mochila && row.guardapolvo_confirm) ? 'bg-green-400 text-green-500 ' : 'bg-yellow-200 text-yellow-400'}  rounded-lg px-2 p-1`}>{row.utiles && row.mochila && row.guardapolvo_confirm ? "Completo" : "Incompleto"}</span></td>                
+                   <td className="px-1 2xl:px-1 py-3 whitespace-no-wrap">
+  {!row.utiles && !row.mochila && !row.guardapolvo_confirm ? "" : new Date(row.fecha_otorgamiento).toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })}
+</td>
+
                   <td className="flex items-center px-10 py-2 whitespace-no-wrap">
                     {row.estado === 'Entregado'  &&
                     <div  className="relative">

@@ -15,7 +15,8 @@ import Logo from '../assets/img/logo.png'
 import { AuthContext } from "../context/authContext";
 import { Link } from 'react-router-dom';
 import Avatar from './Avatar';
-import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
+import { IoIosArrowBack, IoIosArrowForward, IoMdArrowDropdown } from 'react-icons/io';
+import { sortDataNumber } from '../common/SortDataNumber';
 
 const COLORS = ['#006084', '#23A1D8', '#0E6F4B'];
 
@@ -38,6 +39,7 @@ const ListBenefits = () => {
   const [error, setError] = useState(null);
   const [openModalMultiple, setOpenModalMultiple] = useState(false);
   const [idSeccional, setIdSeccional] = useState(null);
+  const [filasFiltradas, setFilasFiltradas] = useState([]);
     const [seccionalesFiltradas, setSeccionalesFiltradas] = useState([]);
     const [activeTab, setActiveTab] = useState('seccional');
       const { currentUser, logout } = useContext(AuthContext);
@@ -97,9 +99,7 @@ const handleChangeTalles = (selectedOptions) => {
 };
 
 
-useEffect(() => {
-  console.log(formData);
-}, [formData]);
+
   
   const handleSeccionalChange = (selectedOptions) => {
     setSelectedSeccionales(selectedOptions);
@@ -124,6 +124,21 @@ useEffect(() => {
        res.status === 200 && setSuccess(res.data.message);      
       setError(null);
       setIsLoading(false);
+      setFormData({
+    id: idSeccional,
+    funcion: "",
+    mochila: 0,
+    utiles_Jardín: 0,
+    utiles_Primario: 0,
+    utiles_Secundario: 0,   
+    talle6:0,
+    talle8: 0,
+    talle10: 0,
+    talle12: 0,
+    talle14: 0,
+    talle16: 0,
+    talle18: 0,   
+  })
       refreshData();
       
            
@@ -146,6 +161,21 @@ useEffect(() => {
       res.status === 200 && setSuccess(res.data.message);      
       setError(null);
       setIsLoading(false);
+      setFormData({
+    id: idSeccional,
+    funcion: "",
+    mochila: 0,
+    utiles_Jardín: 0,
+    utiles_Primario: 0,
+    utiles_Secundario: 0,   
+    talle6:0,
+    talle8: 0,
+    talle10: 0,
+    talle12: 0,
+    talle14: 0,
+    talle16: 0,
+    talle18: 0,   
+  })
        refreshData();
 
       
@@ -255,6 +285,9 @@ useEffect(() => {
    setIsLoading(false);
 };
 
+useEffect(() => {
+  console.log("FILAS CON BOTON",filasFiltradas);
+}, [filasFiltradas]);
 
 useEffect(() => {
   handleAffiliateDataRequest();
@@ -375,9 +408,13 @@ const filasFiltradasYOrdenadas = list
       const sumaB = b.mochila + b.utiles + b.talle6 + b.talle8 + b.talle10 + b.talle12 + b.talle14 + b.talle16 + b.talle18;
       return sumaA - sumaB;
     }
-
+     
     return seccionalComparison;
   });
+
+
+
+
 
   const rowsPerPage = 10
   const  showPagination = true
@@ -386,6 +423,7 @@ const filasFiltradasYOrdenadas = list
   const startIndex = currentPage * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
 
+  
   const nextPage = () => {
     if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1);
@@ -402,7 +440,24 @@ const filasFiltradasYOrdenadas = list
 
   
 
- 
+ const handleSortData = async (field) => {
+  console.log(filasFiltradasYOrdenadas)
+  console.log(field)
+  try {
+    const dataSorted = [...filasFiltradasYOrdenadas].sort((a, b) => {
+      const valueA = typeof a[field] === 'number' ? a[field] : 0;
+      const valueB = typeof b[field] === 'number' ? b[field] : 0;
+
+      return valueB - valueA;
+    });
+
+    setFilasFiltradas(dataSorted);
+  } catch (error) {
+    setError("Ha ocurrido un error, por favor intente nuevamente");
+  }
+};
+
+console.log(filasFiltradasYOrdenadas);
 
 
 
@@ -414,7 +469,6 @@ const filasFiltradasYOrdenadas = list
 //             response.data.sumas.talle14 + response.data.sumas.talle16 + 
 //             response.data.sumas.talle18
 //   };
-
 
 
 
@@ -519,53 +573,56 @@ const filasFiltradasYOrdenadas = list
              <thead >
                <tr>
               
-                 <th className="px-1 2xl:px-3 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                 <th className="2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                    Provincia
                  </th>
-                 <th className="px-1 2xl:px-3 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                 <th className=" 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                    Seccional
                  </th>
-                 <th className="px-1 2xl:px-3 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                 <th className=" 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                    Delegación
                  </th>
                   <th className="px-1 2xl:px-3 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                    Dirección
                  </th>
                  <th className=" py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                   Mochilas
+                  <div onClick={() => handleSortData("mochila")} className='  hover:text-black text-white flex cursor-pointer'>
+                  <span className='text-black'>Moch.</span>
+                  <IoMdArrowDropdown className='text-lg ' />
+                  </div>                  
                  </th>   
                   <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                    Úti.Jardin
+                    Út.J
                  </th> 
                  <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                    Úti.Primario
+                    Út.P
                  </th>  
                  <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                    Úti.Secundario
+                    Út.S
                  </th>   
                   <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                   Talle 6
+                   T6
                  </th>  
                   <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                   Talle 8
+                   T8
                  </th> 
                   <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                   Talle 10
+                   T10
                  </th> 
                   <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                   Talle 12
+                   T12
                  </th> 
                   <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                   Talle 14
+                   T14
                  </th> 
                   <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                   Talle 16
+                   T16
                  </th> 
                   <th className="px-1 2xl:px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                   Talle 18
+                   T18
                  </th>   
                     <th className="px-1 2xl:px-6 py-3   text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                   Cargar Stock
+                   Stock
                  </th>       
 
                </tr>
@@ -581,53 +638,53 @@ const filasFiltradasYOrdenadas = list
                  
                     
                  
-                               <td className="px-6 text-[#006084] py-3 whitespace-no-wrap">{row.provincia}</td>
-                              <td className="px-6 py-3 whitespace-no-wrap">{row.seccional}</td>
-                               <td className="px-6 py-3 whitespace-no-wrap">{row.delegacion}</td>
-                                <td className="px-6 py-3 whitespace-no-wrap">{row.direccion}</td>
-                               <td className={`px-2 2xl:px-6 py-3 whitespace-no-wrap`}><span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.mochila < 150 ? 'bg-red-400 text-red-500' : ''}`}>{row.mochila}</span></td>
+                               <td className="px-2  text-[#006084] py-3 whitespace-no-wrap">{row.provincia}</td>
+                              <td className="px-2  py-3 whitespace-no-wrap">{row.seccional}</td>
+                               <td className="px-2  py-3 whitespace-no-wrap">{row.delegacion}</td>
+                                <td className="px-2  py-3 whitespace-no-wrap">{row.direccion}</td>
+                               <td className={`px-2 py-3 whitespace-no-wrap`}><span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.mochila < 150 ? 'bg-red-400 text-red-500' : ''}`}>{row.mochila}</span></td>
                                                                <td className={`px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap`}><span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.utiles_Jardín < 150 ? 'bg-red-400 text-red-500' : ''}`}>{row.utiles_Jardín}</span></td>
 
-                                <td className={`px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap`}><span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.utiles_Primario < 150 ? 'bg-red-400 text-red-500' : ''}`}>{row.utiles_Primario}</span></td>
-                                 <td className={`px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap`}><span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.utiles_Secundario < 150 ? 'bg-red-400 text-red-500' : ''}`}>{row.utiles_Secundario}</span></td>
+                                <td className={`px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap`}><span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.utiles_Primario < 10 ? 'bg-red-400 text-red-500' : row.utiles_Primario >= 10 && row.utiles_Primario <= 50 ? 'bg-yellow-400 text-yellow-500' : 'bg-green-400 text-green-500'}`}>{row.utiles_Primario}</span></td>
+                                 <td className={`px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap`}><span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.utiles_Secundario < 10 ? 'bg-red-400 text-red-500' : row.utiles_Secundario >= 10 && row.utiles_Secundario <= 50 ? 'bg-yellow-400 text-yellow-500' : 'bg-green-400 text-green-500'}`}>{row.utiles_Secundario}</span></td>
                   <td className={`px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap`}>
-                      <span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.talle6 < 150 ? 'bg-red-400 text-red-500' : ''}`}>
+                      <span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.talle6 < 10 ? 'bg-red-400 text-red-500' : row.talle6 >= 10 && row.talle6 <= 50 ? 'bg-yellow-400 text-yellow-500' : 'bg-green-400 text-green-500'}`}>
                         {row.talle6}
                       </span>
                     </td>
 
                     <td className={`px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap`}>
-                      <span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.talle8 < 150 ? 'bg-red-400 text-red-500' : ''}`}>
+                      <span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.talle8 < 10 ? 'bg-red-400 text-red-500' : row.talle8 >= 10 && row.talle8 <= 50 ? 'bg-yellow-400 text-yellow-500' : 'bg-green-400 text-green-500'}`}>
                         {row.talle8}
                       </span>
                     </td>
 
                     <td className={`px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap`}>
-                      <span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.talle10 < 150 ? 'bg-red-400 text-red-500' : ''}`}>
+                      <span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.talle10 < 10 ? 'bg-red-400 text-red-500' : row.talle10 >= 10 && row.talle10 <= 50 ? 'bg-yellow-400 text-yellow-500' : 'bg-green-400 text-green-500'}`}>
                         {row.talle10}
                       </span>
                     </td>
 
                     <td className={`px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap`}>
-                      <span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.talle12 < 150 ? 'bg-red-400 text-red-500' : ''}`}>
+                      <span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.talle12 < 10 ? 'bg-red-400 text-red-500' : row.talle12 >= 10 && row.talle12 <= 50 ? 'bg-yellow-400 text-yellow-500' : 'bg-green-400 text-green-500'}`}>
                         {row.talle12}
                       </span>
                     </td>
 
                     <td className={`px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap`}>
-                      <span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.talle14 < 150 ? 'bg-red-400 text-red-500' : ''}`}>
+                      <span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.talle14 < 10 ? 'bg-red-400 text-red-500' : row.talle14 >= 10 && row.talle14 <= 50 ? 'bg-yellow-400 text-yellow-500' : 'bg-green-400 text-green-500'}`}>
                         {row.talle14}
                       </span>
                     </td>
 
                     <td className={`px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap`}>
-                      <span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.talle16 < 150 ? 'bg-red-400 text-red-500' : ''}`}>
+                      <span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.talle16 < 10 ? 'bg-red-400 text-red-500' : row.talle16 >= 10 && row.talle16 <= 50 ? 'bg-yellow-400 text-yellow-500' : 'bg-green-400 text-green-500'}`}>
                         {row.talle16}
                       </span>
                     </td>
 
                     <td className={`px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap`}>
-                      <span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.talle18 < 150 ? 'bg-red-400 text-red-500' : ''}`}>
+                      <span className={`bg-opacity-30 rounded-lg px-2 p-1 ${row.talle18 < 10 ? 'bg-red-400 text-red-500' : row.talle18 >= 10 && row.talle18 <= 50 ? 'bg-yellow-400 text-yellow-500' : 'bg-green-400 text-green-500'}`}>
                         {row.talle18}
                       </span>
                     </td>

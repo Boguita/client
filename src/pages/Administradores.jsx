@@ -107,15 +107,15 @@ useEffect(() => {
                     <>
                            <div ref={animationParent}>
                         <h2 className='text-black font-extrabold text-xl'>Pendientes</h2>
-                        <TableUsers data={pendingUsers} onUpdateUserData={handleUpdateUserData} />
+                        <TableUsers initialData={pendingUsers} onUpdateUserData={handleUpdateUserData} />
                       </div>
                       <div className='flex flex-col gap-x-8'>
                         <h2 className='text-black font-extrabold text-xl'>Aprobados</h2>
-                        <TableUsers data={approvedUsers} onUpdateUserData={handleUpdateUserData} />
+                        <TableUsers initialData={approvedUsers} onUpdateUserData={handleUpdateUserData} />
                       </div>
                          <div>
                         <h2 className='text-black font-extrabold text-xl'>Rechazados</h2>
-                        <TableUsers data={rejectedUsers} onUpdateUserData={handleUpdateUserData} />
+                        <TableUsers initialData={rejectedUsers} onUpdateUserData={handleUpdateUserData} />
                       </div>
                       </>
                     }   

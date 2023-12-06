@@ -174,6 +174,24 @@ const handleUpdateUserData = async () => {
   }
 };
 
+  const handleGetList = async () => {
+    try {
+      const res = await api.get(`/tasks/seccionales/excel`, {responseType: 'blob'});
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `seccionales.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      setError(null);
+      setIsLoading(false);
+      // Restablecer el estado del error si la solicitud tiene éxito
+    } catch (error) {
+      setError(error.response.data.message);
+      setIsLoading(false);
+    }
+  }
+
 
 
 
@@ -253,13 +271,20 @@ const handleUpdateUserData = async () => {
                         >
                           <span>Crear Seccional</span>
                         </button>
+                          <button 
+                         className="ml-1 p-1 w-32 font-bold text-white rounded-lg bg-[#23A1D8] hover:bg-opacity-60"
+
+                          onClick={handleGetList}
+                        >
+                          <span>Descargar Lista</span>
+                        </button>
 
                         </div>
                      
                      </div>
                  
                     </div> 
-                                <TableSeccionales data={searchResults} onUpdateUserData={handleUpdateUserData}  />
+                                <TableSeccionales initialData={searchResults} onUpdateUserData={handleUpdateUserData}  />
                               </div>
 
 
@@ -292,45 +317,7 @@ const handleUpdateUserData = async () => {
       </div>
         <h1 className="text-2xl font-semibold mb-4">Crear Nueva Seccional</h1>
         <form onSubmit={handleSubmit}>     
-          <div className="mb-3">          
-            <Input
-              className="form-control capitalize py-3 w-full"
-              id="nombre"
-              type="text"
-              required
-              name="nombre"
-              value={inputs.nombre}
-              onChange={handleInputChange}
-              placeholder="Nombre de Seccional"
-            />
-          </div>
-           <div className="mb-3">          
-            <Input
-              className="form-control capitalize py-3 w-full"
-              id="delegacion"
-              type="text"
-              required
-              name="delegacion"
-              value={inputs.delegacion}
-              onChange={handleInputChange}
-              placeholder="Delegación"
-            />
-          </div>
-            <div className="mb-3">          
-            <Input
-              className="form-control capitalize py-3 w-full"
-              id="direccion"
-              type="text"
-              required
-              name="direccion"
-              value={inputs.direccion}
-              onChange={handleInputChange}
-              placeholder="Calle y Numeración"
-            />
-          </div>
-       
-
-        <div className="py-3 mb-3 !border-l-4 !border-[#006084] bg-gray-200">
+         <div className="py-3 mb-3 !border-l-4 !border-[#006084] bg-gray-200">
                   <select
                     id="provincia"
                     name="provincia"
@@ -350,27 +337,48 @@ const handleUpdateUserData = async () => {
 
                   </select>
                 </div>
+                   <div className="mb-3">          
+            <Input
+              className="form-control capitalize py-3 w-full"
+              id="delegacion"
+              type="text"
+              required
+              name="delegacion"
+              value={inputs.delegacion}
+              onChange={handleInputChange}
+              placeholder="Delegación"
+            />
+          </div>
+          <div className="mb-3">          
+            <Input
+              className="form-control capitalize py-3 w-full"
+              id="nombre"
+              type="text"
+              required
+              name="nombre"
+              value={inputs.nombre}
+              onChange={handleInputChange}
+              placeholder="Nombre de Seccional"
+            />
+          </div>
+        
+            <div className="mb-3">          
+            <Input
+              className="form-control capitalize py-3 w-full"
+              id="direccion"
+              type="text"
+              required
+              name="direccion"
+              value={inputs.direccion}
+              onChange={handleInputChange}
+              placeholder="Calle y Numeración"
+            />
+          </div>
+       
+
+       
                 
-                {/* <div className="py-3 mb-3 !border-l-4 !border-[#006084] bg-gray-200">
-                    <select
-                      id="ciudad"
-                      name="ciudad"
-                      value={inputs.ciudad}
-                      onChange={handleChange}
-                      className=" bg-gray-200 pl-3 text-sm font-semibold focus:text-[#808080] focus:outline-none w-full"
-                    >
-                      <option value="" disabled selected>
-                        Ciudad
-                      </option>
-                      {ciudades
-                      .sort((a, b) => a.nombre.localeCompare(b.nombre))
-                      .map((ciudad) => (
-                        <option key={ciudad.id} value={ciudad.nombre}>
-                          {ciudad.nombre}
-                        </option>
-                      ))}
-                    </select>
-                  </div>    */}
+                
                   {isLoading ? <Loader/> :
           <div className="flex flex-col items-center justify-center">
         {success && <p className="text-green-500  font-semibold">{success}</p>}

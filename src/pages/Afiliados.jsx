@@ -30,7 +30,8 @@ const handleAffiliateDataRequest = async () => {
     const res = await api.get(`/users/afiliados`);
     // Almacenar los datos recibidos de la API
     const afiliados = res.data;
-    setUsers(afiliados.sort((a, b) => a.name.localeCompare(b.name)));
+    setUsers(afiliados.sort((a, b) => b.idafiliados - a.idafiliados));
+
     setErr(null);
      // Restablecer el estado del error si la solicitud tiene éxito
   } catch (error) {
@@ -134,8 +135,8 @@ useEffect(() => {
 
                    <div className='flex gap-10'>
                   <TableAfiliados
-                    data={searchResults} // Usa searchResults en lugar de users
-                    rowsPerPage={10}
+                    initialdata={searchResults} // Usa searchResults en lugar de users
+                    rowsPerPage={20}
                     onUpdateUserData={handleUpdateUserData}
                   />
                   </div> 

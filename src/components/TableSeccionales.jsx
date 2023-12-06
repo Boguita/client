@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {AiOutlineDelete} from 'react-icons/ai';
-import {IoIosArrowForward, IoIosArrowBack} from 'react-icons/io';
+import {IoIosArrowForward, IoIosArrowBack, IoMdArrowDropdown} from 'react-icons/io';
 import Modal from 'react-modal';
 import Avatar from '../assets/img/avatar.png';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
@@ -11,9 +11,10 @@ import Loader from '../components/Loader';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import {RxAvatar} from 'react-icons/rx';
 import Input from './Input';
+import SortData from '../common/SortData';
+import {TbMapPinQuestion, TbUserQuestion} from 'react-icons/tb';
 
-
-const TableSeccionales = ({ data, rowsPerPage = 15,  showPagination = true, onUpdateUserData }) => {
+const TableSeccionales = ({ initialData, rowsPerPage = 15,  showPagination = true, onUpdateUserData }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [openModal, setOpenModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -25,7 +26,18 @@ const TableSeccionales = ({ data, rowsPerPage = 15,  showPagination = true, onUp
     const [currentStep, setCurrentStep] = useState(1);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [data, setData] = useState(null);
+    const [isSorted, setIsSorted] = useState(false);
+    const [openEditModal, setOpenEditModal] = useState(false);
+    const [formData, setFormData] = useState({
+      provincia: "",
+      delegacion: "",
+      direccion: "",
+      nombre: "",      
+    });
   // Estilo en línea en el componente
+
+  
 const whiteRowClass = 'bg-white';
 const grayRowClass = 'bg-gray-200';
 
@@ -54,7 +66,13 @@ const grayRowClass = 'bg-gray-200';
 const handleOpenModal = (afiliado) => {
   setCurrentStep(1);
   setSelectedUser(afiliado);
-  setOpenModal(true);
+  setFormData({
+      provincia: "",
+      delegacion: "",
+      direccion: "",
+      nombre: "",      
+    })
+  setOpenEditModal(true);
 };
 
 const handleSelectOption = (index) => {
@@ -102,6 +120,24 @@ const handleDeleteSeccional = async (user) => {
   } 
   } catch (error) {
     setError("Hubo un error al eliminar la seccional");
+    setLoading(false)
+  }
+}
+
+const handleEditSeccional = async (user) => {
+  try {
+    setError(null);
+  setLoading(true);
+  const res = await api.put(`/tasks/seccionales/${user}`, formData);
+  if(res.status === 200) {
+  setCurrentStep(3)
+  onUpdateUserData()
+  } else {
+  setError("Hubo un error al editar la seccional");
+  setLoading(false); 
+  } 
+  } catch (error) {
+    setError("Hubo un error al editar la seccional");
     setLoading(false)
   }
 }
@@ -176,11 +212,33 @@ useEffect(() => {
 }
 , [afiliadosSeleccionados]);
 
+ const handleSortData = async (field) => {
+    try {
+      const dataSorted = await SortData([...data], field);
+      setData(dataSorted);
+    } catch (error) {
+      setError("Ha ocurrido un error, por favor intente nuevamente");
+    }
+  };
+
+useEffect(() => {
+  if (initialData) {
+    setData(initialData);
+  }
+}, [initialData]);
+
+useEffect(() => {
+  console.log("DATOS ORDENADOS", data);
+}, [data]);
+  
+
+
 
 
 
   return (
     <div ref={animationParent} className="h-full w-full">
+      {!data ? <Loader /> : (
       <div  className="flex flex-col">
         <div ref={animationParent} className="mt-4 bg-white min-h-[25rem] p-8 rounded-xl">
           <table   className="w-full table-auto divide-y-4 divide-[#006084]">
@@ -189,14 +247,23 @@ useEffect(() => {
                 <th className="px-2 2xl:px-6 py-3   text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Nº ID
                 </th>
-                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Provincia
+                <th className=" px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                   <div onClick={() => handleSortData("provincia")} className='  hover:text-black text-white flex cursor-pointer'>
+                  <span className='text-black'>Provincia</span>
+                  <IoMdArrowDropdown className='text-lg ' />
+                  </div>
                 </th>                             
                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Delegacion
+                  <div onClick={() => handleSortData("delegacion")} className=' hover:text-black text-white flex cursor-pointer'>
+                  <span className='text-black'>Delegación</span>
+                  <IoMdArrowDropdown className='text-lg ' />
+                  </div>
                 </th>  
                   <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Seccional
+                  <div onClick={() => handleSortData("nombre")} className='hover:text-black  text-white flex cursor-pointer'>
+                  <span className='text-black'>Seccional</span>
+                  <IoMdArrowDropdown className='text-lg' />
+                  </div>
                 </th> 
                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Dirección
@@ -229,7 +296,8 @@ useEffect(() => {
                         <div className="absolute z-10 right-0 left-5 mt-2 w-48 bg-white rounded-lg shadow-lg">
                           {/* Aquí coloca las opciones del menú */}
                           <ul className='p-1'>
-                            <li onClick={() => deleteUser(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Eliminar</li>                         
+                            <li onClick={() => deleteUser(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Eliminar</li> 
+                            <li onClick={() => handleOpenModal(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Editar</li>                        
                           </ul>
                         </div>
                       )}
@@ -291,10 +359,169 @@ useEffect(() => {
 
       </div>
        
-           <Modal
+          
+
+      )
+      }
+
+        <Modal
+            isOpen={openEditModal}
+            onRequestClose={() => setOpenEditModal(false)}
+            contentLabel="Editar Seccional"
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                zIndex: 1000,
+              },
+              content: {
+                border: "none",
+                background: "white",
+                color: "black",
+                top: "50%",
+                left: "55%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",                
+                transform: "translate(-50%, -50%)",
+                padding: "2rem",
+                width: "80%",
+                maxWidth: "40rem",
+              },
+            }}
+          >
+            
+            {/* {err && <p className="text-red-500">{err}</p>} */}
+            <div  className="mb-2">
+            {selectedUser && (
+              <div  className='flex justify-center h-full w-full'>
+                    <div ref={animationParent}  className="flex flex-col rounded-2xl w-[70%]">
+                      <h3 className="text-2xl text-center font-bold mb-4">Editar Seccional</h3>
+                      {currentStep === 1 &&
+                      <div className='flex flex-col w-full gap-y-2 items-center justify-center '>
+                        <label className="text-sm font-semibold text-gray-600">Provincia</label>
+                        <Input 
+                        placeholder={selectedUser.provincia}
+                        className={"flex w-72"}
+                        label='Provincia'
+                        name='provincia'
+                        value={formData.provincia}
+                        onChange={(e) => setFormData({...formData, provincia: e.target.value})}
+                        />
+                        <label className="text-sm font-semibold text-gray-600">Delegación</label>
+                        <Input
+                        placeholder={selectedUser.delegacion}
+                        className={"flex w-72"}
+                        label='Delegación'
+                        name='delegacion'
+                        value={formData.delegacion}
+                        onChange={(e) => setFormData({...formData, delegacion: e.target.value})}
+                        />
+                        <label className="text-sm font-semibold text-gray-600">Seccional</label>
+                        <Input
+                        placeholder={selectedUser.nombre}
+                        className={"flex w-72"}
+                        label='Seccional'
+                        name='nombre'
+                        value={formData.nombre}
+                        onChange={(e) => setFormData({...formData, nombre: e.target.value})}
+                        />
+                        <label className="text-sm font-semibold text-gray-600">Dirección</label>
+                        <Input
+                        placeholder={selectedUser.direccion}
+                        className={"flex w-72"}
+                        label='Dirección'
+                        name='direccion'
+                        value={formData.direccion}
+                        onChange={(e) => setFormData({...formData, direccion: e.target.value})}
+                        />
+
+                        <div className="flex mt-2 w-full justify-between items-center">
+                          
+                          <button
+                            className="mt-4 bg-gray-600 w-28 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                            onClick={() => setOpenEditModal(false)}
+                          >
+                            Cerrar
+                          </button>
+                          {loading ? <Loader /> :
+                            <button
+                            className="mt-4 bg-[#006084] w-28 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                            onClick={() => {
+                              if(!formData.provincia && !formData.delegacion && !formData.nombre && !formData.direccion) {
+                                setError("Deber rellenar al menos un campo");
+                                return;
+                              }  
+                              setError(null);
+                              setCurrentStep(2)
+                            }}
+                          >Siguiente</button>
+                          }
+                        </div>
+                        </div>
+                        }
+                      {currentStep === 2 &&
+                      <>
+                      <div className='flex flex-col items-center justify-center '>
+                      <TbMapPinQuestion  className='text-yellow-300 mb-4 text-7xl'/>
+                      <p>¿Estas seguro que deseas modificar esta seccional?</p>
+                      </div>
+                        <div className="flex mt-4 justify-around items-center">
+                          {loading ? <Loader /> :
+                           <button
+                            className="mt-4 bg-yellow-500 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                            onClick={() => handleEditSeccional(selectedUser.idseccionales)}
+                          >
+                            Confirmar
+                          </button>
+}
+                          <button
+                            className="mt-4 bg-gray-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                            onClick={() => setOpenEditModal(false)}
+                          >
+                            Cerrar
+                          </button>
+                        </div>
+                        </>
+                        }
+                        {currentStep === 3 &&
+                      <>
+                      <div className='flex flex-col items-center justify-center '>
+                      <AiOutlineCheckCircle className='text-green-600 text-7xl'/>
+                      <p className='text-xl font-bold mt-2'>La seccional se modificó correctamente.</p>
+                      </div>
+                          
+                         
+                    
+                  
+                    
+
+                        <div className="flex mt-4 justify-center items-end">                        
+                          <button
+                            className="mt-4 bg-gray-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                            onClick={() => setOpenEditModal(false)}
+                          >
+                            Cerrar
+                          </button>
+                        </div>
+                        </>
+                        }
+                        </div>
+                        
+                        
+                      </div>
+                    
+                    
+                      
+                  )}
+                  {error && <p className="font-semibold text-red-500">{error}</p>}
+            </div>                          
+
+       
+          </Modal>
+       <Modal
             isOpen={openDeleteModal}
             onRequestClose={() => setOpenDeleteModal(false)}
-            contentLabel="Eliminar Afiliado"
+            contentLabel="Eliminar Seccional"
             style={{
               overlay: {
                 backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -387,8 +614,6 @@ useEffect(() => {
 
        
           </Modal>
-
-          
     </div>
 
   );

@@ -14,7 +14,7 @@ import Input from './Input';
 import { TbUserQuestion } from 'react-icons/tb';
 
 
-const TableBeneficios = ({ data, rowsPerPage = 8,  showPagination = true, onUpdateUserData }) => {
+const TableBeneficios = ({ data, rowsPerPage = 20,  showPagination = true, onUpdateUserData }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [openModal, setOpenModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -266,7 +266,8 @@ useEffect(() => {
                         <div className="absolute z-10 right-0 left-5 mt-2 w-48 bg-white rounded-lg shadow-lg">
                           {/* Aquí coloca las opciones del menú */}
                           <ul className='p-1'>
-                            <li className='hover:border-[#006084] hover:border-b-2  cursor-pointer ' onClick={() => handleOpenModal(row)}>Ver ficha completa</li>  
+                            <li className='hover:border-[#006084] hover:border-b-2  cursor-pointer '><a href={`/admin/${row.afiliado_dni ? row.afiliado_dni : ""}`}  target="_blank"
+        rel="noopener noreferrer">Ver ficha completa</a></li> 
                              {row.estado === 'Pendiente' && 
                             <>
                             <li onClick={() => AprovvedBenefit(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Entregar Beneficio</li>   
@@ -302,21 +303,30 @@ useEffect(() => {
       Anterior
     </IoIosArrowBack>
     <span className="mx-2 flex flex-wrap justify-center items-center">
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-        <span
-          key={page}
-          className={`cursor-pointer mx-1 inline-flex justify-center items-center ${
-            currentPage === page - 1 ? 'bg-[#006084] text-white rounded-full' : ''
-          }`}
-          onClick={() => setCurrentPage(page - 1)}
-          style={{
-            width: '30px', // Ancho y alto del círculo
-            height: '30px',
-          }}
-        >
-          {page}
-        </span>
-      ))}
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+        // Mostrar al menos 15 números
+        if (totalPages <= 15 || (page >= currentPage - 7 && page <= currentPage + 7) || page === 1 || page === totalPages) {
+          return (
+            <span
+              key={page}
+              className={`cursor-pointer mx-1 inline-flex justify-center items-center ${
+                currentPage === page - 1 ? 'bg-[#006084] text-white rounded-full' : ''
+              }`}
+              onClick={() => setCurrentPage(page - 1)}
+              style={{
+                width: '30px', // Ancho y alto del círculo
+                height: '30px',
+              }}
+            >
+              {page}
+            </span>
+          );
+        } else if (page === currentPage - 8 || page === currentPage + 8) {
+          // Mostrar puntos suspensivos
+          return <span key={page}>...</span>;
+        }
+        return null; // Ocultar otras páginas
+      })}
     </span>
     <IoIosArrowForward
       className={`cursor-pointer ${currentPage === totalPages - 1 ? 'text-gray-400' : ''}`}
