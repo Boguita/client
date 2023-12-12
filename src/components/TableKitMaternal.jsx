@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {AiOutlineDelete} from 'react-icons/ai';
-import {IoIosArrowForward, IoIosArrowBack} from 'react-icons/io';
+import {IoIosArrowForward, IoIosArrowBack, IoMdArrowDropdown} from 'react-icons/io';
 import Modal from 'react-modal';
 import Avatar from '../assets/img/avatar.png';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
@@ -11,7 +11,7 @@ import Loader from '../components/Loader';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import {RxAvatar} from 'react-icons/rx';
 import {TbUserQuestion} from 'react-icons/tb';
-
+import SortData from '../common/SortData';
 
 const TableKitMaternal = ({ initialData, rowsPerPage = 8, cat,  showPagination = true, onUpdateUserData }) => {
   const [currentPage, setCurrentPage] = useState(0);
@@ -39,6 +39,15 @@ const grayRowClass = 'bg-gray-200';
   const endIndex = startIndex + rowsPerPage;
 
 
+  const handleSortData = async (field) => {
+    try {
+      const dataSorted = await SortData([...data], field);
+      setData(dataSorted);
+    } catch (error) {
+      setError("Ha ocurrido un error, por favor intente nuevamente");
+    }
+  };
+  
   useEffect(() => {
   if (initialData) {
     setData(initialData);
@@ -328,27 +337,42 @@ const handleExport = async () =>  {
                 <th className="px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   
                 </th>
-                <th className="px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Afiliado
-                </th>
+                <th className=" px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                   <div onClick={() => handleSortData("afiliado_name")} className='  hover:text-black text-white flex cursor-pointer'>
+                  <span className='text-black'>Afiliado</span>
+                  <IoMdArrowDropdown className='text-lg ' />
+                  </div>
+                </th>  
                 <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   DNI
                 </th>
-                <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Madre
-                </th>
+                <th className=" px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                   <div onClick={() => handleSortData("familiar_name")} className='  hover:text-black text-white flex cursor-pointer'>
+                  <span className='text-black'>Madre</span>
+                  <IoMdArrowDropdown className='text-lg ' />
+                  </div>
+                </th> 
                 <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   DNI Madre
                 </th>
-                <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Provincia
-                </th>
-                <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Delegación
-                </th>
-                <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Seccional
-                </th>
+                <th className=" px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                   <div onClick={() => handleSortData("provincia")} className='  hover:text-black text-white flex cursor-pointer'>
+                  <span className='text-black'>Provincia</span>
+                  <IoMdArrowDropdown className='text-lg ' />
+                  </div>
+                </th>  
+                <th className=" px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                   <div onClick={() => handleSortData("delegacion")} className='  hover:text-black text-white flex cursor-pointer'>
+                  <span className='text-black'>Delegación</span>
+                  <IoMdArrowDropdown className='text-lg ' />
+                  </div>
+                </th>  
+                <th className=" px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                   <div onClick={() => handleSortData("seccional")} className='  hover:text-black text-white flex cursor-pointer'>
+                  <span className='text-black'>Seccional</span>
+                  <IoMdArrowDropdown className='text-lg ' />
+                  </div>
+                </th>  
                  <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                  Dirección Seccional
                 </th>
