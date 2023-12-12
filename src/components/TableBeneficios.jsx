@@ -14,7 +14,7 @@ import Input from './Input';
 import { TbUserQuestion } from 'react-icons/tb';
 
 
-const TableBeneficios = ({ data, rowsPerPage = 20,  showPagination = true, onUpdateUserData }) => {
+const TableBeneficios = ({ data, rowsPerPage = 15,  showPagination = true, onUpdateUserData }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [openModal, setOpenModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);

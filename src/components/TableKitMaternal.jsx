@@ -13,7 +13,7 @@ import {RxAvatar} from 'react-icons/rx';
 import {TbUserQuestion} from 'react-icons/tb';
 import SortData from '../common/SortData';
 
-const TableKitMaternal = ({ initialData, rowsPerPage = 8, cat,  showPagination = true, onUpdateUserData }) => {
+const TableKitMaternal = ({ initialData, rowsPerPage = 15, cat,  showPagination = true, onUpdateUserData }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [data, setData] = useState(null);
   const [openModal, setOpenModal] = useState(false);
