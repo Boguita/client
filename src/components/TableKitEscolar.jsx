@@ -323,7 +323,7 @@ const rechazarUsuario = async (afiliado) => {
                             <li className='hover:border-[#006084] hover:border-b-2  cursor-pointer '><a href={`/admin/${row.afiliado_dni ? row.afiliado_dni : ""}`}  target="_blank"
         rel="noopener noreferrer">Ver ficha completa</a></li>
 
-                            <li className='hover:border-[#006084] hover:border-b-2  cursor-pointer'><a href={`https://backuatrebeneficios.galgoproductora.com/${row.constancia_img ? row.constancia_img : ""}`}  target="_blank"
+                            <li className='hover:border-[#006084] hover:border-b-2  cursor-pointer'><a href={`https://back.beneficiosuatre.com.ar/${row.constancia_img ? row.constancia_img : ""}`}  target="_blank"
         rel="noopener noreferrer">Ver Remito Firmado</a></li>   
                                   
                             </>
@@ -472,7 +472,7 @@ const rechazarUsuario = async (afiliado) => {
                    <td className="px-6 py-3 flex flex-col whitespace-no-wrap"> {selectedUser.dni_img_frente && (
     typeof selectedUser.dni_img_frente === 'string' && (
       <a
-        href={`https://backuatrebeneficios.galgoproductora.com/${selectedUser.dni_img_frente}`}
+        href={`https://back.beneficiosuatre.com.ar/${selectedUser.dni_img_frente}`}
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -482,7 +482,7 @@ const rechazarUsuario = async (afiliado) => {
   )} {selectedUser.dni_img_dorso && (
     typeof selectedUser.dni_img_dorso === 'string' && (
       <a
-        href={`https://backuatrebeneficios.galgoproductora.com/${selectedUser.dni_img_dorso}`}
+        href={`https://back.beneficiosuatre.com.ar/${selectedUser.dni_img_dorso}`}
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -504,7 +504,7 @@ const rechazarUsuario = async (afiliado) => {
             
           </table>
                                           <div className='flex  items-center justify-around '>
-                                            <a href={`https://backuatrebeneficios.galgoproductora.com/${selectedUser.constancia_img}`}  target="_blank"
+                                            <a href={`https://back.beneficiosuatre.com.ar/${selectedUser.constancia_img}`}  target="_blank"
         rel="noopener noreferrer"className='bg-[#006084] p-2 text-sm text-white rounded-lg' >Ver Remito Firmado</a>
                                         </div>
                        
