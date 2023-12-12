@@ -201,7 +201,7 @@ const handleUpdateUserData = async () => {
       
    {isLoading ? <Loader/> :
                             <>
-                                  <div className="w-[60%] mt-[32rem] " ref={animationParent}>
+                                  <div className="w-[60%] max-2xl:mt-[72vh] mt-[70vh] " ref={animationParent}>
                                 <h2 className='text-black font-extrabold text-xl'>Seccionales</h2>
                                 <div className='flex flex-col'>            
          

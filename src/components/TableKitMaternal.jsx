@@ -13,14 +13,16 @@ import {RxAvatar} from 'react-icons/rx';
 import {TbUserQuestion} from 'react-icons/tb';
 
 
-const TableKitMaternal = ({ data, rowsPerPage = 8,  showPagination = true, onUpdateUserData }) => {
+const TableKitMaternal = ({ initialData, rowsPerPage = 8, cat,  showPagination = true, onUpdateUserData }) => {
   const [currentPage, setCurrentPage] = useState(0);
+  const [data, setData] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [openStatusModal, setOpenStatusModal] = useState(false);
   const [openPendingModal, setOpenPendingModal] = useState(false);
+  const [openDeleteBenefitModal, setOpenDeleteBenefitModal] = useState(false);
   const [openAprovvedModal, setOpenAprovvedModal] = useState(false);
     const [afiliadosSeleccionados, setAfiliadosSeleccionados] = useState([]);
     const [animationParent] = useAutoAnimate();
@@ -35,6 +37,13 @@ const grayRowClass = 'bg-gray-200';
   const totalPages = Math.ceil(data?.length / rowsPerPage);
   const startIndex = currentPage * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
+
+
+  useEffect(() => {
+  if (initialData) {
+    setData(initialData);
+  }
+}, [initialData]);
 
   useEffect(() => {
     console.log('USUARIO SELECCIONADO', selectedUser);
@@ -98,6 +107,12 @@ const pendingBenefit = (afiliado) => {
   setOpenPendingModal(true);
 }
 
+const deleteBenefit = (afiliado) => {
+  console.log("llega a la funcion",afiliado)
+  setSelectedUser(afiliado);
+  setOpenDeleteBenefitModal(true);
+}
+
 const statusChangue = (afiliado) => {
   setSelectedUser(afiliado);
   setOpenStatusModal(true);
@@ -129,9 +144,12 @@ const handleRejected = async (id) => {
 const handleAprovved = async (id) => {
   try {
   setLoading(true);
+  const fechaEnvio = new Date();
+const formattedFechaEnvio = `${fechaEnvio.getFullYear()}-${(fechaEnvio.getMonth() + 1).toString().padStart(2, '0')}-${fechaEnvio.getDate().toString().padStart(2, '0')} ${fechaEnvio.getHours().toString().padStart(2, '0')}:${fechaEnvio.getMinutes().toString().padStart(2, '0')}:${fechaEnvio.getSeconds().toString().padStart(2, '0')}`;
   const res = await api.put(`/tasks/${id}`,  
        {
-        estado: "Enviado",        
+        estado: "Enviado",    
+        fecha_envio: formattedFechaEnvio,    
       },
     );
   res.status === 200
@@ -171,6 +189,26 @@ const handlePending = async (id) => {
   }
   
 }
+
+const handleDelete = async (id) => {
+  try {
+    setLoading(true);
+    const res = await api.delete(`/tasks/${id}`);
+
+    if (res.status === 200) {
+      setCurrentStep(2);
+      onUpdateUserData();
+    } else {
+      setError("Hubo un error al eliminar el beneficio");
+    }
+
+    setLoading(false);
+  } catch (error) {
+    setError("Hubo un error al eliminar el beneficio");
+    setLoading(false);
+  }
+};
+
 
 const aprobarUsuario = async (afiliado) => {
   try {
@@ -238,6 +276,41 @@ const handleCheckbox = (afiliado) => {
 };
 
 
+const handleCheckBoxAll = () => {
+  if (afiliadosSeleccionados.length === data.length) {
+    // Si todos los usuarios están seleccionados, desmarcarlos todos
+    setAfiliadosSeleccionados([]);
+  } else {
+    // Si no están todos seleccionados, seleccionarlos todos
+    const allUserIds = data.map((afiliado) => afiliado.id);
+    setAfiliadosSeleccionados(allUserIds);
+  }
+};
+
+useEffect(() => {
+  console.log('USERS: ', afiliadosSeleccionados);
+}, [afiliadosSeleccionados]);
+
+const handleExport = async () =>  {
+  try {
+    const res = await api.get(`/tasks/kit-maternal/excel/${afiliadosSeleccionados.join(',')}`, {responseType: 'blob'});
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `kit_nacimiento.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      setError(null);
+      
+      // Restablecer el estado del error si la solicitud tiene éxito
+
+  } catch (error) {
+    setError("Hubo un error al exportar los usuarios");
+  }
+}
+
+
+
 
 
   return (
@@ -245,47 +318,63 @@ const handleCheckbox = (afiliado) => {
       {loading ? <Loader/> : (
       <div  className="flex flex-col">
         <div ref={animationParent} className="mt-4 bg-white min-h-[25rem] p-8 rounded-xl">
-          <table   className=" table-fixed divide-y-4 divide-[#006084]">
+           <div className='flex justify-between'>
+          <p className=' text-[#23a2d9ff] font-semibold hover:text-[#006185ff] cursor-pointer' onClick={handleCheckBoxAll}>Seleccionar todos</p>
+          <button onClick={handleExport} className='bg-[#006084] mb-2 text-white font-semibold rounded-lg p-2 hover:bg-opacity-75'>Exportar seleccionados</button>
+          </div>
+          <table   className=" table-auto divide-y-4 divide-[#006084]">
             <thead >
               <tr>
-           
-                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                <th className="px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  
+                </th>
+                <th className="px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Afiliado
                 </th>
-                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   DNI
                 </th>
-                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Madre
                 </th>
-                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   DNI Madre
                 </th>
-                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Provincia
                 </th>
-                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Delegación
                 </th>
-                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Seccional
                 </th>
-                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                 <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                  Dirección Seccional
                 </th>
-                   <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                   <th className="px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Fecha Parto
                 </th>
-                 <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                {cat !== 'entregados' &&
+                 <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Días para el parto
                 </th>
-                <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                }
+                {cat === "pendientes" &&
+                <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Plazo
                 </th>
-                     <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
-                  Estado
+                }{cat === "enviados" &&
+                <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  Fecha de envío
                 </th>
-                   <th className="px-2 2xl:px-6 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                }
+                {cat === "entregados" &&
+                <th className="px-2  py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
+                  Fecha de entrega
+                </th>
+                }
+                   <th className="px-2 py-3  text-left text-xs leading-4 font-extrabold text-black uppercase tracking-wider">
                   Acciones
                 </th>
                 
@@ -307,7 +396,7 @@ const handleCheckbox = (afiliado) => {
 
 
                 return ( <tr  key={index} className={`text-gray-600 text-sm font-semibold ${index % 2 === 0 ? grayRowClass : whiteRowClass }`}>
-                    <div className="flex items-center pr-4  ">
+                    <div className="flex px-3 items-center ">
                           {/* Checkbox for selecting familiar */}
                           <input
                             type="checkbox"
@@ -315,8 +404,9 @@ const handleCheckbox = (afiliado) => {
                             id={`afiliado_${row.id}`}
                             value={row.id}
                             className="cursor-pointer custom-checkbox"
+                            checked={afiliadosSeleccionados.includes(row.id)}
                             // checked={selectedFamiliares.includes(familiar.id)}
-                            onChange={() => handleCheckbox(row.id)}
+                            onChange={() => handleCheckbox(row)}
                             // disabled={areTodosBeneficiosOtorgados(familiar.id)}
                           />
                           <label
@@ -328,25 +418,35 @@ const handleCheckbox = (afiliado) => {
                               <polyline points="1 9 7 14 15 4"></polyline>
                             </svg>
                           </label>
-                          <td className="px-6 py-3 capitalize text-[#006084] whitespace-no-wrap">{row.afiliado_name}</td>
 
                           {/* Estilizar el checkbox nativo */}
                           {/* <Checkbox selected={selectedFamiliares.includes(familiar.id)} /> */}
                         </div>
-                 
-                             
-                              <td className="px-6 py-3 whitespace-no-wrap">{row.afiliado_dni}</td>
-                  <td className="px-2 2xl:px-6 capitalize py-3 whitespace-no-wrap">{row.familiar_name}</td>
-                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.familiar_dni}</td>
-                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.provincia}</td> 
-                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.delegacion}</td> 
-                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.seccional}</td> 
-                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{row.direccion}</td>
-                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{fechaPartoFormateada}</td>
-                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap">{diasFaltantes}</td> 
-                  <td className="px-2 2xl:px-6 py-3 whitespace-no-wrap"><span className={`bg-opacity-30 ${diasFaltantes < 60 && 'bg-red-400 text-red-500'} rounded-lg px-2 p-1`}>{diasFaltantes < 60 ? 'Urgente' : 'Normal'}</span></td>
-      
-                  <td className="px-2 2xl:px-6  capitalize whitespace-no-wrap"><span className={`bg-opacity-30 ${row.estado === 'Entregado' ? 'bg-green-400 text-green-500 ' : row.estado === 'Rechazado' ? 'bg-red-400 text-red-500' : row.estado === 'Enviado' ? 'bg-blue-400 text-blue-500' : 'bg-yellow-200 text-yellow-400'}  rounded-lg px-2 p-1`}>{row.estado}</span></td>                
+                        
+                        <td className="px-2 py-3 capitalize text-[#006084] whitespace-no-wrap">{row.afiliado_name}</td>
+
+                              <td className="px-2 py-3 whitespace-no-wrap">{row.afiliado_dni}</td>
+                  <td className="px-2 capitalize py-3 whitespace-no-wrap">{row.familiar_name}</td>
+                  <td className="px-2 py-3 whitespace-no-wrap">{row.familiar_dni}</td>
+                  <td className="px-2 py-3 whitespace-no-wrap">{row.provincia}</td> 
+                  <td className="px-2 py-3 whitespace-no-wrap">{row.delegacion}</td> 
+                  <td className="px-2 py-3 whitespace-no-wrap">{row.seccional}</td> 
+                  <td className="px-2 py-3 whitespace-no-wrap">{row.direccion}</td>
+                  <td className="px-2 py-3 whitespace-no-wrap">{fechaPartoFormateada}</td>
+                  {cat !== 'entregados' &&
+                  <td className="px-2 py-3 whitespace-no-wrap">{diasFaltantes}</td> 
+                  }
+                  {cat === 'pendientes' &&
+                  <td className="px-2 py-3 whitespace-no-wrap"><span className={`bg-opacity-30 ${diasFaltantes < 60 && 'bg-red-400 text-red-500'} rounded-lg px-2 p-1`}>{diasFaltantes < 60 ? 'Urgente' : 'Normal'}</span></td>
+                  }
+                  {
+                    cat === 'enviados' &&
+                  <td className="px-2 py-3 whitespace-no-wrap">{row.fecha_envio && new Date(row.fecha_envio).toLocaleDateString("es-AR")}</td>
+                  }
+                   {
+                    cat === 'entregados' &&
+                  <td className="px-2 py-3 whitespace-no-wrap">{row.fecha_entrega && new Date(row.fecha_entrega).toLocaleDateString("es-AR")}</td>
+                  }
                   <td className="flex items-center px-10 py-2 whitespace-no-wrap">
                     <div  className="relative">
                       <FiMoreHorizontal 
@@ -371,6 +471,12 @@ const handleCheckbox = (afiliado) => {
                                   
                             </>
                             }   
+                             {(row.estado === 'Rechazado') && 
+                            <>
+                            <li onClick={() => deleteBenefit(row)} className='hover:border-[#006084] hover:border-b-2  cursor-pointer'>Eliminar</li>   
+                                  
+                            </>
+                            } 
                                           
                           </ul>
                         </div>
@@ -863,6 +969,103 @@ const handleCheckbox = (afiliado) => {
                           <button
                             className="mt-4 bg-gray-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
                             onClick={() => setOpenDeleteModal(false)}
+                          >
+                            Cerrar
+                          </button>
+                        </div>
+                        </>
+                        }
+                        </div>
+                        
+                        
+                      </div>
+                    
+                    
+                      
+                  )}
+                  {error && <p className="font-semibold text-red-500">{error}</p>}
+            </div>                          
+
+       
+          </Modal>
+
+           <Modal
+            isOpen={openDeleteBenefitModal}
+            onRequestClose={() => setOpenDeleteBenefitModal(false)}
+            contentLabel="Eliminar Beneficio"
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    zIndex: 1000
+              },
+              content: {
+                border: "none",
+                background: "white",
+                color: "black",
+                top: "50%",
+                left: "55%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+                padding: "2rem",
+                width: "80%",
+                maxWidth: "40rem",
+              },
+            }}
+          >
+            
+            {/* {err && <p className="text-red-500">{err}</p>} */}
+            <div  className="mb-2">
+            {selectedUser && (
+              <div  className='flex justify-center h-full w-full'>
+                    <div ref={animationParent}  className="flex flex-col rounded-2xl w-[70%]">
+                      {currentStep === 1 &&
+                      <>
+                      <div className='flex flex-col items-center justify-center '>
+                      <AiOutlineWarning className='text-red-600 mb-4 text-7xl'/>
+                      <p>¿Estas seguro que deseas eliminar este beneficio?</p>
+                      </div>
+                          
+                         
+                    
+                  
+                    
+
+                        <div className="flex mt-4 justify-around items-center">
+                          {loading ? <Loader /> :
+                           <button
+                            className="mt-4 bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                            onClick={() => handleDelete(selectedUser.id)}
+                          >
+                            Confirmar
+                          </button>
+}
+                          <button
+                            className="mt-4 bg-gray-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                            onClick={() => setOpenDeleteBenefitModal(false)}
+                          >
+                            Cerrar
+                          </button>
+                        </div>
+                        </>
+                        }
+                        {currentStep === 2 &&
+                      <>
+                      <div className='flex flex-col items-center justify-center '>
+                      <AiOutlineCheckCircle className='text-green-600 text-7xl'/>
+                      <p className='text-xl font-bold mt-2'>El beneficio se eliminó correctamente.</p>
+                      </div>
+                          
+                         
+                    
+                  
+                    
+
+                        <div className="flex mt-4 justify-center items-end">                        
+                          <button
+                            className="mt-4 bg-gray-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75"
+                            onClick={() => setOpenDeleteBenefitModal(false)}
                           >
                             Cerrar
                           </button>

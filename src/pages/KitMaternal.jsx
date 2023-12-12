@@ -44,8 +44,10 @@ const [beneficio, setBeneficio] = useState({
         semanas: "",
         fecha_de_parto: "",
         cantidad: "",
-        detalles: currentUser?.seccional,
-        seccional: currentUser?.provincia,
+        direccion: currentUser?.direccion,
+        seccional: currentUser?.seccional,
+        delegacion: currentUser?.delegacion,
+        provincia: currentUser?.provincia,
         estado: "Pendiente",
         
         
@@ -216,8 +218,10 @@ const handleNextStep = async () => {
 
   try {
     setError(null); // Limpiar cualquier error previo
-    setIsLoading(true);  
-    const res = await api.put(`/tasks/${ids ? ids : beneficiosOtorgados[0].id}`, {estado: "Entregado"});
+    setIsLoading(true); 
+    const fechaEntrega = new Date();
+    const formattedFechaEntrega = `${fechaEntrega.getFullYear()}-${(fechaEntrega.getMonth() + 1).toString().padStart(2, '0')}-${fechaEntrega.getDate().toString().padStart(2, '0')} ${fechaEntrega.getHours().toString().padStart(2, '0')}:${fechaEntrega.getMinutes().toString().padStart(2, '0')}:${fechaEntrega.getSeconds().toString().padStart(2, '0')}`; 
+    const res = await api.put(`/tasks/${ids ? ids : beneficiosOtorgados[0].id}`, {estado: "Entregado", fecha_entrega: formattedFechaEntrega });
     res.status === 200 &&
     console.log(res.data);
     // await descontarStock(currentUser?.seccional_id);

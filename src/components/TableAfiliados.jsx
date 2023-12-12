@@ -116,24 +116,31 @@ const handleCheckBoxAll = () => {
   }
 };
 
-const handleExport = async () =>  {
+const handleExport = async () => {
   try {
-    const res = await api.get(`/users/afiliados/excel/${checkedUsers.join(',')}`, {responseType: 'blob'});
+    setError(null);
+    setLoading(true);
+
+    const res = await api.post('/users/afiliados/excel', {
+      ids: checkedUsers,
+    }, {
+      responseType: 'blob',
+    });
+
     const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `afiliados.xlsx`);
-      document.body.appendChild(link);
-      link.click();
-      setError(null);
-      
-      // Restablecer el estado del error si la solicitud tiene éxito
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'afiliados.xlsx');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
+    setLoading(false);
   } catch (error) {
-    setError("Hubo un error al exportar los usuarios");
+    setError('Hubo un error al exportar los usuarios');
+    setLoading(false);
   }
-}
-
+};
 
 
 

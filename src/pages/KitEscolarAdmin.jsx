@@ -139,8 +139,27 @@ useEffect(() => {
 //     handleSearch(); 
 // }, [searchKeyword, users]);
   const handleListPendings = () => {
-    // Abre una nueva pestaña o ventana del navegador con la URL especificada
-    window.open('/admin/kit-escolar/listado-pendientes', '_blank');
+    try {
+      api.get(`/tasks/stock-escolar/all/excel`, { responseType: 'blob' }).then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        const contentDisposition = response.headers['content-disposition'];
+        let fileName = 'stock-escolar.xlsx';
+        if (contentDisposition) {
+          const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
+          if (fileNameMatch.length === 2) {
+            fileName = fileNameMatch[1];
+          }
+        }
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+      });
+    }
+    catch (error) {
+      console.log(error);
+    }
   };
 
   const stock = stockenviado?.sort((a, b) => b.idenviados - a.idenviados);
@@ -174,7 +193,7 @@ useEffect(() => {
                     
                         >
                           <span className='flex items-center'>
-                          Acceder a lista de totales
+                          Descargar listado
                           <RxExternalLink className='text-2xl' />
                           </span>
                         </button>

@@ -63,25 +63,19 @@ const ProfileAfilliate = () => {
       setDni(dniparams)
       
       handleAffiliateDataRequest(dniparams);
+      handleValidateBenefit(dniparams);
+
     }
   }, [dniparams]);
 
   
   // Función para manejar las peticiones a la API para los datos de afiliados
 const handleAffiliateDataRequest = async (dniparams) => {
-  
-
-  if (!dni && !dniparams) {
-    setErr('Por favor, ingresa un número de DNI antes de hacer la solicitud.');
-    return;
-  }
-
-
+  console.log("dni antes del try", dniparams)
+  console.log("dni variable antes de try", dni)
+  const dniFormatted = dniparams.toString();
   try {
-    const res = await api.get(`users/afiliados/${dni ? dni : dniparams}`);
-
-
-
+    const res = await api.get(`users/afiliados/${dniFormatted}`);
     
     // Almacenar los datos recibidos de la API
     console.log(res.data)
@@ -249,7 +243,7 @@ const toggleFamiliar = id => {
   
 };
 
- const handleValidateBenefit = async () => {
+ const handleValidateBenefit = async (dni) => {
     try {
       setIsLoading(true);
       const res = await api.get(`tasks/beneficio/${dni}`,);
@@ -900,7 +894,7 @@ const comprobarBeneficios = async (familiarIds) => {
                             DNI del Familiar: {beneficio.familiar_dni}
                           </span>
                           <span className='block'>
-                            Fecha de Entrega: {beneficio.constancia_img ? new Date(beneficio.fecha_otorgamiento).toLocaleDateString() : "Sin fecha"}
+                            Fecha de Entrega: {beneficio.fecha_entrega ? new Date(beneficio.fecha_entrega).toLocaleDateString("es-AR") : "Sin fecha"}
                           </span>
                           <span className='block'>
                             Usuario Otorgante: {beneficio.usuario_otorgante}

@@ -146,22 +146,22 @@ console.log("ordenados",sortedPendingUsers);
                         >
                           Ver listado
                         </button> */}
-                        <TableKitMaternal data={sortedPendingUsers} onUpdateUserData={handleUpdateUserData} />
+                        <TableKitMaternal initialData={sortedPendingUsers} cat={"pendientes"} onUpdateUserData={handleUpdateUserData} />
                       </div>
                       
                
                       <div className='flex flex-col gap-x-8'>
                         <h2 className='text-black font-extrabold text-xl'>Enviados</h2>
-                        <TableKitMaternal data={approvedUsers} onUpdateUserData={handleUpdateUserData} />
+                        <TableKitMaternal initialData={approvedUsers} cat={"enviados"} onUpdateUserData={handleUpdateUserData} />
                       </div>
 
                         <div className='flex flex-col gap-x-8'>
                         <h2 className='text-black font-extrabold text-xl'>Entregados</h2>
-                        <TableKitMaternal data={successUsers} onUpdateUserData={handleUpdateUserData} />
+                        <TableKitMaternal initialData={successUsers} cat={"entregados"} onUpdateUserData={handleUpdateUserData} />
                       </div>
                       <div>
                         <h2 className='text-black font-extrabold text-xl'>Rechazados</h2>
-                        <TableKitMaternal data={rejectedUsers} onUpdateUserData={handleUpdateUserData} />
+                        <TableKitMaternal initialData={rejectedUsers} cat={"rechazados"} onUpdateUserData={handleUpdateUserData} />
                       </div>
                       </>
                     }   
