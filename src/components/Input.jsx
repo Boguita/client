@@ -1,6 +1,6 @@
 import '../css/auth.css';
 
-const Input = ({ label, type, placeholder, name, value, onChange, className }) => {
+const Input = ({ label, type, placeholder, name, value, onChange, className, disabled, min }) => {
   return (
     <form className="form-horizontal">
     <div className="form-group relative">
@@ -10,10 +10,12 @@ const Input = ({ label, type, placeholder, name, value, onChange, className }) =
                                 type={type}
                                 placeholder={placeholder}
                                 name={name}
+                                disabled={disabled}
                                 onChange={onChange}
                                 value={value}
                                 label={label}
                                 className={`${className} p-2 bg-gray-200 focus:outline-none font-semibold text-gray-800`}
+                                min={min}
                             />
                         </div>
      </form>

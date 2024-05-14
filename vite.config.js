@@ -1,10 +1,17 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from 'tailwindcss'
+import PluginRewriteAll from 'vite-plugin-rewrite-all'
 
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  
+  scripts: {
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+
   proxy: {
     // Configura aquí tu proxy
     "/api": {
@@ -13,5 +20,5 @@ export default defineConfig({
       rewrite: (path) => path.replace(/^\/api/, ""), // Elimina el prefijo '/api' de la ruta
     },
   },
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), PluginRewriteAll()],
 });

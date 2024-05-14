@@ -1,6 +1,6 @@
 {
   "name": "uatre-benefits",
-  "private": true,
+  "homepage": ".",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -10,16 +10,25 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@formkit/auto-animate": "^0.8.0",
+    "@reduxjs/toolkit": "^2.0.1",
     "@tailwindcss/line-clamp": "^0.4.4",
     "axios": "^0.27.2",
+    "file-saver": "^2.0.5",
+    "primeicons": "^6.0.1",
+    "primereact": "^10.2.1",
     "react": "^18.2.0",
     "react-calendar": "^4.6.0",
     "react-dom": "^18.2.0",
     "react-modal": "^3.16.1",
-    "react-router-dom": "^6.4.1",
+    "react-redux": "^9.0.4",
+    "react-router-dom": "^6.21.1",
     "react-select": "^5.7.2",
     "recharts": "^2.7.3",
-    "sass": "^1.55.0"
+    "sass": "^1.55.0",
+    "sweetalert": "^2.1.2",
+    "vite-plugin-rewrite-all": "^1.0.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

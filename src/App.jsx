@@ -1,17 +1,16 @@
-import {BrowserRouter} from "react-router-dom";
-import {AppRouter} from './Router'
-import "./style.scss"
-import './index.css'
-import './style.css'
-
-
+import { BrowserRouter } from "react-router-dom";
+import { AppRouter } from "./Router";
+import "./style.scss";
+import "./index.css";
+import "./style.css";
+import "primeicons/primeicons.css";
 
 function App() {
-  return (    
-    <div className="app">       
-        <BrowserRouter>
-          <AppRouter/>
-        </BrowserRouter>      
+  return (
+    <div className="app">
+      <BrowserRouter>
+        <AppRouter />
+      </BrowserRouter>
     </div>
   );
 }

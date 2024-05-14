@@ -6,14 +6,19 @@ import axios from "axios";
 import Loader from "../components/Loader";
 import {BsCheck2Circle} from 'react-icons/bs'
 import { FiDownload } from 'react-icons/fi';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { useLocation } from 'react-router-dom';
+
 const RegisterAfiliate = () => {
   const [err, setError] = useState(null);
   const [currentStep, setCurrentStep] = useState(1);
    const [provincias, setProvincias] = useState([]); // Estado para almacenar las provincias
   const [ciudades, setCiudades] = useState([]);
   const [paises, setPaises] = useState([]);
+      const [animationParent] = useAutoAnimate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
+    funcion: '',
     name: '',
     dni: '',
     fecha_de_nacimiento: '',
@@ -30,11 +35,44 @@ const RegisterAfiliate = () => {
         razon_social: '',
         cuit_empleador: '',
         actividad: '',
+        tel_empleador: ''
     },
-    dni_img: null,
+    dni_img_frente: null,
+    dni_img_dorso: null,
     recibo_sueldo: null,
     ddjj: null,
   });
+
+    const location = useLocation();
+  const datosAfiliado = location.state?.datosAfiliado || null;
+
+  useEffect(() => {
+    // Verificar si hay datosAfiliado y actualizar formData
+    if (datosAfiliado) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        name: datosAfiliado.name || '',
+        funcion: datosAfiliado.dni ? true : false,
+        dni: datosAfiliado.dni || '',
+        fecha_de_nacimiento: datosAfiliado.fecha_de_nacimiento || '',
+        tel: datosAfiliado.tel || '',
+        nacionalidad: datosAfiliado.nacionalidad || '',
+        sexo: datosAfiliado.sexo || '',
+        estado_civil: datosAfiliado.estado_civil || '',
+        provincia: datosAfiliado.provincia || '',
+        ciudad: datosAfiliado.ciudad || '',
+        cuit: datosAfiliado.cuit || '',
+        domicilio: datosAfiliado.domicilio || '',
+        correo: datosAfiliado.correo || '',
+        datos_empleador: {
+          razon_social: datosAfiliado.datos_empleador?.razon_social || '',
+          cuit_empleador: datosAfiliado.datos_empleador?.cuit_empleador || '',
+          actividad: datosAfiliado.datos_empleador?.actividad || '',
+        },
+      }));
+    }
+  }, [datosAfiliado]);
+
   
   const navigate = useNavigate();
 
@@ -45,36 +83,53 @@ const RegisterAfiliate = () => {
     const requiredFields = ['name', 'dni', 'tel', 'nacionalidad', 'cuit', 'domicilio', 'correo', 'estado_civil', 'fecha_de_nacimiento', 'sexo'];
     return requiredFields.every(field => formData[field] !== '');
     } else if (currentStep === 2) {
-      return formData.dni_img !== null && formData.ddjj !== null;
+      return formData.dni_img_frente !== null && formData.dni_img_dorso
+      // formData.ddjj !== null;
     } else if (currentStep === 3) {
       const requiredFields = ['datos_empleador.razon_social', 'datos_empleador.cuit_empleador', 'datos_empleador.actividad'];
-      return requiredFields.every(field => formData[field] !== '') && formData.recibo_sueldo !== null;
-    }
+      return requiredFields.every(field => {
+      const nestedFields = field.split('.');
+      return formData[nestedFields[0]][nestedFields[1]] !== '';
+    }) && formData.recibo_sueldo !== null;
+  }
   };
 
  
 
   const handleNextStep = async () => {
+     
 
     if (!areAllFieldsComplete()) {
       setError('Por favor complete todos los campos');
       return;
     }
-
+  
+          // Desplazar a la parte superior después de cambiar el paso
+  window.scrollTo(0, 0);
     if (currentStep === 1) {
       await comprobarAfiliado();
       return;
     }
 
+
   setError(null); // Limpiar cualquier error previo
   setCurrentStep(currentStep + 1);
+  
 };
 
+const handleBackStep = () => {
+  setError(null); // Limpiar cualquier error previo
+  setCurrentStep(currentStep - 1);
+};
+
+
 const comprobarAfiliado = async () => {
+  if(datosAfiliado) return setCurrentStep(currentStep + 1);
   const res = await api.get(`/users/comprobar-afiliado/${formData.dni}`);
   if (res.status === 200) {
     setError('Ya existe un afiliado con ese DNI');
   } else {
+
     setCurrentStep(currentStep + 1);
     setError(null);
   }
@@ -83,6 +138,12 @@ const comprobarAfiliado = async () => {
 useEffect(() => {
   console.log(formData);
 }, [formData]);
+
+useEffect(() => {
+  console.log(currentStep);
+  window.scrollTo(0, 0);
+}, [currentStep]);
+
 
 
 
@@ -106,7 +167,7 @@ useEffect(() => {
   if (e.target.name === "provincia") {
     try {
       const res = await axios.get(
-        `https://apis.datos.gob.ar/georef/api/localidades?provincia=${e.target.value}&campos=id,nombre&max=100`
+        `https://apis.datos.gob.ar/georef/api/localidades?provincia=${e.target.value}&campos=id,nombre&max=1000`
       );
       setCiudades(res.data.localidades);
     } catch (error) {
@@ -116,7 +177,7 @@ useEffect(() => {
 
   if (type === 'file') {
     setFormData({ ...formData, [name]: files[0] });
-  } else if (name === 'razon_social' || name === 'cuit_empleador' || name === 'actividad') {
+  } else if (name === 'razon_social' || name === 'cuit_empleador' || name === 'actividad' || name === 'tel_empleador') {
     // Handle changes in empleador data
     setFormData({
       ...formData,
@@ -162,8 +223,16 @@ useEffect(() => {
     setError(null);
     try {
       setIsLoading(true); 
+   if (!areAllFieldsComplete()) {
+      setError('Por favor complete todos los campos');
+      setIsLoading(false);
+      return;
+    }
+            // Desplazar a la parte superior después de cambiar el paso
+  window.scrollTo(0, 0);
 
     const formDataToSend = new FormData();
+     formDataToSend.append('funcion', formData.funcion);
     formDataToSend.append('name', formData.name);
     formDataToSend.append('dni', formData.dni);
     formDataToSend.append('fecha_de_nacimiento', formData.fecha_de_nacimiento);
@@ -174,6 +243,8 @@ useEffect(() => {
     formDataToSend.append('cuit', formData.cuit);
     formDataToSend.append('domicilio', formData.domicilio);
     formDataToSend.append('correo', formData.correo);
+    formDataToSend.append('provincia', formData.provincia);
+    formDataToSend.append('ciudad', formData.ciudad);
 
     
 
@@ -181,6 +252,7 @@ useEffect(() => {
     razon_social: formData.datos_empleador.razon_social,
     cuit_empleador: formData.datos_empleador.cuit_empleador,
     actividad: formData.datos_empleador.actividad,
+    tel_empleador: formData.datos_empleador.tel_empleador,
   };
 
   formDataToSend.append('datos_empleador', JSON.stringify(datosEmpleador));
@@ -204,18 +276,44 @@ useEffect(() => {
 
 
 
-    const handleDniImgChange = (e) => {
+     const handleDniImgDorso = (e) => {
     const filesArray = Array.from(e.target.files);
-  setFormData((prevFormData) => ({
-    ...prevFormData,
-    dni_img: filesArray,
-  }));
-  console.log(formData.dni_img);
+    const maxFiles = 1;
+     if (filesArray.length > maxFiles) {
+      alert(`Por favor, selecciona un máximo de ${maxFiles} archivos.`);
+      e.target.value = null;
+      return
+    } 
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      dni_img_dorso: filesArray,
+    }));
+    
+  };
+
+   const handleDniImgFrente = (e) => {
+    const filesArray = Array.from(e.target.files);
+    const maxFiles = 1;
+     if (filesArray.length > maxFiles) {
+      alert(`Por favor, selecciona un máximo de ${maxFiles} archivos.`);
+      e.target.value = null;
+      return
+    } 
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      dni_img_frente: filesArray,
+    }));
     
   };
 
   const handleReciboSueldoChange = (e) => {
     const filesArray = Array.from(e.target.files);
+    const maxFiles = 2;
+    if (filesArray.length > maxFiles) {
+      alert(`Por favor, selecciona un máximo de ${maxFiles} archivos.`);
+      e.target.value = null;
+      return
+    }
 setFormData((prevFormData) => ({
     ...prevFormData,
     recibo_sueldo: filesArray,
@@ -224,15 +322,21 @@ setFormData((prevFormData) => ({
     
   };
 
-  const handleDdjjChange = (e) => {
-    const filesArray = Array.from(e.target.files);
-setFormData((prevFormData) => ({
-    ...prevFormData,
-    ddjj: filesArray,
-  }));
-  console.log(formData.ddjj);
+//   const handleDdjjChange = (e) => {
+//     const filesArray = Array.from(e.target.files);
+//     const maxFiles = 2;
+//     if (filesArray.length > maxFiles) {
+//       alert(`Por favor, selecciona un máximo de ${maxFiles} archivos.`);
+//       e.target.value = null;
+//       return
+//     }
+// setFormData((prevFormData) => ({
+//     ...prevFormData,
+//     ddjj: filesArray,
+//   }));
+//   console.log(formData.ddjj);
     
-  };
+//   };
 
 // const loadImage = (imageFile) => {
 //   return new Promise((resolve) => {
@@ -244,14 +348,16 @@ setFormData((prevFormData) => ({
 
 const handleImageUpload = async () => {
     try {
-      console.log(formData.dni_img)
-      console.log(formData.recibo_sueldo)
+
       // Upload DNI images
       const dniFormData = new FormData();
       dniFormData.append("dni", formData.dni);
-      formData.dni_img.forEach((dniImg) => {
-        dniFormData.append("dni_img", dniImg);
-      });
+      formData.dni_img_frente.forEach((dniImg) => {
+      dniFormData.append("dni_img_frente", dniImg);
+    });
+     formData.dni_img_dorso.forEach((dniImg) => {
+      dniFormData.append("dni_img_dorso", dniImg);
+    });
       // await Promise.all(formData.dni_img.map(loadImage));
       const responseDni = await api.post("/uploads/images-dni", dniFormData);
    
@@ -295,21 +401,30 @@ const handleImageUpload = async () => {
   };
 
    return (
-    <div className="bg-gray-200 flex justify-center mt-36 h-screen w-screen sm:pl-80 ml-5">
+    <div className="bg-gray-200 flex justify-center pb-4 mt-36 h-screen w-screen sm:pl-80 sm:ml-5">
       
-   <div className="flex flex-col pt-10 rounded-3xl items-center w-2/3 h-2/3 bg-white">
-    <div className="flex h-20">
-        <h2 className="text-[#006084] text-4xl font-bold">Registro del Trabajador</h2>
-   </div>
+   <div className="flex flex-col pt-10 rounded-3xl items-center  max-sm:h-max w-[95%] sm:w-2/3 sm:h-max bg-white">
+    <div ref={animationParent} className="flex flex-col justify-center items-center h-20">
+        <h2 className="text-[#006084] text-2xl sm:text-4xl font-bold">Registro del Trabajador</h2>
+        {!datosAfiliado && currentStep === 1 ?
+        <p className="text-red-500 text-xs w-4/5 text-center sm:w-full font-semibold mt-1">No existe afiliado registrado con ese DNI, para continuar carga los datos correspondientes.</p>
+        :
+        datosAfiliado && currentStep === 1 &&
+        <p className="text-red-500 text-xs text-center w-4/5 sm:w-full font-semibold mt-1">Por favor, complete los datos del trabajador antes de continuar.</p>
+      }
+      {currentStep === 3 && 
+      <h4 className="text-[#006084] text-xl font-bold">Datos del Empleador</h4>
+      }
+        </div>
       
       <form
-        className="form-horizontal grid grid-cols-2 gap-x-8 gap-y-2 sm:w-[45vw] p-4"
+        className="xl:form-horizontal grid sm:grid-cols-2 gap-x-8 gap-y-2 sm:w-[45vw] p-4"
         onSubmit={handleSubmit}
       >
         
         {currentStep === 1 && (
           <>
-        <div className="mb-4">
+        <div ref={animationParent} className="mb-4">
           
           <Input
             type="text"
@@ -324,7 +439,7 @@ const handleImageUpload = async () => {
         <div className="mb-4">
           
           <Input
-            type="text"
+            type="number"
             name="dni"
             placeholder={"DNI"}
             pattern="[0-9]*"
@@ -352,19 +467,26 @@ const handleImageUpload = async () => {
                     
                   </select>
                 </div>
-
-        <div className="mb-4">
-   
-          <Input
-            type="date"
-            name="fecha_de_nacimiento"
-            
-            required
-            value={formData.fecha_de_nacimiento}
-            onChange={handleChange}
-            className="w-full focus:text-[#808080] py-2 px-3 "
-          />
-        </div>
+<div className="relative items-center mb-4">
+    
+  <Input
+    type="date"
+    name="fecha_de_nacimiento"
+    required
+    value={formData.fecha_de_nacimiento}
+    onChange={handleChange}
+    className="sm:w-full  max-sm:h-11 focus:text-[#808080] sm:py-2 sm:px-3 "
+  />
+  
+  <label className="absolute left-0 bottom-full text-gray-600 text-xs mt-1 sm:opacity-0">
+    Fecha de nacimiento del trabajador
+  </label>
+  
+  {/* Selector CSS para mostrar el texto emergente */}
+  <style>
+    {`.mb-4:hover label { opacity: 1; }`}
+  </style>
+</div>
        
         
         <div className="block pr-2 py-2 h-max !border-l-4 !border-[#006084] bg-gray-200">
@@ -376,7 +498,7 @@ const handleImageUpload = async () => {
             onChange={handleChange}
             className=" bg-gray-200 pl-3 text-base font-semibold focus:outline-none w-full "
           >
-            <option value="">Seleccione</option>
+            <option value="">Sexo</option>
             <option value="Masculino">Masculino</option>
             <option value="Femenino">Femenino</option>
             <option value="Otro">Otro</option>
@@ -411,11 +533,11 @@ const handleImageUpload = async () => {
                     className=" bg-gray-200 w-full pl-2 font-semibold focus:text-[#808080] focus:outline-none"
                   >
                     <option value="" disabled selected><strong className="!text-black">Nacionalidad</strong></option>
-                    {paises.map((pais, index) => (
-                      <option key={index} value={pais}>
-                        {pais}
-                      </option>
-                    ))}
+               {paises.sort().map((pais, index) => (
+                <option key={index} value={pais}>
+                  {pais}
+                </option>
+              ))}
                   </select>
                 </div>
 
@@ -428,12 +550,12 @@ const handleImageUpload = async () => {
                     onChange={handleChange}
                     className=" bg-gray-200 w-full pl-2 font-semibold focus:text-[#808080] focus:outline-none"
                   >
-                    <option value="" disabled selected>Provincia</option>
-                    {provincias.map((provincia) => (
-                      <option key={provincia.id} value={provincia.nombre}>
-                        {provincia.nombre}
-                      </option>
-                    ))}
+                    <option value="" disabled selected>Provincia de Residencia</option>
+                   {provincias.sort((a, b) => a.nombre.localeCompare(b.nombre)).map((provincia) => (
+  <option key={provincia.id} value={provincia.nombre}>
+    {provincia.nombre}
+  </option>
+))}
                   </select>
                 </div>
 
@@ -449,7 +571,7 @@ const handleImageUpload = async () => {
                       <option value="" disabled selected>
                         Ciudad
                       </option>
-                      {ciudades.map((ciudad) => (
+                      {ciudades.sort((a,b) => a.nombre.localeCompare(b.nombre)).map((ciudad) => (
                         <option key={ciudad.id} value={ciudad.nombre}>
                           {ciudad.nombre}
                         </option>
@@ -462,7 +584,7 @@ const handleImageUpload = async () => {
                   <Input
                     type="text"
                     name="domicilio"
-                    placeholder={"Domicilio"}
+                    placeholder={"Calle"}
                     required
                     value={formData.domicilio}
                     onChange={handleChange}
@@ -496,16 +618,19 @@ const handleImageUpload = async () => {
           />
         </div>
 
-         <div className="flex justify-between pt-10">
+        <div className="flex justify-between  sm:w-[210%] max-sm:pt-4 sm:pt-10">
+         <div className="pb-8"  >
+            <button
+               type="button"
+                className="bg-[#23A1D8] hover:bg-[#006084] text-white font-bold py-2 px-4 rounded"
+                onClick={() => navigate("/home")}
+              >
+                Volver
+              </button>
              
           {err && <p className="text-red-500">{err}</p>}
-              
-             
             </div>
-
-             <div className="flex justify-end pt-10">
-             
-          
+             <div className="pb-8"  >
               <button
                type="button"
                 className="bg-[#23A1D8] hover:bg-[#006084] text-white font-bold py-2 px-4 rounded"
@@ -515,38 +640,74 @@ const handleImageUpload = async () => {
               </button>
              
             </div>
+            </div>
+           
         </>
+        
+
       )}
+      
 
 
       {currentStep === 2 && (
         <>
-       <div className="flex flex-col justify-center items-center bg-gray-200 rounded-xl min-h-[10rem] w-[90%] p-2">
-  <p className="font-bold">Adjuntar DNI:</p>
+       <div ref={animationParent} className="flex flex-col sm:justify-center items-center max-sm:mb-3 bg-gray-200 rounded-xl min-h-[10rem] sm:w-[90%] p-2">
+  <p className="font-bold">Adjuntar DNI Frente:</p>
   <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
-    Recuerda subir frente y dorso.
+    La imagen debe tener buena iluminación y apreciarse los datos completos.
   </p>
 
-  <label htmlFor="dni_img" className="cursor-pointer mt-auto mb-2">
+  <label htmlFor="dni_img_frente" className="cursor-pointer mt-auto mb-2">
     <FiDownload className='text-5xl text-[#23A1D8]' />
   </label>
 
   <input
     type="file"
-    name="dni_img"
-    id="dni_img"
-    multiple
+    name="dni_img_frente"
+    id="dni_img_frente"
     required
     style={{ display: 'none' }}
-    onChange={handleDniImgChange}
+    onChange={handleDniImgFrente}
   />
 
   <p className="text-xs font-semibold text-gray-600 text-center">
     Suelte el archivo aquí para cargar o <strong className="text-[#006084]">elegir archivos.</strong>
   </p>
+   {formData.dni_img_frente &&
+    formData.dni_img_frente.map((file, index) => (
+      file.name && <li className="text-sm" key={index}>{file.name}</li>
+    ))}
 </div>
 
+ <div className="flex flex-col justify-center items-center max-sm:mb-3 bg-gray-200 rounded-xl min-h-[10rem] sm:w-[90%] p-2">
+  <p className="font-bold">Adjuntar DNI Dorso:</p>
+  <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
+    La imagen debe tener buena iluminación y apreciarse los datos completos.
+  </p>
 
+  <label htmlFor="dni_img_dorso" className="cursor-pointer mt-auto mb-2">
+    <FiDownload className='text-5xl text-[#23A1D8]' />
+  </label>
+
+  <input
+    type="file"
+    name="dni_img_dorso"
+    id="dni_img_dorso"
+    required
+    style={{ display: 'none' }}
+    onChange={handleDniImgDorso}
+  />
+
+  <p className="text-xs font-semibold text-gray-600 text-center">
+    Suelte el archivo aquí para cargar o <strong className="text-[#006084]">elegir archivos.</strong>
+  </p>
+   {formData.dni_img_dorso &&
+    formData.dni_img_dorso.map((file, index) => (
+      file.name && <li className="text-sm" key={index}>{file.name}</li>
+    ))}
+</div>
+
+{/* 
       <div className="flex flex-col justify-center items-center bg-gray-200 rounded-xl min-h-[10rem] w-[90%] p-2">
   <p className="font-bold">Adjuntar Declaración Jurada:</p>
   <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
@@ -570,19 +731,26 @@ const handleImageUpload = async () => {
   <p className="text-xs font-semibold text-gray-600 text-center">
     Suelte el archivo aquí para cargar o <strong className="text-[#006084]">elegir archivos.</strong>
   </p>
-</div>  
+   {formData.ddjj &&
+    formData.ddjj.map((file, index) => (
+      file.name && <li className="text-sm" key={index}>{file.name}</li>
+    ))}
+</div>   */}
     
       
-         <div className="flex justify-between pt-10">
+         <div className="flex justify-between  sm:w-[210%] max-sm:pt-4 sm:pt-10">
+         <div className="pb-6"  >
+            <button
+               type="button"
+                className="bg-[#23A1D8] hover:bg-[#006084] text-white font-bold py-2 px-4 rounded"
+                onClick={handleBackStep}
+              >
+                Volver
+              </button>
              
           {err && <p className="text-red-500">{err}</p>}
-              
-             
             </div>
-
-             <div className="flex justify-end pt-10">
-             
-          
+             <div className="pb-6"  >
               <button
                type="button"
                 className="bg-[#23A1D8] hover:bg-[#006084] text-white font-bold py-2 px-4 rounded"
@@ -592,12 +760,15 @@ const handleImageUpload = async () => {
               </button>
              
             </div>
+            </div>
        
         </>
       )}
+      
   
   {currentStep === 3 && (
 <>
+  
   <div className="mb-4">
     
     <Input
@@ -614,11 +785,11 @@ const handleImageUpload = async () => {
    <div className="mb-4">
           
           <Input
-            type="text"
-            name="tel"
-            placeholder={"Teléfono"}
+            type="number"
+            name="tel_empleador"
+            placeholder={"Teléfono Empleador"}
             required
-            value={formData.datos_empleador.tel}
+            value={formData.datos_empleador.tel_empleador}
             onChange={handleChange}
             className="w-full  py-2 px-3 focus:outline-none focus:ring focus:border-blue-300"
           />
@@ -627,7 +798,7 @@ const handleImageUpload = async () => {
   <div className="mb-4">
     
     <Input
-      type="text"
+      type="number"
       name="cuit_empleador"
       placeholder={"CUIT"}
       required
@@ -650,7 +821,7 @@ const handleImageUpload = async () => {
   </div>
   
 
-    <div className="flex flex-col justify-center items-center bg-gray-200 rounded-xl min-h-[10rem] w-[90%] p-2">
+    <div className="flex flex-col justify-center items-center bg-gray-200 rounded-xl min-h-[10rem] max-sm:mb-4 sm:w-[90%] p-2">
   <p className="font-bold">Adjuntar Recibo de Sueldo:</p>
   <p className="text-sm font-semibold text-gray-600 max-w-[80%] text-center mt-1">
     Revisar que coincida con los datos del trabajador.
@@ -673,13 +844,17 @@ const handleImageUpload = async () => {
   <p className="text-xs font-semibold text-gray-600 text-center">
     Suelte el archivo aquí para cargar o <strong className="text-[#006084]">elegir archivos.</strong>
   </p>
+  {formData.recibo_sueldo &&
+    formData.recibo_sueldo.map((file, index) => (
+      file.name && <li className="text-sm" key={index}>{file.name}</li>
+    ))}
 </div>  
 
     
    {isLoading ? (
   <Loader /> // Muestra el componente de carga si isLoading es true
 ) : (
-  <div className="flex flex-col items-end justify-end">
+  <div className="flex flex-col items-center sm:items-end justify-end">
   <button
     className="bg-[#23A1D8] hover:bg-[#006084] text-white font-bold py-2 px-4 rounded"
     onClick={handleSubmit}
@@ -697,14 +872,14 @@ const handleImageUpload = async () => {
       {currentStep === 4 && (
     <>
 
-    <div className="flex flex-col h-full w-full justify-end items-center space-y-4">
-                  <BsCheck2Circle className="text-[8rem] text-[#006084]"/>
-                  <p className="font-extrabold text-3xl text-[#006084]">El afiliado ha sido registrado.</p>
-                  <p className="font-bold text-xl text-gray-500">Por favor, verifique si se cargaron los datos correctamente.</p>
+    <div className="flex flex-col sm:p-28 h-full w-full sm:justify-end items-center space-y-4">
+                  <BsCheck2Circle className="text-8xl sm:text-[8rem] text-[#006084]"/>
+                  <p className="font-extrabold text-2xl sm:text-3xl text-[#006084]">El afiliado ha sido registrado.</p>
+                  <p className="font-bold text-lg max-sm:w-5/6 max-sm:pb-4 text-center sm:text-xl text-gray-500">Por favor, verifique si se cargaron los datos correctamente.</p>
 
                   </div>
                   <div className="h-full w-full items-end pb-10 justify-center flex">
-              <button className="btn w-1/3" onClick={() => navigate('/home')}><span>VOLVER</span></button>
+              <button className="btn w-1/3" onClick={() => navigate(`/home/${formData.dni}`)}><span>SIGUIENTE</span></button>
                 {err && <p>{err}</p>}
                 </div>
         
@@ -712,7 +887,7 @@ const handleImageUpload = async () => {
         )}
       
       </div>
-      
+ 
     </div>
   );
 };

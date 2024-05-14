@@ -9,18 +9,22 @@ const Files = ({label, instructions, onUpload}) => {
   const [uploadStatus, setUploadStatus] = useState('');
 
   const handleFileChange = (event) => {
+    setUploadStatus(null);
     const files = Array.from(event.target.files);
     setSelectedFiles(files);
   };
 
   const handleDrop = (event) => {
+
     event.preventDefault();
+    setUploadStatus(null);
     const droppedFiles = Array.from(event.dataTransfer.files);
     setSelectedFiles(droppedFiles);
   };
 
   const handleDragOver = (event) => {
     event.preventDefault();
+    setUploadStatus(null);
   };
 
    const handleUpload = async (id) => {
@@ -59,6 +63,7 @@ const Files = ({label, instructions, onUpload}) => {
       const res = await onUpload()
       console.log(res) // Espera a que onUpload se complete
       if(res.status === 200) {
+      console.log("LLegan estas ids a fotos", res.data)
       const id = res.data.ids;
       await handleUpload(id);
       } // Espera a que handleUpload se complete
@@ -110,10 +115,9 @@ const Files = ({label, instructions, onUpload}) => {
     <div>
       {selectedFiles.length > 0 && (
         <div className='flex flex-col pl-7'>
-          <p>Archivo seleccionado:</p>
           <ul>
             {selectedFiles.map((file, index) => (
-              <li key={index}>{file.name}</li>
+              <li className='truncate w-20' key={index}>{file.name}</li>
             ))}
           </ul>
          

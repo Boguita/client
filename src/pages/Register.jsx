@@ -6,6 +6,8 @@ import Input from "../components/Input";
 import BgRegister from '../assets/img/bg-register.jpg'
 import api from "../common/Axiosconfig";
 import {BsCheck2Circle} from 'react-icons/bs'
+import Select from "react-select";
+import Modal from "react-modal";
 
 const Register = () => {
   const [inputs, setInputs] = useState({
@@ -15,42 +17,80 @@ const Register = () => {
     dni: "",
     cuit: "",
     provincia: "",
-    ciudad: "",
+    delegacion: "",
     domicilio: "",
+    seccional:"",    
     tel: "",
     email: "",
     password: "",
     repeat_password: "",
      // Agregar el estado para la provincia seleccionada
   });
+  const [seccionales, setSeccionales] = useState([]); // Estado para almacenar las seccionales
   const [err, setError] = useState(null);
   const [provincias, setProvincias] = useState([]); // Estado para almacenar las provincias
   const [ciudades, setCiudades] = useState([]);
   const [paises, setPaises] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
-
+    const [selectedSeccionales, setSelectedSeccionales] = useState([]);
+      const [delegaciones, setDelegaciones] = useState([]);
+      const [seccionalesFiltradas, setSeccionalesFiltradas] = useState([]);
+    const [modalTutorialIsOpen, setModalTutorialIsOpen] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log('delegacion', delegaciones)
+    console.log('seccionales', seccionales)
+    console.log('seccionalesFiltradas', seccionalesFiltradas)
+  }, [delegaciones, seccionales, seccionalesFiltradas])
+
 
   const handleChange = async (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     console.log(inputs)
 
     if (e.target.name === "provincia") {
-    try {
-      const res = await axios.get(
-        `https://apis.datos.gob.ar/georef/api/localidades?provincia=${e.target.value}&campos=id,nombre&max=100`
-      );
-      setCiudades(res.data.localidades);
-    } catch (error) {
-      console.error("Error fetching cities:", error);
-    }
+setInputs((prev) => ({ ...prev, delegacion: "" }));
+
+      
+      const delegacion = seccionales
+      .filter((seccional) => quitarAcentos(seccional.provincia) === quitarAcentos(e.target.value))
+      .reduce((uniqueDelegations, seccional) => {
+        const existingDelegation = uniqueDelegations.find(
+          (unique) => unique.delegacion.toLowerCase() === seccional.delegacion.toLowerCase()
+        );
+
+        if (!existingDelegation) {
+          uniqueDelegations.push(seccional);
+        }
+
+        return uniqueDelegations;
+      }, []);
+      setDelegaciones(delegacion);
   }
-  };
+  if(e.target.name === "delegacion") {
+   // Filtrar las seccionales por la ciudad seleccionada
+    const ciudadInput = e.target.value;
+    if (seccionales && seccionales.length > 0) {
+  const filteredSeccionales = seccionales.filter((seccional) => quitarAcentos(seccional.ciudad) === quitarAcentos(ciudadInput));
+  setSeccionalesFiltradas(filteredSeccionales);
+} else {
+  setSeccionalesFiltradas([]); // Establece un array vacío si no hay seccionales
+}
+  setError(null);
+ 
+
+  }
+}
 
   useEffect(() => {
     axios.get("https://apis.datos.gob.ar/georef/api/provincias?campos=id,nombre").then((res) => {
-      setProvincias(res.data.provincias);
-       // Almacenar las provincias en el estado
+      const provinciasFiltradas = res.data.provincias.filter(
+          provincia => provincia.nombre !== "Ciudad Autónoma de Buenos Aires"
+        );
+
+        // Almacenar las provincias filtradas en el estado
+        setProvincias(provinciasFiltradas);
     });
     axios.get("https://restcountries.com/v3.1/all?fields=name").then((res) => {
       const commonNames = res.data.map((country) => country.name.common);
@@ -60,41 +100,96 @@ const Register = () => {
     );
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await api.post("/auth/register", inputs);
-      if(res.status === 200)
-      setCurrentStep(currentStep +1);
-    setError(null)
-      // navigate("/login");
-    } catch (err) {
-      setError(err.response.data);
+  useEffect(() => {
+    api.get("/tasks/seccionales") 
+    .then((res) => {
+      console.log(res.data)
+      setSeccionales(res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }, []);
+
+  const handleValidateFields = () => {
+  return new Promise((resolve) => {
+    if (
+      !inputs.nombre ||
+      !inputs.dni ||
+      !inputs.cuit ||
+      !inputs.nacionalidad ||
+      !inputs.sexo ||
+      !inputs.provincia ||
+      inputs.delegacion === "" ||
+      !inputs.domicilio ||
+      inputs.seccional === "" ||
+      !inputs.tel ||
+      !inputs.email ||
+      !inputs.password ||
+      !inputs.repeat_password
+    ) {
+      setError("Complete todos los campos");
+      resolve(false); // Resuelve la promesa con false si hay error
+    } else {
+      setError(null); // Resuelve la promesa con true si no hay error
+      resolve(true);
     }
-  };
+  });
+};
+
+
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError(null);
+
+  try {
+      const validationSuccess = await handleValidateFields();
+
+    // Verificar si hay errores de validación antes de continuar
+    if (!validationSuccess) {
+      return;
+    }
+    
+    const res = await api.post("/auth/register", inputs);
+    if (res.status === 200) {
+      setCurrentStep(currentStep + 1);
+      setError(null);
+    }
+    // navigate("/login");
+  } catch (err) {
+    setError(err.response.data);
+  }
+};
+
+
+
+  
+  function quitarAcentos(texto) {
+  // Convertir a minúsculas y luego quitar acentos
+  return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
 
   return (
-    <div className="flex flex-col min-h-screen w-screen" style={{ backgroundImage:`url(${BgRegister})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-      <div className="w-full h-full" style={{ backgroundImage: 'linear-gradient(rgba(235, 235, 235, 0.7), rgba(235, 235, 235, 0.7))' }}>
+    <div className="flex flex-col  sm:min-h-screen w-screen" style={{ backgroundImage:`url(${BgRegister})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <div className="w-full  h-full" style={{ backgroundImage: 'linear-gradient(rgba(235, 235, 235, 0.7), rgba(235, 235, 235, 0.7))' }}>
         <div className="p-5 bg-[#006084]">
           <div onClick={()=> {navigate("/login")}} className="logo-register cursor-pointer">
-                <img className="w-1/6" src={Logo} alt="LOGO UATRE"></img>
+                <img className="w-1/2 2xl:w-1/6 xl:w-1/6 lg:w-1/4 md:w-1/5 sm:w-1/3 " src={Logo} alt="LOGO UATRE"></img>
               </div>
 
         </div>
-        <div className="flex justify-center pt-4 w-full ">
-          <div className="w-[65%]  h-full rounded-3xl bg-white">
+        <div className="flex max-sm:bg-white justify-center pt-4 w-full ">
+          <div className=" 2xl:w-[65%] xl:w-[65%] lg:w-[55%] md:w-[55%] sm:w-[80%] w-[80%]   h-full rounded-3xl bg-white">
             <div className="form-container ">
               { currentStep === 1 && (
                 <>
               <div className="flex flex-col justify-center items-center">
 
-              <h3 className="pb-4 text-[#006084] text-4xl font-extrabold">Registro de Administrador</h3>
-              <p className="pb-6 text-base w-2/3 font-semibold text-gray-500">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy
-nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi
-enim ad minim veniam, quis nos</p>
+              <h3 className="pb-4 mt-4 text-[#006084] text-2xl text-center lg:text-3xl xl:text-4xl 2xl:text-4xl  font-extrabold">Registro de Administrador</h3>
+  
               </div>
-              <form className="grid grid-cols-2 gap-x-8">
+              <form className="mt-8 xl:grid xl:grid-cols-2 xl:gap-x-8">
                 <div className="">
                   <Input
                     required
@@ -109,7 +204,7 @@ enim ad minim veniam, quis nos</p>
                 <div className="">
                   <Input
                     required
-                    type="text"
+                    type="number"
                     placeholder="DNI"
                     name="dni"
                     onChange={handleChange}
@@ -120,7 +215,7 @@ enim ad minim veniam, quis nos</p>
                  <div className="">
                   <Input
                     required
-                    type="text"
+                    type="number"
                     placeholder="CUIT/CUIL/CDI"
                     name="cuit"
                     onChange={handleChange}
@@ -138,7 +233,7 @@ enim ad minim veniam, quis nos</p>
                     className=" bg-[#F0F0F0] pl-3 text-sm font-semibold focus:text-[#808080] focus:outline-none w-full"
                   >
                     <option value="" disabled selected>Nacionalidad</option>
-                    {paises.map((pais, index) => (
+                    {paises.sort().map((pais, index) => (
                       <option key={index} value={pais}>
                         {pais}
                       </option>
@@ -181,41 +276,71 @@ enim ad minim veniam, quis nos</p>
                 
                                
                 <div className="py-3 mb-6 !border-l-4 !border-[#006084] bg-[#F0F0F0]">
-                  <select
+                  <select                                    
                     id="provincia"
                     name="provincia"
                     required
                     value={inputs.provincia}
                     onChange={handleChange}
-                    className=" bg-[#F0F0F0] pl-3 text-sm font-semibold focus:text-[#808080] focus:outline-none w-full"
+                          className=" bg-[#F0F0F0] pl-3 text-sm font-semibold   focus:outline-none w-full"
                   >
-                    <option value="" disabled selected>Provincia</option>
-                    {provincias.map((provincia) => (
-                      <option key={provincia.id} value={provincia.nombre}>
-                        {provincia.nombre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                
-                <div className="py-3 mb-6 !border-l-4 !border-[#006084] bg-[#F0F0F0]">
-                    <select
-                      id="ciudad"
-                      name="ciudad"
-                      value={inputs.ciudad}
-                      onChange={handleChange}
-                      className=" bg-[#F0F0F0] pl-3 text-sm font-semibold focus:text-[#808080] focus:outline-none w-full"
-                    >
-                      <option value="" disabled selected>
-                        Ciudad
-                      </option>
-                      {ciudades.map((ciudad) => (
-                        <option key={ciudad.id} value={ciudad.nombre}>
-                          {ciudad.nombre}
+                    <option value="" disabled selected>Provincias</option>
+                  {provincias && provincias
+                      .sort((a, b) => a.nombre.localeCompare(b.nombre))
+                      .map((provincia) => (
+                        <option key={provincia.id} value={provincia.nombre}>
+                         {provincia.nombre}
                         </option>
                       ))}
-                    </select>
+
+                  </select>
                   </div>
+                    <div className="py-3 mb-6 !border-l-4 !border-[#006084] bg-[#F0F0F0]">
+                   <select                                    
+                    id="delegacion"
+                    name="delegacion"
+                    value={inputs.delegacion}
+                    onChange={handleChange}
+                            className=" bg-[#F0F0F0] pl-3 text-sm font-semibold   focus:outline-none w-full"
+                  >
+                    <option value="" selected>Delegaciones</option>
+                  {delegaciones
+                      .sort((a, b) => a.nombre.localeCompare(b.nombre))
+                      .map((provincia) => (
+                        <option key={provincia.id} value={provincia.delegacion}>
+                         {provincia.delegacion}
+                        </option>
+                      ))}
+
+                  </select>
+                  </div>
+                  <div className="py-3 mb-6 !border-l-4 !border-[#006084] bg-[#F0F0F0]">
+                <select
+                  required
+                  className="bg-[#F0F0F0] uppercase pl-3 text-sm font-semibold focus:outline-none w-full"
+                  value={inputs.seccional}
+                  name="seccional"
+                  onChange={handleChange}
+                >
+                  <option value="" disabled >Seccional</option>
+                  {seccionales
+                    .filter(
+                      (seccional) =>
+                        seccional.delegacion.toLowerCase() === inputs.delegacion.toLowerCase()
+                    )
+                    .sort((a, b) => a.nombre.localeCompare(b.nombre))
+                    .map((seccional) => (
+                      <option
+                        key={seccional.id}
+                        value={seccional.id}
+                      >
+                        {`${seccional.provincia}, ${seccional.delegacion}, ${seccional.nombre}`}
+                      </option>
+                    ))}
+                </select>
+
+                  </div>    
+                 
                      <div className="">
                   <Input
                     required
@@ -226,11 +351,12 @@ enim ad minim veniam, quis nos</p>
                     className="form-control"
                   />
                 </div>
+                        
 
                 <div className="">
                   <Input
                     required
-                    type="text"
+                    type="number"
                     placeholder="Teléfono"
                     name="tel"
                     onChange={handleChange}
@@ -269,24 +395,28 @@ enim ad minim veniam, quis nos</p>
                   />
                 </div>
 
+              
+
                 
               </form>
-              <div className="justify-center items-center flex flex-col">
-              <button className="btn  w-1/3" onClick={handleSubmit}><span>REGISTRARME</span></button>
-                {err && <p className="text-red-500 pt-1">{err}</p>}
+              <div className="justify-center pb-4 items-center flex flex-col">
+              <button className="btn  w-32 2xl:w-1/3 xl:w-1/3 lg:w-1/3 md:1/3" onClick={handleSubmit}><span className="!text-xs">REGISTRARME</span></button>
+                {err && <p className="text-red-500 pt-1">{err}</p>}     
                 </div>
+                 <p onClick={() => setModalTutorialIsOpen(true)} className="text-sm mt-2 text-center pb-2 text-gray-500">¿Necesitas ayuda? <strong className="text-[#006084] text-sm font-semibold">Tutorial de registro</strong></p>
+
                 </>
                )}
 
                {currentStep === 2 && (
                  <>
-                 <div className="flex flex-col h-[40rem] justify-center items-center space-y-4">
-                  <BsCheck2Circle className="text-[8rem] text-[#006084]"/>
-                  <p className="font-extrabold text-3xl text-[#006084]">Gracias por registrarte.</p>
-                  <p className="font-bold text-xl text-gray-500">Muy pronto confirmaremos tu usuario por mail.</p>
+                 <div className="flex flex-col h-[25em] sm:h-[40rem] justify-center items-center space-y-4">
+                  <BsCheck2Circle className="text-8xl sm:text-[8rem] text-[#006084]"/>
+                  <p className="font-extrabold max-sm:text-center text-3xl text-[#006084]">Gracias por registrarte.</p>
+                  <p className="font-bold max-sm:text-center text-xl text-gray-500">Muy pronto confirmaremos tu usuario por mail.</p>
 
                   </div>
-                  <div className="justify-center items-center flex">
+                  <div className="justify-center pb-20 items-center flex">
               <button className="btn  w-1/3" onClick={() => navigate('/login')}><span>VOLVER</span></button>
                 {err && <p>{err}</p>}
                 </div>
@@ -304,6 +434,51 @@ enim ad minim veniam, quis nos</p>
           <p className="text-[#006084] text-sm font-semibold">© 2023 UATRE - Unión Argentina de Trabajadores Rurales y Estibadores</p>
           </div>
       </footer>
+       <Modal
+            isOpen={modalTutorialIsOpen}
+            onRequestClose={() => setModalTutorialIsOpen(false)}
+     
+            contentLabel="Tutorial Registro"
+            style={{
+              overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                zIndex: 1000,
+              },
+              content: {
+                border: "none",
+                background: "white",
+                color: "black",
+                top: "55%",
+                left: "50%",
+                right: "auto",
+                bottom: "auto",
+                marginRight: "-50%",
+                transform: "translate(-50%, -50%)",
+                padding: "2rem",
+                width: "80%",
+                maxWidth: "40rem",
+              },
+            }}
+          >
+            <h2 className="text-2xl font-bold mb-4">Tutorial Registro.</h2>
+            
+            <div className="mb-2">
+             <div className="mt-2 flex items-center justify-center">
+                <iframe width="560" height="315" src={`https://www.youtube.com/embed/bcf1P92sBBs?si=SKjKUqnk6jM4YC-g`} 
+                title="YouTube video player"
+                 frameborder="0" 
+                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
+
+                </iframe>
+              </div>
+              <div className="flex items-center justify-center">
+              <button className="mt-4  bg-red-600 w-36 font-bold text-white rounded-lg p-2 hover:bg-opacity-75" onClick={() => setModalTutorialIsOpen(false)}>Cerrar</button>
+              </div>
+            </div>
+                          
+
+       
+          </Modal>
     </div>
   );
 };
