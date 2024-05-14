@@ -11,7 +11,7 @@ export const AuthContexProvider = ({ children }) => {
  const login = async (inputs, setError) => {
     try {
       const res = await axios.post(
-        "http://localhost:8800/api/auth/login",
+        "https://api-red-mu.vercel.app/api/auth/login",
         inputs,
         { withCredentials: true } // Asegúrate de incluir esta opción para enviar las cookies
       );
@@ -24,7 +24,7 @@ export const AuthContexProvider = ({ children }) => {
   };
   const loginAdmin = async (inputs) => {
     try {
-      const res = await axios.post("http://localhost:8800/api/auth/admin", inputs);
+      const res = await axios.post("https://api-red-mu.vercel.app/api/auth/admin", inputs);
       const userData = { ...res.data, token: res.data.access_token }; // Agregar el token a la respuesta
       setCurrentUser(userData);
     } catch (error) {
@@ -34,7 +34,7 @@ export const AuthContexProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.post("http://localhost:8800/api/auth/logout");
+      await axios.post("https://api-red-mu.vercel.app/api/auth/logout");
       setCurrentUser(null);
     } catch (error) {
       console.log(error);
