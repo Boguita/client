@@ -1,4 +1,4 @@
-import '../css/checkbox.css'
+import '../css/Checkbox.css'
 
 const Checkbox = ({id, name, value, isChecked, onChange, disabled}) => {
   return (

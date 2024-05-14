@@ -14,18 +14,18 @@ const Graphics = () => {
 
 
   const monthlyData = [
-    { month: 'Ene', 'LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0 },
-    { month: 'Feb','LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0  },
-    { month: 'Mar', 'LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0 },
-    { month: 'Abr','LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0  },
-    { month: 'May', 'LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0 },
-    { month: 'Jun', 'LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0 },
-    { month: 'Jul', 'LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0 },
-    { month: 'Ago','LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0  },
-    { month: 'Sep', 'LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0 },
-    { month: 'Oct','LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0  },
-    { month: 'Nov','LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0  },
-    { month: 'Dic','LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0  },
+    { month: '1', 'LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0 },
+    { month: '2','LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0  },
+    { month: '3', 'LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0 },
+    { month: '4','LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0  },
+    { month: '5', 'LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0 },
+    { month: '6', 'LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0 },
+    { month: '7', 'LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0 },
+    { month: '8','LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0  },
+    { month: '9', 'LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0 },
+    { month: '10','LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0  },
+    { month: '11','LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0  },
+    { month: '12','LUNA DE MIEL': 0, 'KIT ESCOLAR': 0, 'KIT MATERNAL': 0  },
   ].slice(0, currentMonth); // Filtra hasta el mes actual
 
 
@@ -33,7 +33,7 @@ const Graphics = () => {
    useEffect(() => {
     async function fetchData() {
       try {
-        const res = await api.get(`users/beneficios-otorgados`);
+        const res = await api.get(`users/beneficios-otorgados/${currentUser?.username}`);
         const apiData = res.data;
 
         // Convert API data to match the structure of monthlyData
@@ -56,7 +56,7 @@ const Graphics = () => {
   }, []);
 
   return (
-     <div className="bg-white w-[51%] aspect-auto rounded-lg p-4">
+     <div className="bg-white w-[61%] aspect-auto rounded-lg p-4">
     <ResponsiveContainer aspect={2}>
       <BarChart
         data={data}

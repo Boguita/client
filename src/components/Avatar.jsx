@@ -4,13 +4,13 @@ import { AuthContext } from "../context/authContext";
 
 
 
-const Avatar = ({path}) => {
+const Avatar = () => {
   const { currentUser } = useContext(AuthContext);
 
   return (
    <div className="flex pr-10 py-2 items-center justify-center">
-    <Link  to={`${path === true ? '/admin/profile' : '/profile'}`} className="flex items-center">
-      <span className="max-md:hidden cursor-pointer text-xl mr-4 p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+    <Link to="/profile" className="flex items-center">
+      <span className="cursor-pointer text-xl mr-4 p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
        Hola, {currentUser?.username.charAt(0).toUpperCase() + currentUser?.username.slice(1)}
       </span>
 

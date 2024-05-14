@@ -329,23 +329,3 @@ html {
   gap: 2px;
   color: teal;
 }/*# sourceMappingURL=style.css.map */
-
-.tabs {
-  display: flex;
-}
-
-.tab {
-  flex: 1;
-  padding: 10px;
-  text-align: center;
-  background-color: #f2f2f2;
-  cursor: pointer;
-}
-
-.tab:hover {
-  background-color: #ddd;
-}
-
-.tab.active {
-  background-color: #ccc;
-}

@@ -9,14 +9,12 @@ import Graphics from './Graphics';
 import Calendar from "react-calendar";
 import { IoIosArrowForward, IoIosArrowBack } from 'react-icons/io';
 import Sample from './Calendar';
-import Loader from '../components/Loader';
 
 const Benefits = () => {
 
   const [affiliateData, setAffiliateData] = useState(null);
   const [err, setErr] = useState(null);
   const [beneficio, setBeneficio] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
     const location = useLocation();
   const dni = new URLSearchParams(location.search).get("dni");
 
@@ -58,71 +56,38 @@ const handleAffiliateDataRequest = async () => {
     return formattedDate;
   };
 
-    useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
-
-
-  const handleValidateBenefit = async () => {
-    try {
-      setIsLoading(true);
-      const res = await api.get(`tasks/beneficio/${dni}`,);
-      // Almacenar los datos recibidos de la API
-      setBeneficio(res.data)
-      setIsLoading(false);
-      console.log(res.data)
-
-        // Restablecer el estado del error si la solicitud tiene éxito
-    }
-    catch (error) {
-      console.log(error.response.data.message)
-      setErr(error.response.data.message);
-    }
-    setIsLoading(false);
-  }
-
-  useEffect(() => {
-    handleValidateBenefit();
-  }
-  , [dni]);
+    const handleDateChange = (date) => {
+    setSelectedDate(date);
+    // Aquí podrías realizar una solicitud a la base de datos para obtener los datos del gráfico correspondientes a la fecha seleccionada
+  };
 
 
 
  return (
   <div className="min-h-screen pl-4 md:pl-80 bg-gray-200">
-    <div className='py-28 md:py-36'>
+    <div className='py-8 md:py-36'>
         <div className='flex flex-col md:w-2/3'>
           <h1 className="text-black font-extrabold text-2xl md:text-3xl">Selecciona el beneficio a otorgar</h1>
           <p className='text-gray-500 font-semibold mt-4 md:mt-2'>Recuerda estar atento con la informacion <br/> proporcionada por el sistema.</p>
           
         </div>
-       <div className='flex flex-col md:flex-row max-sm:pt-8 sm:pt-20'>
+       <div className='flex flex-col md:flex-row pt-20'>
 
 
-        <div className='flex flex-col justify-around pr-8 md:flex-row gap-2 md:gap-4'>          
-            
-            <>
-          <div className="flex flex-col rounded-lg h-90 w-full  p-4 bg-white">
+        <div className='flex flex-col justify-center md:flex-row gap-4 md:gap-10'>
+          <div className="flex flex-col rounded-lg h-80 w-full md:w-1/4 p-4 bg-white">
               <img className='mt-2 w-12 h-12' src={PlaneIcon}>
              </img>
-             <h3 className='mt-4 xl:text-3xl lg:text-2xl md:text-2xl text-2xl font-extrabold'>
+             <h3 className='mt-4 lg:text-3xl md:text-2xl font-extrabold'>
                Luna de Miel
              </h3>
              <p className='mt-2 text-sm md:text-base text-gray-500 font-semibold'>
-               Los afiliados a UATRE podrán gozar de 1 semana en forma gratuita (7 días- 6 noches)
-                ingresando el día Lunes y retirándose el día Domingo, en cualquiera de las instalaciones
-                hoteleras, de Necochea y de la Provincia de Cordoba, pertenecientes a nuestra organización.
-                La estadía incluye sólo desayuno.
+               Lorem ipsum dolor sit amet consectetur adipiscing elit, rhoncus per leo auctor tincidunt viverra praesent cubilia, vivamus cursus euismod justo erat tortor.
              </p>
-             <div className='flex items-end h-full'>
-              {isLoading ? <Loader/> : beneficio?.some((beneficio) => beneficio.tipo === 'Luna de miel' && (beneficio.estado === "Pendiente" || beneficio.estado === "Entregado"))
- ?
-              <p className='text-red-500 font-semibold'>El beneficio ya ha sido otorgado con anterioridad.</p>             
-              : <button 
+             <button 
               onClick={() => {
                 // Redirigir a la ruta correspondiente si el usuario está autenticado
-                  // window.scrollTo(0, 0)
+                
                   navigate('/luna-de-miel', {
                     state: { dni }, // Pasamos el DNI como parámetro en el state
                   }); // Agregamos /beneficios/ al inicio de la ruta
@@ -131,51 +96,23 @@ const handleAffiliateDataRequest = async () => {
                  
               }}
              className='mt-4 bg-[#0E6F4B] w-36 font-bold text-white rounded-lg p-1 hover:bg-opacity-75'>
-               SOLICITAR
-             </button> }
-             </div>
+               VER BENEFICIO
+             </button>
           </div>
-          </>
-     
 
-
-          <div className="flex flex-col rounded-lg h-90 w-full  p-4 bg-white">
+          <div className="flex flex-col rounded-lg h-80 w-full md:w-1/4 p-4 bg-white">
               <img className='mt-2 w-12 h-12' src={MonoIcon}>
              </img>
-             <h3 className='mt-4 xl:text-3xl lg:text-2xl md:text-2xl text-2xl font-extrabold'>
+             <h3 className='mt-4 text-3xl font-extrabold'>
                Kit Nacimiento
              </h3>
              <p className='mt-2 text-gray-500 font-semibold'>
-               Para acceder a este beneficio solo se necesita fotocopia del recibo de sueldo del trabajador o trabajadora afiliada, constancia de embarazo con fecha probable de parto y fotocopia del DNI de la beneficiaria. Se puede gestionar en cualquier sede del gremio.
+               Lorem ipsum dolor sit amet consectetur adipiscing elit, rhoncus per leo auctor tincidunt viverra praesent cubilia, vivamus cursus euismod justo erat tortor.
              </p>
-             <div className='flex items-end h-full'>
-               {isLoading ? <Loader/> : beneficio?.some((beneficio) => beneficio.tipo === 'Kit maternal' && beneficio.estado === "Entregado" && beneficio.fecha_otorgamiento.includes(new Date().getFullYear()) )
-              ?
-              <p className='text-red-500 font-semibold'>El beneficio ya ha sido otorgado con anterioridad.</p>             
-              :
-              beneficio?.some((beneficio) => beneficio.tipo === 'Kit maternal' && beneficio.estado === "Pendiente" && beneficio.fecha_otorgamiento.includes(new Date().getFullYear()) ) ? 
-              <p className='text-red-500 font-semibold'>El beneficio aún no llega a la seccional.</p>     
-              :   
-              beneficio?.some((beneficio) => beneficio.tipo === 'Kit maternal' && beneficio.estado === "Enviado" && beneficio.fecha_otorgamiento.includes(new Date().getFullYear()) ) ?  
-              <button 
-              onClick={() => {
-                // Redirigir a la ruta correspondiente si el usuario está autenticado
-                // window.scrollTo(0, 0)
-                  navigate('/kit-maternal', {
-                    state: { dni }, // Pasamos el DNI como parámetro en el state
-                  }); // Agregamos /beneficios/ al inicio de la ruta
-                
-                  // Si no está autenticado, redirigir al inicio de sesión
-                 
-              }}
-             className='mt-4 bg-[#006084] text-sm w-36 font-bold text-white rounded-lg p-1 hover:bg-opacity-75'>
-               ENTREGAR PENDIENTE
-             </button>   
-             :
              <button 
               onClick={() => {
                 // Redirigir a la ruta correspondiente si el usuario está autenticado
-                // window.scrollTo(0, 0)
+                
                   navigate('/kit-maternal', {
                     state: { dni }, // Pasamos el DNI como parámetro en el state
                   }); // Agregamos /beneficios/ al inicio de la ruta
@@ -184,38 +121,33 @@ const handleAffiliateDataRequest = async () => {
                  
               }}
              className='mt-4 bg-[#006084] w-36 font-bold text-white rounded-lg p-1 hover:bg-opacity-75'>
-               SOLICITAR
+               VER BENEFICIO
              </button>
-             }
-            
-             </div>
           </div>
-          <div className="flex flex-col rounded-lg h-90 w-full p-4 bg-white">
+          <div className="flex flex-col rounded-lg h-80 w-full md:w-1/4 p-4 bg-white">
               <img className='mt-2 w-12 h-12' src={Libro}>
              </img>
-             <h3 className='mt-4 xl:text-3xl lg:text-2xl md:text-2xl text-2xl font-extrabold'>
+             <h3 className='mt-4 text-3xl font-extrabold'>
                Kit Escolar
              </h3>
              <p className='mt-2 text-gray-500 font-semibold'>
-Cada año, al comienzo del ciclo escolar, desde el gremio se distribuyen guardapolvos y un kit de mochila y útiles escolares para los hijos de cada trabajador. Se debe gestionar en la sede del gremio que se encuentre más cercana al domicilio del trabajador o trabajadora.             </p>
-             <div className='flex items-end h-full'>
-             <button
+               Lorem ipsum dolor sit amet consectetur adipiscing elit, rhoncus per leo auctor tincidunt viverra praesent cubilia, vivamus cursus euismod justo erat tortor.
+             </p>
+             <button 
              onClick={() => {
                 // Redirigir a la ruta correspondiente si el usuario está autenticado
                 
                   navigate('/kit-escolar', {
                     state: { dni }, // Pasamos el DNI como parámetro en el state
                   }); // Agregamos /beneficios/ al inicio de la ruta
-                // window.scrollTo(0, 0)
+                
                   // Si no está autenticado, redirigir al inicio de sesión
                  
               }}
              
              className='mt-4 bg-[#23A1D8] w-36 font-bold text-white rounded-lg p-1 hover:bg-opacity-75'>
-               SOLICITAR
+               VER BENEFICIO
              </button>
-             </div>
-             
           </div>
           
           {/* Repeat similar code blocks for other items */}

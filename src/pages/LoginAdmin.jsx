@@ -1,34 +1,20 @@
-
-import { useState,  useEffect } from "react";
+import axios from "axios";
+import { useState } from "react";
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import Logo from '../assets/img/logo.png'
-import { useRef } from 'react';
-import autoAnimate from '@formkit/auto-animate';
 
-import '../css/auth.css';
-import Loader from "../components/Loader";
-
-
-const Login = () => {
+const LoginAdmin = () => {
   const [inputs, setInputs] = useState({
-    email: "",
+    username: "",
     password: "",
   });
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  
+  const [err, setError] = useState(null);
 
   const navigate = useNavigate();
 
   const { loginAdmin } = useContext(AuthContext);
-    const yourRef = useRef(null);
-
-    useEffect(() => {
-    yourRef.current && autoAnimate(yourRef.current)
-  }, [yourRef])
-  
 
 
   const handleChange = (e) => {
@@ -38,88 +24,57 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setIsLoading(true);      
-      const res = await loginAdmin(inputs)             
-      setIsLoading(false);   
-      navigate("/admin/dashboard");  
+      await loginAdmin(inputs)
+      navigate("/dashboard");
     } catch (err) {
-      console.log(err)
-      setError(err);
-      setIsLoading(false); 
+      setError(err.response.data);
     }
-    
   };
+
   return (
-    <div className="form-bg ">
-        
-      
-    <div className="container-login-admin flex">
-      
-          <div className="flex pt-8 flex-col w-full h-full">
-             <div className="flex items-center justify-center p-8">
-                <a href="/admin/login">
-                  <img className="flex max-sm:h-16 h-24 w-auto cursor-pointer" src={Logo} alt="Logo" />
-                </a>
-              </div>  
-            
-          
-     
-
-        <div className="row flex flex-col h-[50%] justify-center items-center">         
-             
-              
-
-                <div className="form-container h-[12rem]">
-
-                  <div className="flex flex-col items-center p-8">
-                     <h3 className="title font-extrabold text-center text-4xl text-[#23A1D8] max-sm:text-3xl ">Ingreso de <br/> Administrador</h3>
-                  </div>
-                 
-                    <form ref={yourRef} className="form-horizontal">
-                        <div className="form-group relative">
-         
+    <div className="auth">
+       <div class="form-bg">
+    <div class="container-login">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <div class="form-container">
+                    <div className="logo-login">
+                      <img src={Logo} alt="LOGO BRANDED STRONG"></img>
+                    </div>
+                    <h3 class="title">¡Hello Admin!</h3>
+                    <form class="form-horizontal">
+                        <div class="form-group">                            
                             <input 
-                                required
-                                type="text"
-                                placeholder="Email"
-                                name="email"
-                                onChange={handleChange}
-                                className='form-control p-2 bg-[#d8d8d8]  border-l-4 border-[#006084] font-semibold text-gray-800 w-80 mt-4 pl-6 pr-4'
+                              required
+                              type="text"
+                              placeholder="USERNAME"
+                              name="username"
+                              onChange={handleChange}        
+                              class="form-control"
+                              />
+                         </div>
+                        <div class="form-group">                           
+                            <input class="form-control" 
+                              required
+                              type="password"
+                              placeholder="PASSWORD"
+                              name="password"
+                              onChange={handleChange}
                             />
                         </div>
-                        <div className="form-group relative">
-
-                            <input 
-                                
-                                required
-                                type="password"
-                                placeholder="Contraseña"
-                                name="password"
-                                onChange={handleChange}
-                                className='form-control p-2 bg-[#d8d8d8]  border-l-4 border-[#006084] font-semibold text-gray-800 w-80 mt-4 pl-6 pr-4'
-                            />
-                            
-                        </div>
-                        
-
-                        <div ref={yourRef} className="flex flex-col justify-center items-center align-middle">
+                        <button className="btn" onClick={handleSubmit}><span>Login to your account</span></button>
+                        {err && <p className="flex justify-center text-white mt-2 ">{err}</p>}
                           
-                          {isLoading ? <Loader/> :
-                          <button className="btn" onClick={handleSubmit}><span>INICIAR SESIÓN</span></button>}
-                        </div>
-                        
-                        {error && <p className="flex justify-center font-bold text-red-500 mt-2 ">{error}</p>}
-                          <span className="forgot-password">
-                             <Link className="hi text-[#23A1D8] text-lg" to="/forgot-password">He olvidado mi contraseña</Link>
-                          </span>
-                         
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+      
+    
+    </div>
   );
 };
 
-export default Login;
+export default LoginAdmin;
