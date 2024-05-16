@@ -14,7 +14,7 @@ export const AuthContexProvider = ({ children }) => {
  const login = async (inputs, setError) => {
     try {
       const res = await axios.post(
-        "https://api-red-mu.vercel.app/api/auth/login",
+        "https://uatre-api.onrender.com/api/auth/login",
         inputs,
         { withCredentials: true } // Asegúrate de incluir esta opción para enviar las cookies
       );
@@ -29,7 +29,7 @@ export const AuthContexProvider = ({ children }) => {
   
   const loginAdmin = async (inputs,setError) => {
     try {
-      const res = await axios.post("https://api-red-mu.vercel.app/api/auth/login-aubenefits", inputs, 
+      const res = await axios.post("https://uatre-api.onrender.com/api/auth/login-aubenefits", inputs, 
       { withCredentials: true });
       console.log(res.data)
       if(res.status === 200){
@@ -43,7 +43,7 @@ export const AuthContexProvider = ({ children }) => {
   const logout = async () => {
     
     try {
-      await axios.post("https://api-red-mu.vercel.app/api/auth/logout");
+      await axios.post("https://uatre-api.onrender.com/api/auth/logout");
       setCurrentUser(null);
     } catch (error) {
       console.log(error);
